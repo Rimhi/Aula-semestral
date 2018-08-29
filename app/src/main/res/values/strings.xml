@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Monitoreo ICA</string>
+    <string name="title_activity_maps">Monitoreo</string>
+    <string name="title_activiy_maps_inspector">Mapa Trampas</string>
+</resources>

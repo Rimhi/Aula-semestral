@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "768266602852",
+    "firebase_url": "https://aprendermaps-212917.firebaseio.com",
+    "project_id": "aprendermaps-212917",
+    "storage_bucket": "aprendermaps-212917.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768266602852:android:130a607f3868574a",
+        "android_client_info": {
+          "package_name": "monterrosa.ricardo.aprendermaps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "768266602852-c9348b58im7hd3g4alg9nkess4bi1ft5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYH5qQ4G-6IZqlp8_EtJFY90pm6DKTzXA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
