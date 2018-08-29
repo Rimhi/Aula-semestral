@@ -100,9 +100,9 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
                             }).setPositiveButton("Si", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                            final String [] idtrampa= marker.getTitle().split(" ");
                             Intent intent = new Intent(MapaInspectorActivity.this,LlenarFormularioActivity.class);
-                            intent.putExtra("codigotrampa",marker.getTitle());
+                            intent.putExtra("codigotrampa",idtrampa[1]);
                             startActivity(intent);
 
                         }

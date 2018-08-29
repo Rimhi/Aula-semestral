@@ -179,7 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final String [] idtrampa= marker.getTitle().split(" ");
                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                builder.setTitle("Opciones Marcador")
-                       .setPositiveButton("Eliminar Marcador", new DialogInterface.OnClickListener() {
+                       .setNegativeButton("Eliminar Marcador", new DialogInterface.OnClickListener() {
                            @Override
                            public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -187,24 +187,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                              miBaseDatos.child("trampas").child(idtrampa[1]).setValue(null);
                                marker.remove();
                            }
-                       }).setNegativeButton("Informacion", new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialogInterface, int i) {
-                               AlertDialog.Builder builder1 = new AlertDialog.Builder(MapsActivity.this);
-                               builder1.setPositiveButton("Editar", new DialogInterface.OnClickListener() {
-                                   @Override
-                                   public void onClick(DialogInterface dialogInterface, int i) {
-
-                                   }
-                               }).setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                                   @Override
-                                   public void onClick(DialogInterface dialogInterface, int i) {
-
-                                   }
-                               }).setTitle("Informacion trampa "+idtrampa[1]);
-                               dialog.dismiss();
-                           }
-                       });
+                       }).setPositiveButton("Informacion", new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialogInterface, int i) {
+                       Intent intent = new Intent(getApplicationContext(),InformacionTrampaActivity.class);
+                       intent.putExtra("codigotrampa",idtrampa[1]);
+                       startActivity(intent);
+                   }
+               });
                dialog = builder.create();
                dialog.show();
                 return false;

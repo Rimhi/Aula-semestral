@@ -36,7 +36,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),"Ricardo");
-                baseDatos.child("Fecha_llenar_formulario").child(CodigoTrampa.getText().toString()).setValue(llegadaMapa);
+                baseDatos.child("Fecha_llenar_formulario").child("Codigo: "+CodigoTrampa.getText().toString()+"  Fecha: "+fechaactual()).setValue(llegadaMapa);
             }
         });
     }

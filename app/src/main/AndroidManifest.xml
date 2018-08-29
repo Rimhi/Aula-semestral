@@ -42,9 +42,11 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".MapaInspectorActivity"
-            android:label="@string/title_activiy_maps_inspector"/>
-        <activity android:name=".LlenarFormularioActivity"></activity>
+        <activity
+            android:name=".MapaInspectorActivity"
+            android:label="@string/title_activiy_maps_inspector" />
+        <activity android:name=".LlenarFormularioActivity" />
+        <activity android:name=".InformacionTrampaActivity"></activity>
     </application>
 
 </manifest>
