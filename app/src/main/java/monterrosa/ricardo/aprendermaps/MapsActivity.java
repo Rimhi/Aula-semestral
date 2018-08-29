@@ -177,6 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(final Marker marker) {
                 final String [] idtrampa= marker.getTitle().split(" ");
+                final String [] snippet= marker.getSnippet().split(" ");
                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                builder.setTitle("Opciones Marcador")
                        .setNegativeButton("Eliminar Marcador", new DialogInterface.OnClickListener() {
@@ -190,8 +191,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                        }).setPositiveButton("Informacion", new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialogInterface, int i) {
+                       /***
+                        * queda paendiente para leer datos de firebase
+                        *
+                        * Recordar la forma de guardar las fechas en las que se llego a la trampa y luego mostrarlas en un
+                        * listview 
+                        */
+                       baseDatos.child("trampas").child(idtrampa[1]).child("latitud");
                        Intent intent = new Intent(getApplicationContext(),InformacionTrampaActivity.class);
                        intent.putExtra("codigotrampa",idtrampa[1]);
+                       intent.putExtra("indicio",snippet[1]);
+                       intent.putExtra("posicion",marker.getPosition());
                        startActivity(intent);
                    }
                });
@@ -261,7 +271,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-            final Trampa trampa= dataSnapshot.getValue(Trampa.class);
 
         }
 
