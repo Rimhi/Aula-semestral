@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -127,7 +126,19 @@
             android:layout_height="wrap_content"
             android:id="@+id/CodigoRuta"
             android:layout_marginTop="10dp"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Codigo Trampa: "/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/CodigoTrampa"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/GuardarFormulario"
+            android:text="Guardar"/>
     </LinearLayout>
    </ScrollView>
 </RelativeLayout>
