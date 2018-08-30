@@ -53,9 +53,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker marcador;
     private DatabaseReference baseDatos;
     private DatabaseReference trampaRef;
-    private String borrarmarcador = "";
-    double lat = 0.0;
-    double lng = 0.0;
     private static final int COD_PERMISOS = 3452;
     private LatLngBounds MONTERIA_CORDOBA_COLOMBIA = new LatLngBounds(new LatLng(8.726606067497622, -75.90802716634767),
             new LatLng(8.824689, -75.826778));
@@ -66,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        pedirPermisosFaltantes();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
 
@@ -90,13 +88,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(8.7593615, -75.877503), 13));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(8.7593615, -75.877503), 15));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
         mMap.setMyLocationEnabled(true);
+
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.setMinZoomPreference(13.0f);
         mMap.setLatLngBoundsForCameraTarget(MONTERIA_CORDOBA_COLOMBIA);
@@ -192,12 +189,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                    @Override
                    public void onClick(DialogInterface dialogInterface, int i) {
                        /***
-                        * queda paendiente para leer datos de firebase
-                        *
-                        * Recordar la forma de guardar las fechas en las que se llego a la trampa y luego mostrarlas en un
-                        * listview 
+                        * qenviar datos a la actividad informacion de la trampa para su futuro listado
                         */
-                       baseDatos.child("trampas").child(idtrampa[1]).child("latitud");
                        Intent intent = new Intent(getApplicationContext(),InformacionTrampaActivity.class);
                        intent.putExtra("codigotrampa",idtrampa[1]);
                        intent.putExtra("indicio",snippet[1]);

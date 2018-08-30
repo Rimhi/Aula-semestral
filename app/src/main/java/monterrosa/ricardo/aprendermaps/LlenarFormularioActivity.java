@@ -35,8 +35,12 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         Guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                /***
+                 * Guarda la fecha de inspeccionde la trampa a la cual se le dio en Informacion
+                 */
                 LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),"Ricardo");
-                baseDatos.child("Fecha_llenar_formulario").child("Codigo: "+CodigoTrampa.getText().toString()+"  Fecha: "+fechaactual()).setValue(llegadaMapa);
+                baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
             }
         });
     }

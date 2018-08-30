@@ -57,7 +57,6 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         baseDatos = FirebaseDatabase.getInstance().getReference();
 
         trampaRef = baseDatos.child("trampas");
-        baseDatos.child("Fecha_llenar_formulario");
         trampaRef.addChildEventListener(trampasHijoListener);
 
     }
@@ -77,7 +76,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         LocationManager lm = (LocationManager)getSystemService(getApplicationContext().LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         final LatLng userlocation = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userlocation,13));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userlocation,14));
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -89,7 +88,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(final Marker marker) {
-                if (calcularDistancia(userlocation,marker.getPosition())<=5){
+                if (calcularDistancia(userlocation,marker.getPosition())<=6){
                     AlertDialog.Builder builder = new AlertDialog.Builder(MapaInspectorActivity.this);
                     builder.setTitle("¿Desea llenar formulario?")
                             .setNegativeButton("no", new DialogInterface.OnClickListener() {
