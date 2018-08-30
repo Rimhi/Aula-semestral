@@ -249,7 +249,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if( mMap != null && trampa != null){
                 MarkerOptions markerOptions = new MarkerOptions()
                         .title("Identificacion: "+trampa.id)
-                        .snippet("Indicio o Referencia: "+trampa.direccion)
+                        .snippet("Referencia: "+trampa.direccion)
                         .position( new LatLng(trampa.latitud, trampa.longitud) );
                 mMap.addMarker(markerOptions);
             }

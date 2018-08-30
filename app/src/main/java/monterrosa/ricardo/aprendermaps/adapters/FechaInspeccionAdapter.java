@@ -26,10 +26,7 @@ import monterrosa.ricardo.aprendermaps.Trampa;
 
 public class FechaInspeccionAdapter extends RecyclerView.Adapter<FechaInspeccionAdapter.ViewHolder>{
     ArrayList<LlegadaMapa> lista;
-    private Activity activity;
-    private DatabaseReference databaseReference;
-    public  FechaInspeccionAdapter(Activity a,ArrayList<LlegadaMapa>b){
-        this.activity = a;
+    public  FechaInspeccionAdapter(ArrayList<LlegadaMapa>b){
         this.lista= b;
     }
     @Override
@@ -40,9 +37,10 @@ public class FechaInspeccionAdapter extends RecyclerView.Adapter<FechaInspeccion
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.nombre.setText(lista.get(position).NombreColector);
-        holder.fecha.setText(lista.get(position).Fecha);
-        holder.descripcion.setText(lista.get(position).idTrampa);
+        LlegadaMapa llegadaMapa = lista.get(position);
+        holder.nombre.setText(llegadaMapa.NombreColector);
+        holder.fecha.setText(llegadaMapa.Fecha);
+        holder.descripcion.setText(llegadaMapa.idTrampa);
     }
 
     @Override

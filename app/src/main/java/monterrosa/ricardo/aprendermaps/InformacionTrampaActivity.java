@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +25,7 @@ public class InformacionTrampaActivity extends AppCompatActivity {
     private  DatabaseReference databaseReference;
     private ArrayList<LlegadaMapa> lista = new ArrayList<>();
     private FechaInspeccionAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,26 +39,32 @@ public class InformacionTrampaActivity extends AppCompatActivity {
         indicio.setText(getIntent().getStringExtra("indicio"));
         posicion.setText(getIntent().getStringExtra("posicion"));
         miBaseDatos = FirebaseDatabase.getInstance().getReference();
-        databaseReference = miBaseDatos.child("trampas").child(CodigTrampa.getText().toString());
-        miBaseDatos.addChildEventListener(eventListener);
+        databaseReference = miBaseDatos.child("trampas").child(CodigTrampa.getText().toString()).child("Inspeccion");
+        databaseReference.addChildEventListener(eventListener);
+
+
+
 
     }
     ChildEventListener eventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
+                lista.add(llegadaMapa);
+
+            adapter = new FechaInspeccionAdapter(lista);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(InformacionTrampaActivity.this);
             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            lista.clear();
-            LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
-            lista.add(llegadaMapa);
-            adapter = new FechaInspeccionAdapter(InformacionTrampaActivity.this,lista);
             fechasdeInspeccion.setLayoutManager(linearLayoutManager);
             fechasdeInspeccion.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
 
 
+
+
         }
+
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
