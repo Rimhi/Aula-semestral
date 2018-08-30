@@ -40,37 +40,9 @@ public class FechaInspeccionAdapter extends RecyclerView.Adapter<FechaInspeccion
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                final LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
-                holder.nombre.setText(llegadaMapa.NombreColector);
-                holder.fecha.setText(llegadaMapa.Fecha);
-                holder.descripcion.setText(llegadaMapa.idTrampa);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+        holder.nombre.setText(lista.get(position).NombreColector);
+        holder.fecha.setText(lista.get(position).Fecha);
+        holder.descripcion.setText(lista.get(position).idTrampa);
     }
 
     @Override

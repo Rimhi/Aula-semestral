@@ -2,6 +2,7 @@ package monterrosa.ricardo.aprendermaps;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -12,11 +13,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
+import monterrosa.ricardo.aprendermaps.adapters.FechaInspeccionAdapter;
+
 public class InformacionTrampaActivity extends AppCompatActivity {
     private RecyclerView fechasdeInspeccion;
     private EditText CodigTrampa,indicio,posicion;
     private DatabaseReference miBaseDatos;
-
+    private  DatabaseReference databaseReference;
+    private ArrayList<LlegadaMapa> lista = new ArrayList<>();
+    private FechaInspeccionAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +37,23 @@ public class InformacionTrampaActivity extends AppCompatActivity {
         indicio.setText(getIntent().getStringExtra("indicio"));
         posicion.setText(getIntent().getStringExtra("posicion"));
         miBaseDatos = FirebaseDatabase.getInstance().getReference();
+        databaseReference = miBaseDatos.child("trampas").child(CodigTrampa.getText().toString());
         miBaseDatos.addChildEventListener(eventListener);
 
     }
     ChildEventListener eventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(InformacionTrampaActivity.this);
+            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            lista.clear();
+            LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
+            lista.add(llegadaMapa);
+            adapter = new FechaInspeccionAdapter(InformacionTrampaActivity.this,lista);
+            fechasdeInspeccion.setLayoutManager(linearLayoutManager);
+            fechasdeInspeccion.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+
 
 
         }
