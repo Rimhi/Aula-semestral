@@ -59,6 +59,7 @@ public class RegistroActivity extends AppCompatActivity {
                                     progreso.dismiss();
                                 }else {
                                     Toast.makeText(RegistroActivity.this,"Error al Registrar Usuario",Toast.LENGTH_SHORT).show();
+                                    progreso.dismiss();
                                 }
                             }
                         });

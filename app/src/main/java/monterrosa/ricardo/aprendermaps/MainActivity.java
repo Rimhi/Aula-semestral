@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("correo", correo);
                         startActivity(intent);
                     } else {
-                        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                        Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                         intent.putExtra("correo", correo);
                         startActivity(intent);
                     }
