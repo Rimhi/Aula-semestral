@@ -50,6 +50,11 @@
         <activity
             android:name=".InspectorActivity"
             android:label="@string/title_activity_inspector"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".RegistroActivity" />
+        <activity
+            android:name=".AdminActivity"
+            android:label="@string/title_activity_admin"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

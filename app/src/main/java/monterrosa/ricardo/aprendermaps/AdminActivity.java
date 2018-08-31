@@ -2,6 +2,7 @@ package monterrosa.ricardo.aprendermaps;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -13,21 +14,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class InspectorActivity extends AppCompatActivity
+public class AdminActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    String nombre,correo;
-    TextView correoInspector,NombreInspector;
-
+    private FirebaseAuth auth;
+    private TextView correo,nombre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inspector);
+        setContentView(R.layout.activity_admin);
+        auth = FirebaseAuth.getInstance();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,15 +45,15 @@ public class InspectorActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        View HeadView = navigationView.getHeaderView(0);
-        correo = getIntent().getStringExtra("correo");
-        nombre = getIntent().getStringExtra("nombre");
-        NombreInspector = HeadView.findViewById(R.id.PerfilNombreInsector);
-        correoInspector = HeadView.findViewById(R.id.PerfilcorreoInspector);
-        correoInspector.setText(correo);
+        View header = navigationView.getHeaderView(0);
+        correo = header.findViewById(R.id.adminCorreo);
+        correo.setText(auth.getCurrentUser().getEmail());
+
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -67,7 +67,7 @@ public class InspectorActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.inspector, menu);
+        getMenuInflater().inflate(R.menu.admin, menu);
         return true;
     }
 
@@ -92,15 +92,13 @@ public class InspectorActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_MapaInspector) {
-            Intent intent = new Intent(InspectorActivity.this,MapaInspectorActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_VisitaInspector) {
+        if (id == R.id.nav_admin_mapa) {
+            startActivity(new Intent(AdminActivity.this,MapsActivity.class));
+        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_salir) {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(InspectorActivity.this,MainActivity.class));
-
+        } else if (id == R.id.nav_admin_salir) {
+            auth.signOut();
+            startActivity(new Intent(AdminActivity.this,MainActivity.class));
 
         } else if (id == R.id.nav_manage) {
 

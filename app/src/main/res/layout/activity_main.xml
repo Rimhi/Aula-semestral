@@ -7,12 +7,6 @@
     android:gravity="center"
     android:layout_height="match_parent"
     tools:context="monterrosa.ricardo.aprendermaps.MainActivity">
-
-     <Button
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:text="ir a mapa"
-         android:onClick="irmap"/>
      <EditText
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
@@ -32,5 +26,14 @@
          android:layout_height="wrap_content"
          android:text="ir a mapa de inspector"
          android:onClick="irMapInspector"/>
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="60dp"
+         android:text="¿Aun no tienes tu cuenta?  Registrate pulsando aqui ..."
+         android:id="@+id/irRegistro"
+         android:textColor="#700202"
+         android:onClick="onclick"
+         android:gravity="center"/>
 
 </LinearLayout>
