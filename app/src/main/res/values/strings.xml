@@ -2,4 +2,10 @@
     <string name="app_name">Monitoreo ICA</string>
     <string name="title_activity_maps">Monitoreo</string>
     <string name="title_activiy_maps_inspector">Mapa Trampas</string>
+    <string name="title_activity_inspector">InspectorActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

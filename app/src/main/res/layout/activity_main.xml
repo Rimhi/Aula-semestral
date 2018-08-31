@@ -13,6 +13,18 @@
          android:layout_height="wrap_content"
          android:text="ir a mapa"
          android:onClick="irmap"/>
+     <EditText
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:id="@+id/correoInspector"
+         android:hint="CORREO ELECTRONICO"/>
+     <EditText
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:id="@+id/contraseñaInspector"
+         android:hint="Contraseña"
+         android:inputType="textPassword"/>
+
 
      <Button
          android:layout_marginTop="20dp"

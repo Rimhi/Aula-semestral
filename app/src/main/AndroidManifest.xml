@@ -46,7 +46,11 @@
             android:name=".MapaInspectorActivity"
             android:label="@string/title_activiy_maps_inspector" />
         <activity android:name=".LlenarFormularioActivity" />
-        <activity android:name=".InformacionTrampaActivity"></activity>
+        <activity android:name=".InformacionTrampaActivity" />
+        <activity
+            android:name=".InspectorActivity"
+            android:label="@string/title_activity_inspector"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
