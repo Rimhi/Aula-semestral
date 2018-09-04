@@ -1,8 +1,10 @@
 package monterrosa.ricardo.aprendermaps;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -14,14 +16,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class AdminActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private  static final int GALERY_INTENT = 1;
+    private DatabaseReference mibasedatos,databaseReference;
     private FirebaseAuth auth;
     private TextView correo,nombre;
+    private ImageView imagen;;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +63,45 @@ public class AdminActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
         correo = header.findViewById(R.id.adminCorreo);
+        nombre = header.findViewById(R.id.adminNombre);
         correo.setText(auth.getCurrentUser().getEmail());
+        imagen = header.findViewById(R.id.adminimageView);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        mibasedatos = databaseReference.child("Usuarios");
+        mibasedatos.addChildEventListener(addlistener);
 
     }
+    ChildEventListener addlistener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            final ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
+            nombre.setText(modeloRegistro.Nombre);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
     @Override
     public void onBackPressed() {
@@ -112,4 +161,7 @@ public class AdminActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+
 }

@@ -1,8 +1,13 @@
 package monterrosa.ricardo.aprendermaps;
 
+import android.*;
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,16 +24,20 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG ="hola" ;
     private EditText correo,contraseña;
     private FirebaseAuth mAuth;
     private  FirebaseAuth.AuthStateListener authStateListener;
     private ProgressDialog progreso;
+    private static final int COD_PERMISOS = 3452;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pedirPermisosFaltantes();
         mAuth = FirebaseAuth.getInstance();
         contraseña = findViewById(R.id.contraseñaInspector);
         correo = findViewById(R.id.correoInspector);
@@ -107,6 +116,49 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onclick(View view){
         startActivity(new Intent(MainActivity.this,RegistroActivity.class));
+    }
+    private boolean pedirPermisosFaltantes(){
+        boolean todosConsedidos = true;
+        ArrayList<String> permisosFaltantes = new ArrayList<>();
+
+        boolean permisoCoarse = ( ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED);
+
+        boolean permisoFine = ( ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED);
+        boolean permisoStorage = (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED);
+        boolean permisoStorage2 = (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED);
+
+
+        if(!permisoCoarse){
+            todosConsedidos = false;
+            permisosFaltantes.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+
+        if(!permisoFine){
+            todosConsedidos = false;
+            permisosFaltantes.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (!permisoStorage){
+            todosConsedidos = false;
+            permisosFaltantes.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!permisoStorage2){
+            todosConsedidos = false;
+            permisosFaltantes.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+
+        if(!todosConsedidos) {
+            String[] permisos = new String[permisosFaltantes.size()];
+            permisos = permisosFaltantes.toArray(permisos);
+
+            ActivityCompat.requestPermissions(this, permisos, COD_PERMISOS);
+        }
+
+        return todosConsedidos;
     }
 
 }

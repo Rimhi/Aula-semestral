@@ -1,6 +1,7 @@
 package monterrosa.ricardo.aprendermaps;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,14 +15,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class InspectorActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     String nombre,correo;
     TextView correoInspector,NombreInspector;
+    ImageView InspectorimageView;
+    private DatabaseReference mibasedatos,databaseReference;
 
 
     @Override
@@ -52,8 +63,48 @@ public class InspectorActivity extends AppCompatActivity
         nombre = getIntent().getStringExtra("nombre");
         NombreInspector = HeadView.findViewById(R.id.PerfilNombreInsector);
         correoInspector = HeadView.findViewById(R.id.PerfilcorreoInspector);
-        correoInspector.setText(correo);
+        InspectorimageView = HeadView.findViewById(R.id.PerfilimagenInspector);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        mibasedatos = databaseReference.child("Usuarios");
+        mibasedatos.addChildEventListener(addlistener);
     }
+    ChildEventListener addlistener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            final ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
+            NombreInspector.setText(modeloRegistro.Nombre);
+            correoInspector.setText(modeloRegistro.correo);
+            String imagen = modeloRegistro.imagen;
+            Toast.makeText(InspectorActivity.this,imagen,Toast.LENGTH_LONG).show();
+            Glide.with(InspectorActivity.this)
+                    .load(Uri.parse(imagen))
+                    .fitCenter()
+                    .centerCrop()
+                    .into(InspectorimageView);
+
+
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
