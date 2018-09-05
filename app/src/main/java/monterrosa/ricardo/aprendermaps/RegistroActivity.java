@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -35,6 +36,7 @@ public class RegistroActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseAuth auth;
+    private FirebaseUser usuario;
     private EditText correo,contraseña,nombre,contraseña2,cedula,telefono,direccion;
     private ProgressDialog progreso;
     private StorageReference mStorageRef;
@@ -89,7 +91,19 @@ public class RegistroActivity extends AppCompatActivity {
                                             cedula.getText()+"", telefono.getText()+"",correo.getText()+"",
                                             direccion.getText()+"",Imagen+"",fechaactual()+"");
                                     miBasedatos.setValue(registro);
+                                    usuario = auth.getCurrentUser();
+                                    usuario.sendEmailVerification()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()){
+                                                        Toast.makeText(RegistroActivity.this, "Por favor Verifica tu correo", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+
                                     progreso.dismiss();
+
                                 }else {
                                     Toast.makeText(RegistroActivity.this,"Error al Registrar Usuario",Toast.LENGTH_SHORT).show();
                                     progreso.dismiss();
@@ -119,7 +133,8 @@ public class RegistroActivity extends AppCompatActivity {
         subirimagen.setVisibility(View.VISIBLE);
     }
     public void SubirArchivosAStorage(View view){
-
+        progreso.setMessage("Subiendo ...");
+        progreso.show();
 
         StorageReference riversRef = mStorageRef.child(cedula.getText().toString()).child(file.getLastPathSegment());
 
@@ -128,6 +143,7 @@ public class RegistroActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // Get a URL to the uploaded content
+
                         downloadUrl = taskSnapshot.getDownloadUrl();
                         Imagen = downloadUrl+"";
                         Glide.with(RegistroActivity.this)
@@ -135,7 +151,8 @@ public class RegistroActivity extends AppCompatActivity {
                                 .fitCenter()
                                 .centerCrop()
                                 .into(imagen);
-
+                        progreso.dismiss();
+                        subirimagen.setVisibility(View.INVISIBLE);
 
 
                     }

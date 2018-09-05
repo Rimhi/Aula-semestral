@@ -51,7 +51,8 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
     private static final String TAG = "UtilidadesCoordenadas";
     private int numero = 1;
     private LatLng userlocation = null;
-    private LocationListener locationListener;
+    private MiLocationListener locationListener;
+    private String TAG_POS = "PosicionTag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,31 +68,52 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         trampaRef = baseDatos.child("trampas");
         trampaRef.addChildEventListener(trampasHijoListener);
 
-       locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                if (userlocation ==null) {
-                    userlocation = new LatLng(location.getLatitude(), location.getLongitude());
-                }
-            }
+        locationListener = new MiLocationListener();
 
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        };
 
     }
+
+    private class MiLocationListener implements LocationListener{
+        private AlertDialog dialogoActivarGPS;
+
+        public MiLocationListener(){
+            AlertDialog.Builder builderDialog = new AlertDialog.Builder(MapaInspectorActivity.this)
+                    .setTitle("Debe activar el GPS")
+                    .setIcon(R.drawable.ic_error)
+                    .setMessage("Por favor Activa el GPS para poder usar la app")
+                    .setCancelable(false);// No puede cancelar el dialogo
+
+            dialogoActivarGPS = builderDialog.create();
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            userlocation = new LatLng(location.getLatitude(), location.getLongitude());
+            if (userlocation != null){
+                dialog.dismiss();
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+            if( dialogoActivarGPS.isShowing() ){
+                dialogoActivarGPS.dismiss();
+            }
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+            if( !MapaInspectorActivity.this.isFinishing() ) {
+                dialogoActivarGPS.show();
+            }
+        }
+    }
+
 
 
     @Override
@@ -104,6 +126,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.setMinZoomPreference(13.0f);
         mMap.setLatLngBoundsForCameraTarget(MONTERIA_CORDOBA_COLOMBIA);
+
         LocationManager lm = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,1,locationListener);
         if (userlocation!=null){mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userlocation, 14));}
@@ -117,11 +140,12 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
                 return false;
             }
         });
-        final LatLng finalUserlocation = userlocation;
+
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(final Marker marker) {
-                if (calcularDistancia(finalUserlocation, marker.getPosition()) <= 6) {
+            if (userlocation!=null) {
+                if (calcularDistancia(userlocation, marker.getPosition()) <= 4) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MapaInspectorActivity.this);
                     builder.setTitle("¿Desea llenar formulario?")
                             .setNegativeButton("no", new DialogInterface.OnClickListener() {
@@ -163,6 +187,15 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
 
                     //Toast.makeText(getApplicationContext(),"Porfavor Dirigete a "+marker.getPosition()+" como  "+marker.getSnippet(),Toast.LENGTH_LONG).show();
                 }
+            }else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapaInspectorActivity.this);
+                builder.setTitle("Posicion nula")
+                        .setMessage("Por favor espera a que se encuentre tu posicion")
+                        .setCancelable(false);
+                dialog = builder.create();
+                dialog.show();
+
+            }
             }
         });
     }

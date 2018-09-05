@@ -57,7 +57,7 @@
                     android:layout_width="25dp"
                     android:layout_height="20dp"
                     android:id="@+id/editarindicacion1"
-                    android:src="@mipmap/informacion"/>
+                    android:src="@drawable/ic_informacion"/>
             </LinearLayout>
             <EditText
                 android:layout_width="match_parent"

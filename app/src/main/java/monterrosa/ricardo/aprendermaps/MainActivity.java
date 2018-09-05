@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "signInWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
                     String correo = user.getEmail();
-                    if (user.getEmail().equals("rimhi7@gmail.com")) {
+                    if (user.getEmail().equals("rimhi7@gmail.com") || user.getEmail().equals("luna@gmail.com")) {
                         Intent intent = new Intent(MainActivity.this, InspectorActivity.class);
                         intent.putExtra("correo", correo);
                         startActivity(intent);
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 String correo = user.getEmail();
                                 Toast.makeText(MainActivity.this, user.getDisplayName(), Toast.LENGTH_LONG).show();
-                                if (user.getEmail().equals("rimhi7@gmail.com")) {
+                                if (user.getEmail().equals("rimhi7@gmail.com") || user.getEmail().equals("luna@gmail.com")) {
                                     progreso.dismiss();
                                     Intent intent = new Intent(MainActivity.this, InspectorActivity.class);
                                     intent.putExtra("correo", correo);
@@ -100,8 +100,9 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(MainActivity.this, "Authentication failed.",
+                                Toast.makeText(MainActivity.this, "Usuario o Contraseña Erroneos",
                                         Toast.LENGTH_SHORT).show();
+                                progreso.dismiss();
                             }
                         }
                     });
