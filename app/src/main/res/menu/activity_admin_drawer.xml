@@ -14,8 +14,12 @@
             android:title="Gallery" />
         <item
             android:id="@+id/nav_admin_inspectores"
+            android:icon="@drawable/ic_supervisor"
+            android:title="Consultores" />
+        <item
+            android:id="@+id/nav_admin_modificar"
             android:icon="@drawable/ic_persona"
-            android:title="Inspectores" />
+            android:title="Modificar Cuenta"/>
         <item
             android:id="@+id/nav_admin_salir"
             android:icon="@drawable/salir_opcion"

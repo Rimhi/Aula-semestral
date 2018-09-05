@@ -32,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class InspectorActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    String nombre,correo;
     TextView correoInspector,NombreInspector;
     ImageView InspectorimageView;
     private DatabaseReference mibasedatos,databaseReference;
@@ -68,8 +67,6 @@ public class InspectorActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View HeadView = navigationView.getHeaderView(0);
-        correo = getIntent().getStringExtra("correo");
-        nombre = getIntent().getStringExtra("nombre");
         NombreInspector = HeadView.findViewById(R.id.PerfilNombreInsector);
         correoInspector = HeadView.findViewById(R.id.PerfilcorreoInspector);
         InspectorimageView = HeadView.findViewById(R.id.PerfilimagenInspector);
@@ -146,15 +143,16 @@ public class InspectorActivity extends AppCompatActivity
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
-            NombreInspector.setText(modeloRegistro.Nombre);
-            correoInspector.setText(modeloRegistro.correo);
-            String imagen = modeloRegistro.imagen;
-            Glide.with(InspectorActivity.this)
-                    .load(Uri.parse(imagen))
-                    .fitCenter()
-                    .centerCrop()
-                    .into(InspectorimageView);
-
+            if (mAuth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
+                NombreInspector.setText(modeloRegistro.Nombre);
+                correoInspector.setText(modeloRegistro.correo);
+                String imagen = modeloRegistro.imagen;
+                Glide.with(InspectorActivity.this)
+                        .load(Uri.parse(imagen))
+                        .fitCenter()
+                        .centerCrop()
+                        .into(InspectorimageView);
+            }
 
         }
 

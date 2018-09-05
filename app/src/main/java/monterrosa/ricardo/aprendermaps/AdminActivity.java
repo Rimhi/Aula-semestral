@@ -38,7 +38,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 public class AdminActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,VerInspectoresFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,VerInspectoresFragment.OnFragmentInteractionListener,PerfilAdminFragment.OnFragmentInteractionListener {
     private  static final int GALERY_INTENT = 1;
     private DatabaseReference mibasedatos,databaseReference;
     private FirebaseAuth auth;
@@ -143,14 +143,16 @@ public class AdminActivity extends AppCompatActivity
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
-            nombre.setText(modeloRegistro.Nombre);
-            correo.setText(modeloRegistro.correo);
-            String imagen = modeloRegistro.imagen;
-            Glide.with(AdminActivity.this)
-                    .load(Uri.parse(imagen))
-                    .fitCenter()
-                    .centerCrop()
-                    .into(Adminimagen);
+            if (auth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
+                nombre.setText(modeloRegistro.Nombre);
+                correo.setText(modeloRegistro.correo);
+                String imagen = modeloRegistro.imagen;
+                Glide.with(AdminActivity.this)
+                        .load(Uri.parse(imagen))
+                        .fitCenter()
+                        .centerCrop()
+                        .into(Adminimagen);
+            }
         }
 
         @Override
@@ -223,7 +225,9 @@ public class AdminActivity extends AppCompatActivity
             VerInspectoresFragment fragment = new VerInspectoresFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_admin_modificar) {
+            PerfilAdminFragment fragment = new PerfilAdminFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
 
         } else if (id == R.id.nav_send) {
 
