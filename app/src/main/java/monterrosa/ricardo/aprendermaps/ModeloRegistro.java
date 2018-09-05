@@ -5,14 +5,14 @@ package monterrosa.ricardo.aprendermaps;
  */
 
 public class ModeloRegistro {
-    String Nombre;
-    String Cedula;
-    String Telefono;
-    String correo;
-    String Direccion;
-    String IDguidDatabase;
-    String imagen;
-    String fechaRegistro;
+    public String Nombre;
+    public String Cedula;
+    public String Telefono;
+    public String correo;
+    public String Direccion;
+    public String IDguidDatabase;
+    public String imagen;
+    public String fechaRegistro;
 
     public ModeloRegistro(String id,String nombre, String cedula, String telefono, String correo, String direccion, String imagen, String Fecharegistro) {
         IDguidDatabase = id;
@@ -28,8 +28,4 @@ public class ModeloRegistro {
     public ModeloRegistro() {
     }
 
-    @Override
-    public String toString() {
-        return "nombre: "+Nombre+", Cedula: "+Cedula;
-    }
 }

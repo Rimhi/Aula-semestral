@@ -23,6 +23,11 @@ import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -33,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private  FirebaseAuth.AuthStateListener authStateListener;
     private ProgressDialog progreso;
     private static final int COD_PERMISOS = 3452;
+    private DatabaseReference correosAdmin;
+    private DatabaseReference reference;
+    private  String Verificacion = "rimhi7@gmail.com";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,18 +53,18 @@ public class MainActivity extends AppCompatActivity {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
                 if (firebaseAuth.getCurrentUser()!=null){
                     Log.d(TAG, "signInWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
-                    String correo = user.getEmail();
-                    if (user.getEmail().equals("rimhi7@gmail.com") || user.getEmail().equals("luna@gmail.com")) {
-                        Intent intent = new Intent(MainActivity.this, InspectorActivity.class);
-                        intent.putExtra("correo", correo);
+                    Toast.makeText(MainActivity.this, Verificacion, Toast.LENGTH_SHORT).show();
+                    if (user.getEmail().equals(Verificacion)) {
+                        Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                         startActivity(intent);
                     } else {
-                        Intent intent = new Intent(MainActivity.this, AdminActivity.class);
-                        intent.putExtra("correo", correo);
+                        Intent intent = new Intent(MainActivity.this, InspectorActivity.class);
                         startActivity(intent);
+
                     }
 
                 }else {
@@ -65,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
+
+
 
 
     }
@@ -79,23 +89,21 @@ public class MainActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 String correo = user.getEmail();
                                 Toast.makeText(MainActivity.this, user.getDisplayName(), Toast.LENGTH_LONG).show();
-                                if (user.getEmail().equals("rimhi7@gmail.com") || user.getEmail().equals("luna@gmail.com")) {
+                                if (user.getEmail().equals(Verificacion)) {
                                     progreso.dismiss();
-                                    Intent intent = new Intent(MainActivity.this, InspectorActivity.class);
-                                    intent.putExtra("correo", correo);
+                                    Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                                     startActivity(intent);
                                 } else {
                                     progreso.dismiss();
-                                    Intent intent = new Intent(MainActivity.this, AdminActivity.class);
-                                    intent.putExtra("correo", correo);
+                                    Intent intent = new Intent(MainActivity.this, InspectorActivity.class);
                                     startActivity(intent);
+
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.

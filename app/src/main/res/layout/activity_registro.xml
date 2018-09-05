@@ -58,7 +58,7 @@
             android:padding="10dp"
             android:gravity="center"/>
         <ImageView
-            android:layout_width="match_parent"
+            android:layout_width="200px"
             android:layout_height="200px"
             android:id="@+id/RegistroImagen"
             android:layout_gravity="center"
