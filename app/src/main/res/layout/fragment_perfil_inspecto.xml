@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="monterrosa.ricardo.aprendermaps.PerfilAdminFragment">
+    tools:context="monterrosa.ricardo.aprendermaps.PerfilInspectoFragment">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -20,7 +21,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:id="@+id/editarfotoadmin"/>
+                android:id="@+id/editarfotoinspector"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,30 +32,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nombre Completo"
-                android:id="@+id/editarnombreadmin"/>
+                android:id="@+id/editarnombreinspector"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Cedula"
-                android:id="@+id/editarcedulaadmin"
+                android:id="@+id/editarcedulainspector"
                 android:inputType="number"/>
             <EditText
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="Celular"
-              android:inputType="number"
-              android:id="@+id/editarcelularadmin"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Celular"
+                android:inputType="number"
+                android:id="@+id/editarcelularinspector"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Direccion de residencia"
-                android:id="@+id/editardireccionadmin"/>
+                android:id="@+id/editardireccioninspector"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Editar"
                 android:layout_marginTop="5dp"
-                android:id="@+id/Editarpefiladmin"/>
+                android:id="@+id/Editarpefilinspector"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,29 +68,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Correo Electronico"
-                android:id="@+id/editarcorreoelectronicoadmin"
+                android:id="@+id/editarcorreoelectronicoinspector"
                 android:focusable="false"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Contraseña"
-                android:id="@+id/editarcontraseñaadmin"
+                android:id="@+id/editarcontraseñainspector"
                 android:inputType="textPassword"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Repite la Contraeña"
                 android:inputType="textPassword"
-                android:id="@+id/editarrepetircontraseñaadmin"/>
+                android:id="@+id/editarrepetircontraseñainspector"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Editar"
                 android:layout_marginTop="5dp"
-                android:id="@+id/editaringresoadmin"/>
+                android:id="@+id/editaringresoinspector"/>
 
 
         </LinearLayout>
     </ScrollView>
+
 
 </FrameLayout>

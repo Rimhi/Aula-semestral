@@ -31,7 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class InspectorActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener , PerfilInspectoFragment.OnFragmentInteractionListener{
     TextView correoInspector,NombreInspector;
     ImageView InspectorimageView;
     private DatabaseReference mibasedatos,databaseReference;
@@ -224,8 +224,9 @@ public class InspectorActivity extends AppCompatActivity
             startActivity(new Intent(InspectorActivity.this,MainActivity.class));
 
 
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.nav_perfilinspector) {
+            PerfilInspectoFragment fragment = new PerfilInspectoFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.contenedorInspector,fragment).commit();
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -235,5 +236,10 @@ public class InspectorActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

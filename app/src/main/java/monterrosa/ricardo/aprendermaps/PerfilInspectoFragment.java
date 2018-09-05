@@ -32,31 +32,32 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PerfilAdminFragment.OnFragmentInteractionListener} interface
+ * {@link PerfilInspectoFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PerfilAdminFragment#newInstance} factory method to
+ * Use the {@link PerfilInspectoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PerfilAdminFragment extends Fragment {
+public class PerfilInspectoFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private DatabaseReference mibasedatos;
-    private DatabaseReference databaseReference;
-    private FirebaseAuth auth;
-    private ImageView editarimagenadmin;
-    private String urlimagenadmin,fecharegistroadmin;
-    private Button Editarperfiladmin,EditarIngresoAdmin;
-    private EditText editarNombreadmin,editarcedulaadmin,editarcelularadmin,editardireccionadmin,editarcorreoelectronicoadmin,editarcontraseña1,editarcontraseña2;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private DatabaseReference mibasedatos;
+    private DatabaseReference databaseReference;
+    private FirebaseAuth auth;
+    private ImageView editarimageninspector;
+    private String urlimageninspector,fecharegistroinspector;
+    private Button Editarperfilinspector,EditarIngresoinspector;
+    private EditText editarNombreinspector,editarcedulainspector,editarcelularinspector,editardireccioninspector,editarcorreoelectronicoinspector,editarcontraseña1,editarcontraseña2;
+
 
     private OnFragmentInteractionListener mListener;
 
-    public PerfilAdminFragment() {
+    public PerfilInspectoFragment() {
         // Required empty public constructor
     }
 
@@ -66,11 +67,11 @@ public class PerfilAdminFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment PerfilAdminFragment.
+     * @return A new instance of fragment PerfilInspectoFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PerfilAdminFragment newInstance(String param1, String param2) {
-        PerfilAdminFragment fragment = new PerfilAdminFragment();
+    public static PerfilInspectoFragment newInstance(String param1, String param2) {
+        PerfilInspectoFragment fragment = new PerfilInspectoFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -90,28 +91,28 @@ public class PerfilAdminFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =inflater.inflate(R.layout.fragment_perfil_admin, container, false);
+        View view = inflater.inflate(R.layout.fragment_perfil_inspecto, container, false);
         auth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         mibasedatos = databaseReference.child("Usuarios");
-        editarNombreadmin = view.findViewById(R.id.editarnombreadmin);
-        editarcedulaadmin = view.findViewById(R.id.editarcedulaadmin);
-        editarcelularadmin = view.findViewById(R.id.editarcelularadmin);
-        editardireccionadmin = view.findViewById(R.id.editardireccionadmin);
-        editarcorreoelectronicoadmin = view.findViewById(R.id.editarcorreoelectronicoadmin);
-        editarcontraseña1 = view.findViewById(R.id.editarcontraseñaadmin);
-        editarcontraseña2 = view.findViewById(R.id.editarrepetircontraseñaadmin);
-        editarimagenadmin = view.findViewById(R.id.editarfotoadmin);
-        Editarperfiladmin = view.findViewById(R.id.Editarpefiladmin);
-        EditarIngresoAdmin = view.findViewById(R.id.editaringresoadmin);
-        Editarperfiladmin.setOnClickListener(new View.OnClickListener() {
+        editarNombreinspector = view.findViewById(R.id.editarnombreinspector);
+        editarcedulainspector = view.findViewById(R.id.editarcedulainspector);
+        editarcelularinspector = view.findViewById(R.id.editarcelularinspector);
+        editardireccioninspector = view.findViewById(R.id.editardireccioninspector);
+        editarcorreoelectronicoinspector = view.findViewById(R.id.editarcorreoelectronicoinspector);
+        editarcontraseña1 = view.findViewById(R.id.editarcontraseñainspector);
+        editarcontraseña2 = view.findViewById(R.id.editarrepetircontraseñainspector);
+        editarimageninspector = view.findViewById(R.id.editarfotoinspector);
+        Editarperfilinspector = view.findViewById(R.id.Editarpefilinspector);
+        EditarIngresoinspector = view.findViewById(R.id.editaringresoinspector);
+        Editarperfilinspector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 edperfil();
             }
         });
         mibasedatos.addChildEventListener(listener);
-        EditarIngresoAdmin.setOnClickListener(new View.OnClickListener() {
+        EditarIngresoinspector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cambiarcontraseña();
@@ -126,18 +127,18 @@ public class PerfilAdminFragment extends Fragment {
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
             if (auth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)){
-                editarNombreadmin.setText(modeloRegistro.Nombre);
-                editarcedulaadmin.setText(modeloRegistro.Cedula);
-                editarcelularadmin.setText(modeloRegistro.Telefono);
-                editardireccionadmin.setText(modeloRegistro.Direccion);
-                urlimagenadmin = modeloRegistro.imagen;
-                editarcorreoelectronicoadmin.setText(modeloRegistro.correo);
-                fecharegistroadmin = modeloRegistro.fechaRegistro;
+                editarNombreinspector.setText(modeloRegistro.Nombre);
+                editarcedulainspector.setText(modeloRegistro.Cedula);
+                editarcelularinspector.setText(modeloRegistro.Telefono);
+                editardireccioninspector.setText(modeloRegistro.Direccion);
+                urlimageninspector = modeloRegistro.imagen;
+                editarcorreoelectronicoinspector.setText(modeloRegistro.correo);
+                fecharegistroinspector = modeloRegistro.fechaRegistro;
                 Glide.with(getContext())
                         .load(Uri.parse(modeloRegistro.imagen))
                         .fitCenter()
                         .centerCrop()
-                        .into(editarimagenadmin);
+                        .into(editarimageninspector);
             }
         }
 
@@ -202,9 +203,9 @@ public class PerfilAdminFragment extends Fragment {
     }
     private void edperfil(){
         mibasedatos = databaseReference.child("Usuarios").child(auth.getCurrentUser().getUid());
-        ModeloRegistro modeloRegistro = new ModeloRegistro(auth.getCurrentUser().getUid()+"",editarNombreadmin.getText()+"",
-                editarcedulaadmin.getText()+"",editarcelularadmin.getText()+"",editarcorreoelectronicoadmin.getText()+"",
-                editardireccionadmin.getText()+"",urlimagenadmin,fecharegistroadmin);
+        ModeloRegistro modeloRegistro = new ModeloRegistro(auth.getCurrentUser().getUid()+"",editarNombreinspector.getText()+"",
+                editarcedulainspector.getText()+"",editarcelularinspector.getText()+"",editarcorreoelectronicoinspector.getText()+"",
+                editardireccioninspector.getText()+"",urlimageninspector,fecharegistroinspector);
         mibasedatos.setValue(modeloRegistro);
     }
     private void cambiarcontraseña(){

@@ -13,13 +13,13 @@
             android:icon="@drawable/marcador_visitas"
             android:title="Visitas" />
         <item
+            android:id="@+id/nav_perfilinspector"
+            android:icon="@drawable/ic_persona"
+            android:title="Modificar Cuenta" />
+        <item
             android:id="@+id/nav_salir"
             android:icon="@drawable/salir_opcion"
             android:title="Salir" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
     </group>
 
     <item android:title="Communicate">

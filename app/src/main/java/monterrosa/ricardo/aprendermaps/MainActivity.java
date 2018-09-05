@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 if (firebaseAuth.getCurrentUser()!=null){
                     Log.d(TAG, "signInWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
-                    Toast.makeText(MainActivity.this, Verificacion, Toast.LENGTH_SHORT).show();
                     if (user.getEmail().equals(Verificacion)) {
                         Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                         startActivity(intent);
@@ -78,6 +77,25 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    public void recuperarcontraseña(View view){
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (correo.getText().toString().isEmpty()){
+            Toast.makeText(this, "por favor ingresa el correo", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            auth.sendPasswordResetEmail(correo.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Toast.makeText(MainActivity.this, "Correo electronico enviado", Toast.LENGTH_SHORT).show();
+                            }else {
+                                Toast.makeText(MainActivity.this, "ha ocurrido un error, intenta de nuevo o verifica tu email", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
 
     public void irMapInspector(View view){
         if (correo.getText().toString().equals("") || contraseña.getText().toString().equals("")) {
@@ -93,8 +111,6 @@ public class MainActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                String correo = user.getEmail();
-                                Toast.makeText(MainActivity.this, user.getDisplayName(), Toast.LENGTH_LONG).show();
                                 if (user.getEmail().equals(Verificacion)) {
                                     progreso.dismiss();
                                     Intent intent = new Intent(MainActivity.this, AdminActivity.class);
