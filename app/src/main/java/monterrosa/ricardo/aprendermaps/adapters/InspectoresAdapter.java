@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-import monterrosa.ricardo.aprendermaps.AdminActivity;
 import monterrosa.ricardo.aprendermaps.ModeloRegistro;
 import monterrosa.ricardo.aprendermaps.R;
 
@@ -48,6 +47,7 @@ public class InspectoresAdapter extends RecyclerView.Adapter<InspectoresAdapter.
                 .fitCenter()
                 .centerCrop()
                 .into(holder.imagen);
+
 
     }
 

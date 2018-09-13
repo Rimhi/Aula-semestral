@@ -42,22 +42,23 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".Admin.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".MapaInspectorActivity"
+            android:name=".Inspector.MapaInspectorActivity"
             android:label="@string/title_activiy_maps_inspector" />
-        <activity android:name=".LlenarFormularioActivity" />
-        <activity android:name=".InformacionTrampaActivity" />
+        <activity android:name=".Inspector.LlenarFormularioActivity" />
+        <activity android:name=".Admin.InformacionTrampaActivity" />
         <activity
-            android:name=".InspectorActivity"
+            android:name=".Inspector.InspectorActivity"
             android:label="@string/title_activity_inspector"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RegistroActivity" />
         <activity
-            android:name=".AdminActivity"
+            android:name=".Admin.AdminActivity"
             android:label="@string/title_activity_admin"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <service android:name=".Servicios.ServiceNotificacion"></service>
     </application>
 
 </manifest>

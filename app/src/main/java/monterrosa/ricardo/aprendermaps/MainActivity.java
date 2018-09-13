@@ -1,6 +1,5 @@
 package monterrosa.ricardo.aprendermaps;
 
-import android.*;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,23 +12,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+
+import monterrosa.ricardo.aprendermaps.Admin.AdminActivity;
+import monterrosa.ricardo.aprendermaps.Inspector.InspectorActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG ="hola" ;
@@ -83,11 +78,15 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "por favor ingresa el correo", Toast.LENGTH_SHORT).show();
         }
         else {
+            progreso.setMessage("Enviando ...");
+            progreso.setCancelable(false);
+            progreso.show();
             auth.sendPasswordResetEmail(correo.getText().toString())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
+                                progreso.dismiss();
                                 Toast.makeText(MainActivity.this, "Correo electronico enviado", Toast.LENGTH_SHORT).show();
                             }else {
                                 Toast.makeText(MainActivity.this, "ha ocurrido un error, intenta de nuevo o verifica tu email", Toast.LENGTH_SHORT).show();

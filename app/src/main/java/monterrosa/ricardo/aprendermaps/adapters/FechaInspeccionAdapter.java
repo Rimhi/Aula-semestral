@@ -1,24 +1,15 @@
 package monterrosa.ricardo.aprendermaps.adapters;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.ArrayList;
 
-import monterrosa.ricardo.aprendermaps.LlegadaMapa;
+import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
 import monterrosa.ricardo.aprendermaps.R;
-import monterrosa.ricardo.aprendermaps.Trampa;
 
 /**
  * Created by Ricardo Monterrosa H on 29/08/2018.
@@ -40,7 +31,10 @@ public class FechaInspeccionAdapter extends RecyclerView.Adapter<FechaInspeccion
         LlegadaMapa llegadaMapa = lista.get(position);
         holder.nombre.setText(llegadaMapa.NombreColector);
         holder.fecha.setText(llegadaMapa.Fecha);
-        holder.descripcion.setText(llegadaMapa.idTrampa);
+        holder.descripcion.setText("");
+        holder.Cedula.setText(llegadaMapa.cedula);
+        holder.id.setText(llegadaMapa.idTrampa);
+        holder.correo.setText(llegadaMapa.correo);
     }
 
     @Override
@@ -49,12 +43,15 @@ public class FechaInspeccionAdapter extends RecyclerView.Adapter<FechaInspeccion
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView fecha,descripcion,nombre;
+        TextView fecha,descripcion,nombre,id,correo,Cedula;
         public ViewHolder(View itemView) {
             super(itemView);
             fecha = itemView.findViewById(R.id.CardViewFeachaInspeccion);
             descripcion = itemView.findViewById(R.id.CardViewDescripcionInspeccion);
             nombre = itemView.findViewById(R.id.CardviewNombreInspector);
+            id = itemView.findViewById(R.id.CardViewIDtrampa);
+            correo = itemView.findViewById(R.id.CardViewCorreoInpector);
+            Cedula = itemView.findViewById(R.id.CardViewCedulaInspector);
         }
     }
 }

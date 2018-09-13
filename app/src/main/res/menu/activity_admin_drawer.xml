@@ -9,9 +9,9 @@
             android:icon="@drawable/mapa_callejero"
             android:title="Mapa"/>
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_admin_visitas"
+            android:icon="@drawable/marcador_visitas"
+            android:title="Visitas" />
         <item
             android:id="@+id/nav_admin_inspectores"
             android:icon="@drawable/ic_supervisor"

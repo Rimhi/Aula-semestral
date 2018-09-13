@@ -1,4 +1,4 @@
-package monterrosa.ricardo.aprendermaps;
+package monterrosa.ricardo.aprendermaps.Admin;
 
 import android.content.Context;
 import android.net.Uri;
@@ -19,6 +19,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+import monterrosa.ricardo.aprendermaps.ModeloRegistro;
+import monterrosa.ricardo.aprendermaps.R;
 import monterrosa.ricardo.aprendermaps.adapters.InspectoresAdapter;
 
 
@@ -88,13 +90,15 @@ public class VerInspectoresFragment extends Fragment {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
-            listmodelo.add(modeloRegistro);
-            adapter = new InspectoresAdapter(listmodelo,getContext());
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            listaInspectores.setLayoutManager(linearLayoutManager);
-            listaInspectores.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+            if (!mAuth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
+                listmodelo.add(modeloRegistro);
+                adapter = new InspectoresAdapter(listmodelo, getContext());
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                listaInspectores.setLayoutManager(linearLayoutManager);
+                listaInspectores.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            }
 
 
         }

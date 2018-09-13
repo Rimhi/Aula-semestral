@@ -1,38 +1,40 @@
-package monterrosa.ricardo.aprendermaps;
+package monterrosa.ricardo.aprendermaps.Admin;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -44,15 +46,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.sql.Connection;
 import java.util.ArrayList;
+
+import monterrosa.ricardo.aprendermaps.ModeloDarposicion;
+import monterrosa.ricardo.aprendermaps.ModeloRegistro;
+import monterrosa.ricardo.aprendermaps.R;
+import monterrosa.ricardo.aprendermaps.adapters.InspectorInfoWindowAdapter;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Marker marcador;
+    private Marker marcadorinspectores;
     private DatabaseReference baseDatos;
     private DatabaseReference trampaRef;
+    private DatabaseReference posciosionesInspector;
     private static final int COD_PERMISOS = 3452;
     private LatLngBounds MONTERIA_CORDOBA_COLOMBIA = new LatLngBounds(new LatLng(8.726606067497622, -75.90802716634767),
             new LatLng(8.824689, -75.826778));
@@ -76,6 +84,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             dialog.show();
         }
         baseDatos = FirebaseDatabase.getInstance().getReference();
+        posciosionesInspector = baseDatos.child("Posiciones");
+        posciosionesInspector.addChildEventListener(posicionesinspectorlistener);
 
         trampaRef = baseDatos.child("trampas");
         trampaRef.addChildEventListener(trampasHijoListener);
@@ -253,8 +263,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .position( new LatLng(trampa.latitud, trampa.longitud) );
                 mMap.addMarker(markerOptions);
             }
-
-//            Toast.makeText(MapaInspectorActivity.this, "Trampa añadida: "+trampa.toString(), Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -277,7 +285,74 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     };
+    ChildEventListener posicionesinspectorlistener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            final ModeloDarposicion modeloRegistro = dataSnapshot.getValue(ModeloDarposicion.class);
+            if (mMap != null && modeloRegistro !=null){
+                marcadorinspectores = mMap.addMarker(new MarkerOptions()
+                        .title(modeloRegistro.ceduladarposiciontelefonoinspector)
+                        .snippet("Primera o Ultima Conexion a la aplicacion")
+                        .position(new LatLng(modeloRegistro.latitud,modeloRegistro.longitud))
+                        .icon(getBitmapFromVector(MapsActivity.this,R.drawable.ic_person_posicion,getResources().getColor(R.color.Ultimaposicion))));
+                if (marcadorinspectores.getTitle().equals(modeloRegistro.ceduladarposiciontelefonoinspector)) {
+                    mMap.setInfoWindowAdapter(new InspectorInfoWindowAdapter(getLayoutInflater()));
+                }
+            }
+        }
 
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            marcadorinspectores.remove();
+            final ModeloDarposicion modeloRegistro = dataSnapshot.getValue(ModeloDarposicion.class);
+            if (mMap != null && modeloRegistro !=null){
+                marcadorinspectores = mMap.addMarker(new MarkerOptions()
+                        .title(modeloRegistro.ceduladarposiciontelefonoinspector)
+                        .snippet("Telefono: "+modeloRegistro.telefonodarposicioninspector)
+                        .position(new LatLng(modeloRegistro.latitud,modeloRegistro.longitud))
+                        .icon(getBitmapFromVector(MapsActivity.this,R.drawable.ic_person_posicion,getResources().getColor(R.color.Activo))));
+                if (marcadorinspectores.getTitle().equals(modeloRegistro.ceduladarposiciontelefonoinspector)) {
+                    mMap.setInfoWindowAdapter(new InspectorInfoWindowAdapter(getLayoutInflater()));
+                    marcadorinspectores.showInfoWindow();
+                }
+            }
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+    public static BitmapDescriptor getBitmapFromVector(@NonNull Context context,
+                                                       @DrawableRes int vectorResourceId,
+                                                       @ColorInt int tintColor) {
+
+        Drawable vectorDrawable = ResourcesCompat.getDrawable(
+                context.getResources(), vectorResourceId, null);
+        if (vectorDrawable == null) {
+            String TAG = "tag";
+            Log.e(TAG, "Requested vector resource was not found");
+            return BitmapDescriptorFactory.defaultMarker();
+        }
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        DrawableCompat.setTint(vectorDrawable, tintColor);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
 
 
 }

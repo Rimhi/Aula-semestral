@@ -1,12 +1,10 @@
-package monterrosa.ricardo.aprendermaps;
+package monterrosa.ricardo.aprendermaps.Admin;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -16,6 +14,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
+import monterrosa.ricardo.aprendermaps.R;
 import monterrosa.ricardo.aprendermaps.adapters.FechaInspeccionAdapter;
 
 public class InformacionTrampaActivity extends AppCompatActivity {

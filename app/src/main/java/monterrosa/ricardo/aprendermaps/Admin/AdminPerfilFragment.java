@@ -1,4 +1,4 @@
-package monterrosa.ricardo.aprendermaps;
+package monterrosa.ricardo.aprendermaps.Admin;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,18 +26,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import monterrosa.ricardo.aprendermaps.ModeloRegistro;
+import monterrosa.ricardo.aprendermaps.R;
+
 import static android.content.ContentValues.TAG;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PerfilAdminFragment.OnFragmentInteractionListener} interface
+ * {@link AdminPerfilFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PerfilAdminFragment#newInstance} factory method to
+ * Use the {@link AdminPerfilFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PerfilAdminFragment extends Fragment {
+public class AdminPerfilFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -56,7 +59,7 @@ public class PerfilAdminFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public PerfilAdminFragment() {
+    public AdminPerfilFragment() {
         // Required empty public constructor
     }
 
@@ -66,11 +69,11 @@ public class PerfilAdminFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment PerfilAdminFragment.
+     * @return A new instance of fragment AdminPerfilFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PerfilAdminFragment newInstance(String param1, String param2) {
-        PerfilAdminFragment fragment = new PerfilAdminFragment();
+    public static AdminPerfilFragment newInstance(String param1, String param2) {
+        AdminPerfilFragment fragment = new AdminPerfilFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

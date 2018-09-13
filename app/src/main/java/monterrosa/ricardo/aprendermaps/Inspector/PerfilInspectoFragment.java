@@ -1,5 +1,6 @@
-package monterrosa.ricardo.aprendermaps;
+package monterrosa.ricardo.aprendermaps.Inspector;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -25,6 +26,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import monterrosa.ricardo.aprendermaps.Admin.AdminActivity;
+import monterrosa.ricardo.aprendermaps.ModeloRegistro;
+import monterrosa.ricardo.aprendermaps.R;
 
 import static android.content.ContentValues.TAG;
 
@@ -53,7 +58,7 @@ public class PerfilInspectoFragment extends Fragment {
     private String urlimageninspector,fecharegistroinspector;
     private Button Editarperfilinspector,EditarIngresoinspector;
     private EditText editarNombreinspector,editarcedulainspector,editarcelularinspector,editardireccioninspector,editarcorreoelectronicoinspector,editarcontraseña1,editarcontraseña2;
-
+    private ProgressDialog progressDialog;
 
     private OnFragmentInteractionListener mListener;
 
@@ -209,6 +214,9 @@ public class PerfilInspectoFragment extends Fragment {
         mibasedatos.setValue(modeloRegistro);
     }
     private void cambiarcontraseña(){
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Cambiando ...");
+        progressDialog.show();
         if (editarcontraseña1.getText().toString().equals(editarcontraseña2.getText().toString())) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             user.updatePassword(editarcontraseña1.getText()+"")
@@ -218,9 +226,11 @@ public class PerfilInspectoFragment extends Fragment {
                             if (task.isSuccessful()){
                                 Toast.makeText(getContext(),"Contraseña Cambiada Con exito",Toast.LENGTH_SHORT).show();
                                 Log.e(TAG,"Contraseña Cambiada");
+                                progressDialog.dismiss();
                                 startActivity(new Intent(getContext(),AdminActivity.class));
                             }else {
                                 Toast.makeText(getContext(), "no se pudo modificar la contraseña", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
                             }
                         }
                     });

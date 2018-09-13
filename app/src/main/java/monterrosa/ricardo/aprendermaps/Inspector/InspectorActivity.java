@@ -1,4 +1,4 @@
-package monterrosa.ricardo.aprendermaps;
+package monterrosa.ricardo.aprendermaps.Inspector;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,8 +29,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import monterrosa.ricardo.aprendermaps.Admin.ChatAdminFragment;
+import monterrosa.ricardo.aprendermaps.MainActivity;
+import monterrosa.ricardo.aprendermaps.ModeloRegistro;
+import monterrosa.ricardo.aprendermaps.R;
+
 public class InspectorActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , PerfilInspectoFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener ,
+        PerfilInspectoFragment.OnFragmentInteractionListener, VisitasInspectorFragment.OnFragmentInteractionListener,
+        ChatAdminFragment.OnFragmentInteractionListener{
     TextView correoInspector,NombreInspector;
     ImageView InspectorimageView;
     private DatabaseReference mibasedatos,databaseReference;
@@ -39,6 +45,7 @@ public class InspectorActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener listener;
     private AlertDialog dialog;
     private FirebaseUser user;
+    private String NombreParaUserdetails;
 
 
     @Override
@@ -50,12 +57,13 @@ public class InspectorActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ChatAdminFragment fragmento = new ChatAdminFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.contenedorInspector,fragmento).commit();
+                fab.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -131,6 +139,7 @@ public class InspectorActivity extends AppCompatActivity
         };
 
 
+
     }
 
     @Override
@@ -144,6 +153,7 @@ public class InspectorActivity extends AppCompatActivity
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
             if (mAuth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
+                NombreParaUserdetails = modeloRegistro.Nombre;
                 NombreInspector.setText(modeloRegistro.Nombre);
                 correoInspector.setText(modeloRegistro.correo);
                 String imagen = modeloRegistro.imagen;
@@ -218,7 +228,8 @@ public class InspectorActivity extends AppCompatActivity
             Intent intent = new Intent(InspectorActivity.this,MapaInspectorActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_VisitaInspector) {
-
+            VisitasInspectorFragment fragment = new VisitasInspectorFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.contenedorInspector,fragment).commit();
         } else if (id == R.id.nav_salir) {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(InspectorActivity.this,MainActivity.class));

@@ -1,27 +1,17 @@
-package monterrosa.ricardo.aprendermaps;
+package monterrosa.ricardo.aprendermaps.Inspector;
 
-import android.Manifest;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,19 +21,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.text.DecimalFormat;
+import monterrosa.ricardo.aprendermaps.ModeloDarposicion;
+import monterrosa.ricardo.aprendermaps.ModeloRegistro;
+import monterrosa.ricardo.aprendermaps.R;
+import monterrosa.ricardo.aprendermaps.Admin.Trampa;
 
 public class MapaInspectorActivity extends AppCompatActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
     private DatabaseReference baseDatos;
     private DatabaseReference trampaRef;
+    private DatabaseReference posicionesinspector;
+    private DatabaseReference perfinInspector;
     private AlertDialog dialog;
     private LatLngBounds MONTERIA_CORDOBA_COLOMBIA = new LatLngBounds(new LatLng(8.726606067497622, -75.90802716634767),
             new LatLng(8.824689, -75.826778));
@@ -53,6 +48,9 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
     private LatLng userlocation = null;
     private MiLocationListener locationListener;
     private String TAG_POS = "PosicionTag";
+    private ProgressDialog progressDialog;
+    private FirebaseAuth auth;
+    private String NombreInspector,CedulaInspector,TelefonoInspector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,18 +62,59 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         mapFragment.getMapAsync(this);
 
         baseDatos = FirebaseDatabase.getInstance().getReference();
-
+        auth = FirebaseAuth.getInstance();
         trampaRef = baseDatos.child("trampas");
         trampaRef.addChildEventListener(trampasHijoListener);
+        perfinInspector = baseDatos.child("Usuarios");
+        perfinInspector.addChildEventListener(perfillistener);
+        posicionesinspector = baseDatos.child("Posiciones");
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIcon(R.drawable.ic_informacion);
+        progressDialog.setTitle("Cargando Mapa");
+        progressDialog.setMessage("Por favor espera");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
         locationListener = new MiLocationListener();
 
 
     }
+    ChildEventListener perfillistener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
+            if (auth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)){
+                NombreInspector = modeloRegistro.Nombre;
+                TelefonoInspector = modeloRegistro.Telefono;
+                CedulaInspector = modeloRegistro.Cedula;
+
+            }
+
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
     private class MiLocationListener implements LocationListener{
         private AlertDialog dialogoActivarGPS;
-
         public MiLocationListener(){
             AlertDialog.Builder builderDialog = new AlertDialog.Builder(MapaInspectorActivity.this)
                     .setTitle("Debe activar el GPS")
@@ -89,8 +128,11 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         @Override
         public void onLocationChanged(Location location) {
             userlocation = new LatLng(location.getLatitude(), location.getLongitude());
+            ModeloDarposicion modeloDarposicion = new ModeloDarposicion(userlocation.latitude,userlocation.longitude,auth.getCurrentUser().getUid(),
+                    NombreInspector,TelefonoInspector,CedulaInspector);
+            posicionesinspector.child(auth.getCurrentUser().getUid()).setValue(modeloDarposicion);
             if (userlocation != null){
-                dialog.dismiss();
+                    progressDialog.dismiss();
             }
         }
 
@@ -145,7 +187,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             @Override
             public void onInfoWindowClick(final Marker marker) {
             if (userlocation!=null) {
-                if (calcularDistancia(userlocation, marker.getPosition()) <= 4) {
+                if (calcularDistancia(userlocation, marker.getPosition()) <= 5.5) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MapaInspectorActivity.this);
                     builder.setTitle("¿Desea llenar formulario?")
                             .setNegativeButton("no", new DialogInterface.OnClickListener() {

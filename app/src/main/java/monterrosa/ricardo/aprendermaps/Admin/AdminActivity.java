@@ -1,15 +1,17 @@
-package monterrosa.ricardo.aprendermaps;
+package monterrosa.ricardo.aprendermaps.Admin;
 
-import android.app.Fragment;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,8 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -33,12 +33,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
+import monterrosa.ricardo.aprendermaps.MainActivity;
+import monterrosa.ricardo.aprendermaps.ModeloRegistro;
+import monterrosa.ricardo.aprendermaps.R;
+import monterrosa.ricardo.aprendermaps.Servicios.ServiceNotificacion;
 
 public class AdminActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,VerInspectoresFragment.OnFragmentInteractionListener,PerfilAdminFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,VerInspectoresFragment.OnFragmentInteractionListener,AdminPerfilFragment.OnFragmentInteractionListener, AdminVisitasFragment.OnFragmentInteractionListener,ChatAdminFragment.OnFragmentInteractionListener {
     private  static final int GALERY_INTENT = 1;
     private DatabaseReference mibasedatos,databaseReference;
     private FirebaseAuth auth;
@@ -56,13 +63,13 @@ public class AdminActivity extends AppCompatActivity
         user = auth.getCurrentUser();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final ChatAdminFragment framento = new ChatAdminFragment();
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,framento).commit();
+                fab.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -137,6 +144,10 @@ public class AdminActivity extends AppCompatActivity
 
             }
         };
+        startService(new Intent(AdminActivity.this, ServiceNotificacion.class));
+
+
+
 
     }
     ChildEventListener addlistener = new ChildEventListener() {
@@ -215,7 +226,10 @@ public class AdminActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_admin_mapa) {
             startActivity(new Intent(AdminActivity.this,MapsActivity.class));
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_admin_visitas) {
+            AdminVisitasFragment fragment = new AdminVisitasFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
+
 
         } else if (id == R.id.nav_admin_salir) {
             auth.signOut();
@@ -226,7 +240,7 @@ public class AdminActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
 
         } else if (id == R.id.nav_admin_modificar) {
-            PerfilAdminFragment fragment = new PerfilAdminFragment();
+            AdminPerfilFragment fragment = new AdminPerfilFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
 
         } else if (id == R.id.nav_send) {
@@ -248,4 +262,14 @@ public class AdminActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+    private String fechaactual(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date date = new Date();
+
+        String fecha = dateFormat.format(date);
+
+        return  fecha;
+    }
+
+
 }
