@@ -1,8 +1,16 @@
 package monterrosa.ricardo.aprendermaps.Inspector;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -19,17 +28,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.codec.Base64;
+import com.itextpdf.text.pdf.PushbuttonField;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -38,8 +50,12 @@ import monterrosa.ricardo.aprendermaps.R;
 
 
 public class LlenarFormularioActivity extends AppCompatActivity {
-    private EditText CodigoTrampa, fechacoleccion,CentroAcopio,Oficina,nombreColector,Nombredelaruta,semana,responsable,registroruta,codigoruta,firma;
-    Button Guardar;
+    private String path;
+    private EditText CodigoTrampa, fechacoleccion,CentroAcopio,Oficina,nombreColector,Nombredelaruta,semana,
+            responsable,registroruta,codigoruta,Municipio,Tipo_Atrayente,numeroanas,numeroceratis,numerootros,fenologia
+            ,Estadotrampa,Observaciones;
+    private Button Guardar,Guardarfirma,limpiarfirma;
+    private SignaturePad firma;
     private DatabaseReference baseDatos;
     private DatabaseReference usuarios;
     private DatabaseReference trampas;
@@ -52,6 +68,14 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_llenar_formulario);
         Oficina = findViewById(R.id.oficina);
+        Municipio = findViewById(R.id.FormularioMunicipio);
+        Tipo_Atrayente = findViewById(R.id.formularioTipoAtrayente);
+        numeroanas = findViewById(R.id.numeroAnastrepha);
+        numeroceratis = findViewById(R.id.NumeroCeratitis);
+        numerootros = findViewById(R.id.numeroOtros);
+        fenologia = findViewById(R.id.FormularioFenologia);
+        Estadotrampa = findViewById(R.id.FormularioEstadotrampa);
+        Observaciones = findViewById(R.id.FomuarioObservaciones);
         nombreColector = findViewById(R.id.NombreColector);
         Nombredelaruta = findViewById(R.id.NombreRuta);
         semana = findViewById(R.id.Numerosemanaepidemiologica);
@@ -60,7 +84,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         codigoruta = findViewById(R.id.CodigoRuta);
         CodigoTrampa = findViewById(R.id.CodigoTrampa);
         fechacoleccion = findViewById(R.id.FechaColeccion);
-        firma = findViewById(R.id.firmadueñopredio);
+        firma = (SignaturePad) findViewById(R.id.firmadueñopredio);
         Guardar = findViewById(R.id.GuardarFormulario);
         auth = FirebaseAuth.getInstance();
         fechacoleccion.setText(fechaactual());
@@ -68,6 +92,32 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         baseDatos = FirebaseDatabase.getInstance().getReference();
         usuarios = baseDatos.child("Usuarios");
         CentroAcopio = findViewById(R.id.CentroAcopio);
+        Guardarfirma = findViewById(R.id.savesignature);
+        limpiarfirma = findViewById(R.id.clearsignature);
+        firma.setOnSignedListener(new SignaturePad.OnSignedListener() {
+            @Override
+            public void onStartSigning() {
+
+            }
+
+            @Override
+            public void onSigned() {
+                Guardarfirma.setEnabled(true);
+                limpiarfirma.setEnabled(true);
+            }
+
+            @Override
+            public void onClear() {
+                Guardarfirma.setEnabled(false);
+                limpiarfirma.setEnabled(false);
+            }
+        });
+        limpiarfirma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firma.clear();
+            }
+        });
         usuarios.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -112,10 +162,27 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
                 trampas = baseDatos.child("Inspecciones");
                 trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
-                LlenarPedf(new File(Environment.getExternalStorageDirectory().toString(),"Reportes")+"");
+                LlenarPedf(new File(Environment.getExternalStorageDirectory().toString(),"Reportes")+"",path);
 
             }
         });
+        Guardarfirma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bitmap signatureBitmap = firma.getSignatureBitmap();
+                if (addJpgSignatureToGallery(signatureBitmap)) {
+                    Toast.makeText(LlenarFormularioActivity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LlenarFormularioActivity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                }
+                if (addSvgSignatureToGallery(firma.getSignatureSvg())) {
+                    Toast.makeText(LlenarFormularioActivity.this, "SVG Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LlenarFormularioActivity.this, "Unable to store the SVG signature", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
     private String fechaactual(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -125,7 +192,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
 
         return  fecha;
     }
-    private void LlenarPedf(String destino){
+    private void LlenarPedf(String destino,String ruta){
         File folder = new File(Environment.getExternalStorageDirectory().toString(),"Reportes");
         if (!folder.exists()){
             folder.mkdirs();
@@ -149,15 +216,16 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             acroFields.setField("Nombrepredioempresa",Nombredelaruta.getText()+"");
             acroFields.setField("Codigo_ruta",codigoruta.getText()+"");
             acroFields.setField("CODIGOTRAMPARow1.0",CodigoTrampa.getText()+"");
-            acroFields.setField("MUNICIPIORow1","Aqui");
-            acroFields.setField("TIPO_ATRAYENTERow1","Aqui");
-            acroFields.setField("AnastrephaRow1","Aqui");
-            acroFields.setField("CeratitisRow1","Aqui");
-            acroFields.setField("OtrosRow1","Aqui");
-            acroFields.setField("FENOLOGIARow1","Aqui");
-            acroFields.setField("ESTADOTRAMPARow1","Aqui");
-            acroFields.setField("OBSERVACIONESRow1","Aqui");
+            acroFields.setField("MUNICIPIORow1",Municipio.getText()+"");
+            acroFields.setField("TIPO_ATRAYENTERow1",Tipo_Atrayente.getText().toString());
+            acroFields.setField("AnastrephaRow1",numeroanas.getText()+"");
+            acroFields.setField("CeratitisRow1",numeroceratis.getText()+"");
+            acroFields.setField("OtrosRow1",numerootros.getText()+"");
+            acroFields.setField("FENOLOGIARow1",fenologia.getText()+"");
+            acroFields.setField("ESTADOTRAMPARow1",Estadotrampa.getText()+"");
+            acroFields.setField("OBSERVACIONESRow1",Observaciones.getText()+"");
             acroFields.setField("FIRMAPROPIETARIORow1","Aqui");
+
             stamper.close();
             pdfReader.close();
             Log.e("Datos", acroFields.getFields()+"");
@@ -168,18 +236,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    private void cratePdf(String nombre){
-        Document document = new Document();
-        try {
-            PdfWriter.getInstance(document,new FileOutputStream(nombre));
-            document.open();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
 
-    }
     private void CopyRawToSDCard(int id, String path) {
         InputStream in = getResources().openRawResource(id);
         FileOutputStream out = null;
@@ -199,5 +256,66 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             Log.e(TAG, "copyFile IOException " + e.getMessage());
         }
     }
+
+    public File getAlbumStorageDir(String albumName) {
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), albumName);
+        if (!file.mkdirs()) {
+            Log.e("SignaturePad", "Directory not created");
+        }
+        return file;
+    }
+
+    public void saveBitmapToJPG(Bitmap bitmap, File photo) throws IOException {
+        Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(newBitmap);
+        canvas.drawColor(Color.WHITE);
+        canvas.drawBitmap(bitmap, 0, 0, null);
+        OutputStream stream = new FileOutputStream(photo);
+        newBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+        stream.close();
+    }
+
+    public boolean addJpgSignatureToGallery(Bitmap signature) {
+        boolean result = false;
+        try {
+            File photo = new File(getAlbumStorageDir("SignaturePad"), String.format("Signature_%d.jpg", System.currentTimeMillis()));
+            saveBitmapToJPG(signature, photo);
+            scanMediaFile(photo);
+            path= photo+"";
+            result = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private void scanMediaFile(File photo) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri contentUri = Uri.fromFile(photo);
+        mediaScanIntent.setData(contentUri);
+        LlenarFormularioActivity.this.sendBroadcast(mediaScanIntent);
+    }
+
+    public boolean addSvgSignatureToGallery(String signatureSvg) {
+        boolean result = false;
+        try {
+            File svgFile = new File(getAlbumStorageDir("SignaturePad"), String.format("Signature_%d.svg", System.currentTimeMillis()));
+            OutputStream stream = new FileOutputStream(svgFile);
+            OutputStreamWriter writer = new OutputStreamWriter(stream);
+            writer.write(signatureSvg);
+            writer.close();
+            stream.flush();
+            stream.close();
+            scanMediaFile(svgFile);
+            result = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
 
 }

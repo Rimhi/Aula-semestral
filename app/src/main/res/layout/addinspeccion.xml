@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:sing="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Codigo Trampa: "
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/CodigoTrampa"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Municipio: "
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Municipio"
+                android:layout_marginTop="10dp"
+                android:id="@+id/FormularioMunicipio"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tipo de Atrayente:"
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="1.Proteina  2.Trimedlure  3.Methyl Eugenol  4.Cuelure"
+                android:id="@+id/formularioTipoAtrayente"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Numero de Especimenes Capturados:"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Anastrepha"
+                android:id="@+id/numeroAnastrepha"
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ceratitis"
+                android:id="@+id/NumeroCeratitis"
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Otros Generos"
+                android:id="@+id/numeroOtros"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fenologia: "
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="1.Vegetativo  2.Floracion  3.Fructificacion  4.Descamsp"
+                android:id="@+id/FormularioFenologia"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estado de la trampa"
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="1. Activa      2. Inactiva"
+                android:inputType="number"
+                android:layout_marginTop="10dp"
+                android:id="@+id/FormularioEstadotrampa"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Observaciones"
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Observaciones"
+                android:inputType="textMultiLine"
+                android:layout_marginTop="10dp"
+                android:id="@+id/FomuarioObservaciones"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Firma del dueño del predio"/>
+            <com.github.gcacace.signaturepad.views.SignaturePad
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/firmadueñopredio"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:penColor="@android:color/black"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar Firmar"
+                    android:id="@+id/savesignature"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Limpiar Firma"
+                    android:id="@+id/clearsignature"/>
+            </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Agregar Otra Trampa"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
