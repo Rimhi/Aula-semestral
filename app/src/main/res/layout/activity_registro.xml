@@ -14,49 +14,57 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/RegistroNombreInspector"
-            android:hint="Nombre Completo"/>
+            android:hint="  Nombre Completo"
+            android:drawableLeft="@drawable/ic_name"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/RegistroCorreoInspector"
-            android:hint="Correo Electronico" />
+            android:hint="  Correo Electronico"
+            android:drawableLeft="@drawable/ic_email_registro"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/RegistroContraseñaInspector"
-            android:hint="Contraseña"
-            android:inputType="textPassword"/>
+            android:hint="  Contraseña"
+            android:inputType="textPassword"
+            android:drawableLeft="@drawable/ic_lock"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/RegistroRepetirContraseñaInspector"
-            android:hint="Repite tu Contraseña"
-            android:inputType="textPassword"/>
+            android:hint="  Repite tu Contraseña"
+            android:inputType="textPassword"
+            android:drawableLeft="@drawable/ic_lock"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="Cedula"
-            android:id="@+id/RegistroCedula"/>
+            android:hint="  Cedula"
+            android:id="@+id/RegistroCedula"
+            android:drawableLeft="@drawable/ic_chat"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Telefono de Contacto"
+            android:hint="  Telefono de Contacto"
             android:id="@+id/RegistroTelefono"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:drawableLeft="@drawable/ic_contact_phone"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Direccion de Residencia"
+            android:hint="  Direccion de Residencia"
             android:inputType="textMultiLine"
-            android:id="@+id/RegistroDireccion"/>
+            android:id="@+id/RegistroDireccion"
+            android:drawableLeft="@drawable/ic_direccion"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Subir foto"
+            android:text="Cargar foto"
             android:onClick="ObtenerUri"
             android:padding="10dp"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:drawableTop="@drawable/ic_insert_photo"/>
         <ImageView
             android:layout_width="200px"
             android:layout_height="200px"
@@ -71,20 +79,23 @@
             android:gravity="center"
             android:onClick="SubirArchivosAStorage"
             android:visibility="invisible"
-            android:id="@+id/RegistroSubirimagen"/>
+            android:id="@+id/RegistroSubirimagen"
+            android:drawableTop="@drawable/ic_file_upload"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Registrarse"
-            android:onClick="registrar"/>
+            android:onClick="registrar"
+            android:drawableTop="@drawable/ic_person_add"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ya tengo una cuenta"
+            android:text="Ya tengo una cuenta"
             android:textColor="#000"
             android:layout_marginTop="60dp"
             android:gravity="center"
-            android:onClick="irInicio"/>
+            android:onClick="irInicio"
+            android:drawableTop="@drawable/ic_exit"/>
     </LinearLayout>
 
 </ScrollView>

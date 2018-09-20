@@ -68,7 +68,7 @@ public class RegistroActivity extends AppCompatActivity {
 
     }
     public void irInicio(View view){
-        startActivity(new Intent(RegistroActivity.this,MainActivity.class));
+        startActivity(new Intent(RegistroActivity.this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
     public void registrar(View view){
         if (correo.getText().toString().isEmpty() || contraseña.getText().toString().isEmpty() || contraseña2.getText().toString().isEmpty()
@@ -135,34 +135,37 @@ public class RegistroActivity extends AppCompatActivity {
     public void SubirArchivosAStorage(View view){
         progreso.setMessage("Subiendo ...");
         progreso.show();
+        if (!cedula.getText().toString().isEmpty() && file!=null) {
+            StorageReference riversRef = mStorageRef.child(cedula.getText().toString()).child(file.getLastPathSegment());
 
-        StorageReference riversRef = mStorageRef.child(cedula.getText().toString()).child(file.getLastPathSegment());
+            riversRef.putFile(file)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // Get a URL to the uploaded content
 
-        riversRef.putFile(file)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get a URL to the uploaded content
-
-                        downloadUrl = taskSnapshot.getDownloadUrl();
-                        Imagen = downloadUrl+"";
-                        Glide.with(RegistroActivity.this)
-                                .load(downloadUrl)
-                                .fitCenter()
-                                .centerCrop()
-                                .into(imagen);
-                        progreso.dismiss();
-                        subirimagen.setVisibility(View.INVISIBLE);
+                            downloadUrl = taskSnapshot.getDownloadUrl();
+                            Imagen = downloadUrl + "";
+                            Glide.with(RegistroActivity.this)
+                                    .load(downloadUrl)
+                                    .fitCenter()
+                                    .centerCrop()
+                                    .into(imagen);
+                            progreso.dismiss();
+                            subirimagen.setVisibility(View.INVISIBLE);
 
 
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
 
-                    }
-                });
+                        }
+                    });
+        }else {
+            Toast.makeText(this, "Ha ocurrido un error, Carga  una imagen o ingresa tu cedula", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public String fechaactual(){

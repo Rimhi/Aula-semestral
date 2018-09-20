@@ -20,6 +20,8 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_inspector"
-        app:menu="@menu/activity_inspector_drawer" />
+        app:menu="@menu/activity_inspector_drawer"
+        android:background="@color/colorPrimary"
+        app:itemTextColor="#ffff"/>
 
 </android.support.v4.widget.DrawerLayout>

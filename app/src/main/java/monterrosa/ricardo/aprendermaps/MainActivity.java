@@ -53,10 +53,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "signInWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
                     if (user.getEmail().equals(Verificacion)) {
-                        Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                        Intent intent = new Intent(MainActivity.this, AdminActivity.class).addFlags(
+                                Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     } else {
-                        Intent intent = new Intent(MainActivity.this, InspectorActivity.class);
+                        Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
 
                     }
@@ -112,11 +114,13 @@ public class MainActivity extends AppCompatActivity {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 if (user.getEmail().equals(Verificacion)) {
                                     progreso.dismiss();
-                                    Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, AdminActivity.class)
+                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                 } else {
                                     progreso.dismiss();
-                                    Intent intent = new Intent(MainActivity.this, InspectorActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
+                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
 
                                 }
@@ -139,7 +143,8 @@ public class MainActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(authStateListener);
     }
     public void onclick(View view){
-        startActivity(new Intent(MainActivity.this,RegistroActivity.class));
+        startActivity(new Intent(MainActivity.this,RegistroActivity.class)
+        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
     private boolean pedirPermisosFaltantes(){
         boolean todosConsedidos = true;

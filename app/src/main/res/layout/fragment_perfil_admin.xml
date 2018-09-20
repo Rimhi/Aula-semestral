@@ -14,8 +14,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Subir Foto"
-                android:padding="10dp"/>
+                android:text="Cargar Foto"
+                android:padding="10dp"
+                android:drawableTop="@drawable/ic_insert_photo"/>
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -26,35 +27,41 @@
                 android:layout_height="wrap_content"
                 android:text="Presiona aqui si la foto no ha cargado"
                 android:gravity="center"
-                android:padding="10dp"/>
+                android:padding="10dp"
+                android:drawableTop="@drawable/ic_file_upload"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre Completo"
-                android:id="@+id/editarnombreadmin"/>
+                android:hint="  Nombre Completo"
+                android:id="@+id/editarnombreadmin"
+                android:drawableLeft="@drawable/ic_name"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Cedula"
+                android:hint="  Cedula"
                 android:id="@+id/editarcedulaadmin"
-                android:inputType="number"/>
-            <EditText
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="Celular"
-              android:inputType="number"
-              android:id="@+id/editarcelularadmin"/>
+                android:inputType="number"
+                android:drawableLeft="@drawable/ic_chat"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Direccion de residencia"
-                android:id="@+id/editardireccionadmin"/>
+                android:hint="  Celular"
+                android:inputType="number"
+                android:id="@+id/editarcelularadmin"
+                android:drawableLeft="@drawable/ic_contact_phone"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="  Direccion de residencia"
+                android:id="@+id/editardireccionadmin"
+                android:drawableLeft="@drawable/ic_direccion"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Editar"
+                android:text="  Editar"
                 android:layout_marginTop="5dp"
-                android:id="@+id/Editarpefiladmin"/>
+                android:id="@+id/Editarpefiladmin"
+                android:drawableTop="@drawable/ic_edit_black_24dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,27 +73,31 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Correo Electronico"
+                android:hint="  Correo Electronico"
                 android:id="@+id/editarcorreoelectronicoadmin"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:drawableLeft="@drawable/ic_email_registro"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Contraseña"
+                android:hint="  Contraseña"
                 android:id="@+id/editarcontraseñaadmin"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:drawableLeft="@drawable/ic_lock"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Repite la Contraeña"
+                android:hint="  Repite la Contraeña"
                 android:inputType="textPassword"
-                android:id="@+id/editarrepetircontraseñaadmin"/>
+                android:id="@+id/editarrepetircontraseñaadmin"
+                android:drawableLeft="@drawable/ic_lock"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Editar"
                 android:layout_marginTop="5dp"
-                android:id="@+id/editaringresoadmin"/>
+                android:id="@+id/editaringresoadmin"
+                android:drawableTop="@drawable/ic_edit_black_24dp"/>
 
 
         </LinearLayout>

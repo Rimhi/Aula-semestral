@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -185,6 +187,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         mMap.setMinZoomPreference(13.0f);
         mMap.setLatLngBoundsForCameraTarget(MONTERIA_CORDOBA_COLOMBIA);
 
+
         LocationManager lm = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,1,locationListener);
         if (userlocation!=null){mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userlocation, 14));}
@@ -232,10 +235,11 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
                             .setPositiveButton("Ir", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    if (userlocation !=null) {
+                                    if (userlocation !=null && marker.getPosition()!=null) {
                                         String Url = getDirectionsUrl(userlocation, marker.getPosition());
                                         DownloadTask downloadTask =  new DownloadTask();
                                         downloadTask.execute(Url);
+                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userlocation,11));
                                         dialog.dismiss();
                                     }
                                 }
@@ -450,7 +454,6 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
 
             // Traversing through all the routes
             for(int i=0;i<result.size();i++){
@@ -473,14 +476,44 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
 
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(2);
+                lineOptions.width(7);
+                lineOptions.clickable(true);
                 lineOptions.color(Color.RED);
             }
 
             // Drawing polyline in the Google Map for the i-th route
-            mMap.addPolyline(lineOptions);
+            if (lineOptions!=null) {
+                mMap.addPolyline(lineOptions);
+            }else {
+                Toast.makeText(MapaInspectorActivity.this, "Intentalo Nuevamente!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
+    /***
+     * Eliminar polyline
+     * con 3 clicks
+      */
+    private void Eliminarpolilinea(){
+        mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+            @Override
+            public void onPolylineClick(Polyline polyline) {
+
+                mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+                    @Override
+                    public void onPolylineClick(Polyline polyline) {
+                        mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+                            @Override
+                            public void onPolylineClick(Polyline polyline) {
+                                polyline.remove();
+                            }
+                        });
+
+                    }
+                });
+
+            }
+        });
+    }
 
 }

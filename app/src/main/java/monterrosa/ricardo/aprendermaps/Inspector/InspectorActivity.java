@@ -45,7 +45,6 @@ public class InspectorActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener listener;
     private AlertDialog dialog;
     private FirebaseUser user;
-    private String NombreParaUserdetails;
 
 
     @Override
@@ -144,7 +143,6 @@ public class InspectorActivity extends AppCompatActivity
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
             if (mAuth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
-                NombreParaUserdetails = modeloRegistro.Nombre;
                 NombreInspector.setText(modeloRegistro.Nombre);
                 correoInspector.setText(modeloRegistro.correo);
                 String imagen = modeloRegistro.imagen;

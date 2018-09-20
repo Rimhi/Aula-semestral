@@ -11,36 +11,44 @@
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:id="@+id/correoInspector"
-         android:hint="CORREO ELECTRONICO"/>
+         android:hint="  Correo Electronico"
+         android:drawableLeft="@drawable/ic_persona"/>
      <EditText
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:id="@+id/contraseñaInspector"
-         android:hint="Contraseña"
-         android:inputType="textPassword"/>
+         android:hint="  Contraseña"
+         android:inputType="textPassword"
+         android:drawableLeft="@drawable/ic_key"/>
 
 
      <Button
          android:layout_marginTop="20dp"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:text="ir a mapa de inspector"
-         android:onClick="irMapInspector"/>
+         android:text="Iniciar Sesion"
+         android:onClick="irMapInspector"
+         android:drawableTop="@drawable/ic_lock_open" />
      <TextView
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:text="olvide mi contraseña"
+         android:textSize="18dp"
          android:gravity="center"
          android:layout_marginTop="30dp"
-         android:onClick="recuperarcontraseña"/>
+         android:onClick="recuperarcontraseña"
+         android:drawableTop="@drawable/ic_key"
+         android:textColor="@color/colorPrimary"/>
      <TextView
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:layout_marginTop="60dp"
          android:text="¿Aun no tienes tu cuenta?  Registrate pulsando aqui ..."
          android:id="@+id/irRegistro"
-         android:textColor="#700202"
+         android:textColor="@color/colorPrimary"
          android:onClick="onclick"
-         android:gravity="center"/>
+         android:gravity="center"
+         android:drawableBottom="@drawable/ic_person_add"
+         android:textSize="17dp"/>
 
 </LinearLayout>
