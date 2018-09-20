@@ -5,14 +5,47 @@ package monterrosa.ricardo.aprendermaps;
  */
 
 public class Modelochat {
-    public String username;
-    public String chatWith;
+    private String Id,Mensaje,Horamensaje,Nombre;
 
-    public Modelochat(String username, String chatWith) {
-        this.username = username;
-        this.chatWith = chatWith;
+    public Modelochat(String id, String mensaje, String horamensaje, String nombre) {
+        Id = id;
+        Mensaje = mensaje;
+        Horamensaje = horamensaje;
+        Nombre = nombre;
     }
 
     public Modelochat() {
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
+
+    public String getMensaje() {
+        return Mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        Mensaje = mensaje;
+    }
+
+    public String getHoramensaje() {
+        return Horamensaje;
+    }
+
+    public void setHoramensaje(String horamensaje) {
+        Horamensaje = horamensaje;
+    }
+
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String nombre) {
+        Nombre = nombre;
     }
 }

@@ -6,11 +6,11 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_MapaInspector"
-            android:icon="@drawable/mapa_callejero"
+            android:icon="@drawable/ic_map_black_24dp"
             android:title="Mapa" />
         <item
             android:id="@+id/nav_VisitaInspector"
-            android:icon="@drawable/marcador_visitas"
+            android:icon="@drawable/ic_visitas"
             android:title="Visitas" />
         <item
             android:id="@+id/nav_perfilinspector"
@@ -18,16 +18,16 @@
             android:title="Modificar Cuenta" />
         <item
             android:id="@+id/nav_salir"
-            android:icon="@drawable/salir_opcion"
+            android:icon="@drawable/ic_exit"
             android:title="Salir" />
     </group>
 
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_inspector_chat"
+                android:icon="@drawable/ic_chat"
+                android:title="Sala de char" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"

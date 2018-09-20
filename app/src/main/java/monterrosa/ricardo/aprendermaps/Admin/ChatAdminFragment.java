@@ -5,6 +5,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,13 +31,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import monterrosa.ricardo.aprendermaps.ModeloRegistro;
 import monterrosa.ricardo.aprendermaps.Modelochat;
 import monterrosa.ricardo.aprendermaps.R;
+import monterrosa.ricardo.aprendermaps.adapters.AdapterMensaje;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,22 +56,20 @@ public class ChatAdminFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private LinearLayout layout;
-    private RelativeLayout layout_2;
-    private ImageView enviar;
     private EditText messageArea;
-    private ScrollView scrollView;
-    private DatabaseReference Chat;
-    private DatabaseReference Chatleer;
-    private DatabaseReference databaseReference;
     private DatabaseReference usuarios;
     private FirebaseAuth auth;
     private Spinner sujetoschat;
-    private ArrayList<String> lista;
+
     private ArrayAdapter adapterSpiner;
     private String Nombre,id;
-    private int Contador = 0;
-    private  int contando = Contador;
+    private RecyclerView listamensajes;
+    private List<Modelochat> mensaje = new ArrayList<>();
+    private AdapterMensaje adapterMensaje;
+    private ImageView enviar;
+    private EditText escribirmensaje;
+    private DatabaseReference databaseReference;
+    private DatabaseReference chat;
 
 
     // TODO: Rename and change types of parameters
@@ -105,67 +111,63 @@ public class ChatAdminFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        if (null == savedInstanceState){
-            Log.v(TAG_CICLO_VIDA, "onCreate, contador es null");
-            Contador =0;
-        }else {
-            contando = savedInstanceState.getInt("Contador",0);
-            Log.v(TAG_CICLO_VIDA, "onCreate, contador"+savedInstanceState.getInt("Contador",0));
-        }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState == null){
-            Log.v(TAG_CICLO_VIDA, "onActivityCreated, contador es null");
-            Contador =0;
-        }else {
-            contando = savedInstanceState.getInt("Contador",0);
-            Log.v(TAG_CICLO_VIDA, "onActivityCreated, contador"+savedInstanceState.getInt("Contador",0));
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_admin, container, false);
-        if (null == savedInstanceState){
-            Log.v(TAG_CICLO_VIDA, "onCreateView, contador es null");
-            Contador =0;
-        }else {
-            contando = savedInstanceState.getInt("Contador",0);
-            Log.v(TAG_CICLO_VIDA, "onCreateView, contador"+savedInstanceState.getInt("Contador",0));
-        }
-        layout = view.findViewById(R.id.layout1);
-        layout_2 = view.findViewById(R.id.layout2);
+
         enviar = view.findViewById(R.id.sendButton);
         messageArea = view.findViewById(R.id.messageArea);
-        scrollView = view.findViewById(R.id.scrollViewchat);
-        sujetoschat = view.findViewById(R.id.sujetoschat);
+
         databaseReference = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
         usuarios = databaseReference.child("Usuarios");
         usuarios.addChildEventListener(listenerusuarios);
-        Chat = databaseReference.child("Chat");
-        Chatleer = databaseReference.child("Chat").child(auth.getCurrentUser().getUid());
-        Chatleer.addChildEventListener(listnerchat);
+        enviar = view.findViewById(R.id.sendButton);
+        escribirmensaje = view.findViewById(R.id.messageArea);
+        listamensajes = view.findViewById(R.id.chat);
+        LinearLayoutManager lm = new LinearLayoutManager(getContext());
+        lm.setOrientation(LinearLayoutManager.VERTICAL);
+        listamensajes.setLayoutManager(lm);
 
+        adapterMensaje = new AdapterMensaje(mensaje,getContext());
+        listamensajes.setAdapter(adapterMensaje);
+        setScrollchat();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        chat = databaseReference.child("Chat");
+        escribirmensaje.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                setScrollchat();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String mensage = messageArea.getText().toString();
-                if (!mensage.isEmpty()){
-                    Modelochat modelochat = new Modelochat(Nombre,mensage);
-                    Chat.child(auth.getCurrentUser().getUid()).child(id+"&"+auth.getCurrentUser().getUid()+"Mensaje:"+obtenerserial(20)).setValue(modelochat);
-                    Chat.child(id).child(auth.getCurrentUser().getUid()+"&"+id+Nombre+"Mensaje:"+obtenerserial(20)).setValue(modelochat);
-                    messageArea.setText("");
-                    contando ++;
-                    Log.e("contaor",contando+"");
+                if (!escribirmensaje.getText().toString().isEmpty() && Nombre!=null) {
+                    Crearmensjae(escribirmensaje.getText() + "", ObtenerHora(), Nombre);
                 }
             }
         });
+        chat.addChildEventListener(listenermensajes);
 
 
         return view;
@@ -213,15 +215,10 @@ public class ChatAdminFragment extends Fragment {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
-            if (!auth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)){
-                lista = new ArrayList<>();
-                lista.add(modeloRegistro.Nombre);
-                adapterSpiner = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,lista);
-                sujetoschat.setAdapter(adapterSpiner);
-                    if (sujetoschat.getSelectedItem().toString().equals(modeloRegistro.Nombre)) {
-                        Nombre = modeloRegistro.Nombre;
-                        id = modeloRegistro.IDguidDatabase;
-                }
+            if (auth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)){
+                Nombre = modeloRegistro.Nombre;
+                id = modeloRegistro.IDguidDatabase;
+
 
             }
 
@@ -247,24 +244,35 @@ public class ChatAdminFragment extends Fragment {
 
         }
     };
-    ChildEventListener listnerchat = new ChildEventListener() {
+    public void Crearmensjae(String Mensaje, String Hora, String Nombre) {
+        Modelochat modelochat = new Modelochat();
+        modelochat.setMensaje(Mensaje);
+        modelochat.setHoramensaje(Hora);
+        modelochat.setNombre(Nombre);
+        modelochat.setId(auth.getCurrentUser().getUid());
+        chat.push().setValue(modelochat);
+        escribirmensaje.setText("");
+        setScrollchat();
+
+    }
+
+    public void setScrollchat() {
+        listamensajes.scrollToPosition(adapterMensaje.getItemCount() - 1);
+    }
+
+    ChildEventListener listenermensajes = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             Modelochat modelochat = dataSnapshot.getValue(Modelochat.class);
-            String message = modelochat.chatWith;
-            String userName = modelochat.username;
-            if (userName!= null) {
-                if (userName.equals(Nombre)) {
-                    addMessageBox("You:-\n" + message, 1);
-                } else {
-                    addMessageBox(Nombre + ":-\n" + message, 2);
-                }
-            }
+            mensaje.add(modelochat);
+            adapterMensaje.notifyDataSetChanged();
+            setScrollchat();
 
         }
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
 
         }
 
@@ -283,123 +291,11 @@ public class ChatAdminFragment extends Fragment {
 
         }
     };
-    public void addMessageBox(String message, int type){
-        if (getContext()!=null) {
-            TextView textView = new TextView(getContext());
-            textView.setText(message);
-
-            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp2.weight = 1.0f;
-
-            if (type == 1) {
-                lp2.gravity = Gravity.LEFT;
-                textView.setBackgroundResource(R.drawable.ic_chat_derecha);
-                textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-
-            } else {
-                lp2.gravity = Gravity.RIGHT;
-                textView.setBackgroundResource(R.drawable.ic_chat_izquierda);
-                textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-            }
-            textView.setLayoutParams(lp2);
-            layout.addView(textView);
-            scrollView.fullScroll(View.FOCUS_DOWN);
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Contador = contando;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Contador = contando;
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (null == savedInstanceState){
-            Log.v(TAG_CICLO_VIDA, "onViewStateRestored, contador es null");
-            Contador =0;
-        }else {
-            contando = savedInstanceState.getInt("Contador",0);
-            Log.v(TAG_CICLO_VIDA, "onViewStateRestored, contador"+savedInstanceState.getInt("Contador",0));
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Contador = contando;
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Contador = contando;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("Contador",contando);
-        super.onSaveInstanceState(outState);
-        Log.e(TAG_CICLO_VIDA, "onSaveInstanceState, contador "+outState.getInt("Contador",0));
-    }
-    String obtenerserial(int n){
-        String serial="";
-        for (int i =1; i<=n;i++){
-
-            double num = (Math.random() * 12)+2;
-            int numero = (int) num;
-            switch (numero){
-                case 10:
-                    serial+="A";
-                    break;
-                case 11:
-                    serial+="B";
-                    break;
-                case 12:
-                    serial+="C";
-                    break;
-                case 13:
-                    serial+="D";
-                    break;
-                case 14:
-                    serial+="E";
-                    break;
-                case 15:
-                    serial+="F";
-                    break;
-                case 16:
-                    serial+="G";
-                    break;
-                case 17:
-                    serial+="H";
-                    break;
-                case 18:
-                    serial+="I";
-                    break;
-                case 19:
-                    serial+="J";
-                    break;
-                case 20:
-                    serial+="K";
-                    break;
-
-                default:
-                    serial+=numero+"";
-                    break;
-            }
-
-
-
-        }
-        return serial;
-
+    private String ObtenerHora(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        String Hora = "";
+        Calendar c = Calendar.getInstance();
+        Hora = simpleDateFormat.format(c.getTime())+"";
+        return Hora;
     }
 }

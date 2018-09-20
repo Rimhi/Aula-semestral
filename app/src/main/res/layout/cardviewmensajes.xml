@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:cardView="http://schemas.android.com/apk/res-auto">
+<android.support.v7.widget.CardView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    cardView:cardBackgroundColor="@android:color/transparent"
+    cardView:cardElevation="0dp"
+    android:id="@+id/CV"
+    android:paddingLeft="5sp"
+    android:paddingRight="5sp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/out_message_bg"
+            android:orientation="vertical"
+            android:id="@+id/fondomensaje">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/CarviewNombrechat"
+                android:text="Ricardo"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/CardViewMensaje"
+                android:text="hola como estan"
+                android:maxWidth="240sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/CardViewHora"
+                android:text="12:00 pm"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+        </LinearLayout>
+</android.support.v7.widget.CardView>
+</RelativeLayout>

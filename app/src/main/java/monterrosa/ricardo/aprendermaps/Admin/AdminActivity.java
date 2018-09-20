@@ -63,16 +63,6 @@ public class AdminActivity extends AppCompatActivity
         user = auth.getCurrentUser();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ChatAdminFragment framento = new ChatAdminFragment();
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,framento).commit();
-                fab.setVisibility(View.INVISIBLE);
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -243,7 +233,9 @@ public class AdminActivity extends AppCompatActivity
             AdminPerfilFragment fragment = new AdminPerfilFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_admin_chat) {
+            final ChatAdminFragment framento = new ChatAdminFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,framento).commit();
 
         }
 

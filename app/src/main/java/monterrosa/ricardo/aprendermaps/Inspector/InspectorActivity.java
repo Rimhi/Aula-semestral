@@ -57,15 +57,6 @@ public class InspectorActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ChatAdminFragment fragmento = new ChatAdminFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.contenedorInspector,fragmento).commit();
-                fab.setVisibility(View.INVISIBLE);
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -238,7 +229,9 @@ public class InspectorActivity extends AppCompatActivity
         } else if (id == R.id.nav_perfilinspector) {
             PerfilInspectoFragment fragment = new PerfilInspectoFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.contenedorInspector,fragment).commit();
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_inspector_chat) {
+            final ChatAdminFragment framento = new ChatAdminFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.contenedorInspector,framento).commit();
 
         } else if (id == R.id.nav_send) {
 
