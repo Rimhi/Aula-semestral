@@ -69,6 +69,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
     private ProgressDialog progressDialog;
     private FirebaseAuth auth;
     private String NombreInspector,CedulaInspector,TelefonoInspector;
+    private int añadir = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +92,12 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         progressDialog.setTitle("Cargando Mapa");
         progressDialog.setMessage("Por favor espera");
         progressDialog.setCancelable(false);
-        progressDialog.show();
+        //progressDialog.show();
+        if (getIntent().getExtras()!= null){
+            añadir = getIntent().getExtras().getInt("añadir");
+            Log.e("añadir Mpa",añadir+"");
 
+        }
         locationListener = new MiLocationListener();
 
 
@@ -206,7 +211,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             @Override
             public void onInfoWindowClick(final Marker marker) {
             if (userlocation!=null) {
-                if (calcularDistancia(userlocation, marker.getPosition()) <= 5.5) {
+                if (calcularDistancia(userlocation, marker.getPosition()) <= 50000) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MapaInspectorActivity.this);
                     builder.setTitle("¿Desea llenar formulario?")
                             .setNegativeButton("no", new DialogInterface.OnClickListener() {
@@ -220,6 +225,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
                             final String[] idtrampa = marker.getTitle().split(" ");
                             Intent intent = new Intent(MapaInspectorActivity.this, LlenarFormularioActivity.class);
                             intent.putExtra("codigotrampa", idtrampa[1]);
+                            intent.putExtra("añadir",añadir);
                             startActivity(intent);
 
                         }

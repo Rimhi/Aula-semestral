@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
@@ -30,11 +31,16 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImage;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfSignature;
+import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.PushbuttonField;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -54,7 +60,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     private EditText CodigoTrampa, fechacoleccion,CentroAcopio,Oficina,nombreColector,Nombredelaruta,semana,
             responsable,registroruta,codigoruta,Municipio,Tipo_Atrayente,numeroanas,numeroceratis,numerootros,fenologia
             ,Estadotrampa,Observaciones;
-    private Button Guardar,Guardarfirma,limpiarfirma;
+    private Button Guardar,Guardarfirma,limpiarfirma,addformulario;
     private SignaturePad firma;
     private DatabaseReference baseDatos;
     private DatabaseReference usuarios;
@@ -62,6 +68,8 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     private String Nombre,Cedula,correo;
     private FirebaseAuth auth;
     private String TAG = "DatoCopiar";
+    private int añadir;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +102,10 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         CentroAcopio = findViewById(R.id.CentroAcopio);
         Guardarfirma = findViewById(R.id.savesignature);
         limpiarfirma = findViewById(R.id.clearsignature);
+        if (getIntent().getExtras() !=null){
+            añadir = getIntent().getExtras().getInt("añadir");
+            Log.e("añadir llena",añadir+"");
+        }
         firma.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
             public void onStartSigning() {
@@ -150,6 +162,19 @@ public class LlenarFormularioActivity extends AppCompatActivity {
 
             }
         });
+        addformulario = findViewById(R.id.addformulariotrampa);
+        addformulario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LlenarPedf(new File(Environment.getExternalStorageDirectory().toString(),"Reportes")+"",path);
+                añadir ++;
+                Log.e("añadir",añadir+"");
+                Intent intent = new Intent(LlenarFormularioActivity.this,MapaInspectorActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("añadir",añadir);
+                intent.putExtra("CentroAcopio",CentroAcopio.getText()+"");
+                startActivity(intent);
+            }
+        });
 
         Guardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +183,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 /***
                  * Guarda la fecha de inspeccionde la trampa a la cual se le dio en Informacion
                  */
+                Copiarpdf();
                 LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid());
                 baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
                 trampas = baseDatos.child("Inspecciones");
@@ -192,7 +218,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
 
         return  fecha;
     }
-    private void LlenarPedf(String destino,String ruta){
+    private void Copiarpdf(){
         File folder = new File(Environment.getExternalStorageDirectory().toString(),"Reportes");
         if (!folder.exists()){
             folder.mkdirs();
@@ -201,41 +227,8 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         else {
             CopyRawToSDCard((R.raw.forma),Environment.getExternalStorageDirectory()+"/forma.pdf");
         }
-
-        try {
-            PdfReader pdfReader = new PdfReader(getResources().openRawResource(R.raw.forma));
-            PdfStamper stamper = new PdfStamper(pdfReader,new FileOutputStream(destino+"/forma.pdf"));
-            AcroFields acroFields = stamper.getAcroFields();
-            acroFields.setField("Centro_de _acopio",CentroAcopio.getText()+"");
-            acroFields.setField("Fecha_ddmmaaaa",fechaactual());
-            acroFields.setField("Semana",semana.getText()+"");
-            acroFields.setField("Oficina",Oficina.getText()+"");
-            acroFields.setField("Responsable",responsable.getText()+"");
-            acroFields.setField("colectorRow1",nombreColector.getText()+"");
-            acroFields.setField("Registro_ruta",registroruta.getText()+"");
-            acroFields.setField("Nombrepredioempresa",Nombredelaruta.getText()+"");
-            acroFields.setField("Codigo_ruta",codigoruta.getText()+"");
-            acroFields.setField("CODIGOTRAMPARow1.0",CodigoTrampa.getText()+"");
-            acroFields.setField("MUNICIPIORow1",Municipio.getText()+"");
-            acroFields.setField("TIPO_ATRAYENTERow1",Tipo_Atrayente.getText().toString());
-            acroFields.setField("AnastrephaRow1",numeroanas.getText()+"");
-            acroFields.setField("CeratitisRow1",numeroceratis.getText()+"");
-            acroFields.setField("OtrosRow1",numerootros.getText()+"");
-            acroFields.setField("FENOLOGIARow1",fenologia.getText()+"");
-            acroFields.setField("ESTADOTRAMPARow1",Estadotrampa.getText()+"");
-            acroFields.setField("OBSERVACIONESRow1",Observaciones.getText()+"");
-            acroFields.setField("FIRMAPROPIETARIORow1","Aqui");
-
-            stamper.close();
-            pdfReader.close();
-            Log.e("Datos", acroFields.getFields()+"");
-
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
+
 
     private void CopyRawToSDCard(int id, String path) {
         InputStream in = getResources().openRawResource(id);
@@ -315,7 +308,64 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         }
         return result;
     }
+    private void LlenarPedf(String destino,String ruta){
+        try {
+            PdfReader pdfReader = new PdfReader(getResources().openRawResource(R.raw.forma));
+            PdfStamper stamper = new PdfStamper(pdfReader,new FileOutputStream(destino+"/forma.pdf"));
+            InputStream ims = getResources().openRawResource(R.raw.forma);
+            AcroFields acroFields = stamper.getAcroFields();
+            Log.e("Datos", acroFields.getFields()+"");
+            acroFields.setField("Centro_de _acopio",CentroAcopio.getText()+"");
+            acroFields.setField("Fecha_ddmmaaaa",fechaactual());
+            acroFields.setField("Semana",semana.getText()+"");
+            acroFields.setField("Oficina",Oficina.getText()+"");
+            acroFields.setField("Responsable",responsable.getText()+"");
+            acroFields.setField("colectorRow1",nombreColector.getText()+"");
+            acroFields.setField("Registro_ruta",registroruta.getText()+"");
+            acroFields.setField("Nombrepredioempresa",Nombredelaruta.getText()+"");
+            acroFields.setField("Codigo_ruta",codigoruta.getText()+"");
+            if (añadir == 1) {
+                acroFields.setField("CODIGOTRAMPARow1.0", CodigoTrampa.getText() + "");
+                acroFields.setField("MUNICIPIORow1", Municipio.getText() + "");
+                acroFields.setField("TIPO_ATRAYENTERow1", Tipo_Atrayente.getText().toString());
+                acroFields.setField("AnastrephaRow1", numeroanas.getText() + "");
+                acroFields.setField("CeratitisRow1", numeroceratis.getText() + "");
+                acroFields.setField("OtrosRow1", numerootros.getText() + "");
+                acroFields.setField("FENOLOGIARow1", fenologia.getText() + "");
+                acroFields.setField("ESTADOTRAMPARow1", Estadotrampa.getText() + "");
+                acroFields.setField("OBSERVACIONESRow1", Observaciones.getText() + "");
+            }if (añadir == 2){
+                acroFields.setField("CODIGOTRAMPARow2", CodigoTrampa.getText() + "");
+                acroFields.setField("MUNICIPIORow2", Municipio.getText() + "");
+                acroFields.setField("TIPO_ATRAYENTERow2", Tipo_Atrayente.getText().toString());
+                acroFields.setField("AnastrephaRow2", numeroanas.getText() + "");
+                acroFields.setField("CeratitisRow2", numeroceratis.getText() + "");
+                acroFields.setField("OtrosRow2", numerootros.getText() + "");
+                acroFields.setField("FENOLOGIARow2", fenologia.getText() + "");
+                acroFields.setField("ESTADOTRAMPARow2", Estadotrampa.getText() + "");
+                acroFields.setField("OBSERVACIONESRow2", Observaciones.getText() + "");
+                acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
+            } if (añadir == 3){
+                acroFields.setField("CODIGOTRAMPARow3", CodigoTrampa.getText() + "");
+                acroFields.setField("MUNICIPIORow3", Municipio.getText() + "");
+                acroFields.setField("TIPO_ATRAYENTERow3", Tipo_Atrayente.getText().toString());
+                acroFields.setField("AnastrephaRow3", numeroanas.getText() + "");
+                acroFields.setField("CeratitisRow3", numeroceratis.getText() + "");
+                acroFields.setField("OtrosRow3", numerootros.getText() + "");
+                acroFields.setField("FENOLOGIARow3", fenologia.getText() + "");
+                acroFields.setField("ESTADOTRAMPARow3", Estadotrampa.getText() + "");
+                acroFields.setField("OBSERVACIONESRow3", Observaciones.getText() + "");
+                acroFields.setField("FIRMAPROPIETARIORow3", "Aqui");
+            }
 
+            stamper.close();
+            pdfReader.close();
+            Log.e("Datos", acroFields.getFields()+"");
 
-
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
