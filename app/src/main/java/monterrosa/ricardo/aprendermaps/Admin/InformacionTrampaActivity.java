@@ -20,7 +20,7 @@ import monterrosa.ricardo.aprendermaps.adapters.FechaInspeccionAdapter;
 
 public class InformacionTrampaActivity extends AppCompatActivity {
     private RecyclerView fechasdeInspeccion;
-    private EditText CodigTrampa,indicio,posicion;
+    private EditText CodigTrampa,posicion,fecha;
     private DatabaseReference miBaseDatos;
     private  DatabaseReference databaseReference;
     private ArrayList<LlegadaMapa> lista = new ArrayList<>();
@@ -32,11 +32,11 @@ public class InformacionTrampaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_informacion_trampa);
         fechasdeInspeccion = findViewById(R.id.fechasInspeccion);
         CodigTrampa = findViewById(R.id.editaridtrampa);
-        indicio = findViewById(R.id.editarLugardelatrampa);
         posicion = findViewById(R.id.editarlatlangtrampa);
+        fecha = findViewById(R.id.editarfechaingresotrampa);
 
         CodigTrampa.setText(getIntent().getStringExtra("codigotrampa"));
-        indicio.setText(getIntent().getStringExtra("indicio"));
+        fecha.setText(getIntent().getStringExtra("indicio"));
         posicion.setText(getIntent().getStringExtra("posicion"));
         miBaseDatos = FirebaseDatabase.getInstance().getReference();
         databaseReference = miBaseDatos.child("trampas").child(CodigTrampa.getText().toString()).child("Inspeccion");

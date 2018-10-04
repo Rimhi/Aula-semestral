@@ -1,9 +1,14 @@
 package monterrosa.ricardo.aprendermaps;
 
 import android.Manifest;
+import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,7 +26,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 import monterrosa.ricardo.aprendermaps.Admin.AdminActivity;
 import monterrosa.ricardo.aprendermaps.Inspector.InspectorActivity;
@@ -36,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference correosAdmin;
     private DatabaseReference reference;
     private  String Verificacion = "rimhi7@gmail.com";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
     public void recuperarcontraseña(View view){
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (correo.getText().toString().isEmpty()){

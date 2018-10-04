@@ -143,6 +143,7 @@ public class ChatAdminFragment extends Fragment {
         setScrollchat();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         chat = databaseReference.child("Chat");
+
         escribirmensaje.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -159,6 +160,7 @@ public class ChatAdminFragment extends Fragment {
 
             }
         });
+        eliminarchat();
         enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -297,5 +299,10 @@ public class ChatAdminFragment extends Fragment {
         Calendar c = Calendar.getInstance();
         Hora = simpleDateFormat.format(c.getTime())+"";
         return Hora;
+    }
+    private void eliminarchat(){
+        if (mensaje.size()>=300){
+            chat.setValue(null);
+        }
     }
 }

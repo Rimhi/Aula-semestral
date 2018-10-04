@@ -16,7 +16,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_centerHorizontal="true"
-                android:src="@mipmap/ica"
+                android:src="@mipmap/logoica"
                 android:layout_marginTop="20dp"/>
             <TextView
                 android:layout_width="match_parent"
@@ -44,28 +44,6 @@
                 android:id="@+id/editaridtrampa"
                 android:inputType="number"
                 android:layout_marginTop="10dp" />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Lugar en donde se encuentra la trampa :"/>
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="20dp"
-                    android:id="@+id/editarindicacion1"
-                    android:src="@drawable/ic_informacion"/>
-            </LinearLayout>
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/editarLugardelatrampa"
-                android:inputType="textMultiLine"
-                android:hint="indicio de la trampa"
-                android:layout_marginTop="10dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

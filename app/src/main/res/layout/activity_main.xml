@@ -42,7 +42,7 @@
      <TextView
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
-         android:layout_marginTop="60dp"
+         android:layout_marginTop="30dp"
          android:text="¿Aun no tienes tu cuenta?  Registrate pulsando aqui ..."
          android:id="@+id/irRegistro"
          android:textColor="@color/colorPrimary"

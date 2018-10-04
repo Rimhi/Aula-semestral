@@ -148,11 +148,13 @@ public class AdminActivity extends AppCompatActivity
                 nombre.setText(modeloRegistro.Nombre);
                 correo.setText(modeloRegistro.correo);
                 String imagen = modeloRegistro.imagen;
-                Glide.with(AdminActivity.this)
-                        .load(Uri.parse(imagen))
-                        .fitCenter()
-                        .centerCrop()
-                        .into(Adminimagen);
+                if (!AdminActivity.super.isDestroyed()) {
+                    Glide.with(AdminActivity.this)
+                            .load(Uri.parse(imagen))
+                            .fitCenter()
+                            .centerCrop()
+                            .into(Adminimagen);
+                }
             }
         }
 

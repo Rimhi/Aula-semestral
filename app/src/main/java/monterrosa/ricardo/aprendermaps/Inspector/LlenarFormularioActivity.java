@@ -75,36 +75,9 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_llenar_formulario);
-        Oficina = findViewById(R.id.oficina);
-        Municipio = findViewById(R.id.FormularioMunicipio);
-        Tipo_Atrayente = findViewById(R.id.formularioTipoAtrayente);
-        numeroanas = findViewById(R.id.numeroAnastrepha);
-        numeroceratis = findViewById(R.id.NumeroCeratitis);
-        numerootros = findViewById(R.id.numeroOtros);
-        fenologia = findViewById(R.id.FormularioFenologia);
-        Estadotrampa = findViewById(R.id.FormularioEstadotrampa);
-        Observaciones = findViewById(R.id.FomuarioObservaciones);
-        nombreColector = findViewById(R.id.NombreColector);
-        Nombredelaruta = findViewById(R.id.NombreRuta);
-        semana = findViewById(R.id.Numerosemanaepidemiologica);
-        responsable = findViewById(R.id.Responsable);
-        registroruta = findViewById(R.id.RegistroRuta);
-        codigoruta = findViewById(R.id.CodigoRuta);
-        CodigoTrampa = findViewById(R.id.CodigoTrampa);
-        fechacoleccion = findViewById(R.id.FechaColeccion);
-        firma = (SignaturePad) findViewById(R.id.firmadueñopredio);
-        Guardar = findViewById(R.id.GuardarFormulario);
-        auth = FirebaseAuth.getInstance();
-        fechacoleccion.setText(fechaactual());
-        CodigoTrampa.setText(getIntent().getStringExtra("codigotrampa"));
-        baseDatos = FirebaseDatabase.getInstance().getReference();
-        usuarios = baseDatos.child("Usuarios");
-        CentroAcopio = findViewById(R.id.CentroAcopio);
-        Guardarfirma = findViewById(R.id.savesignature);
-        limpiarfirma = findViewById(R.id.clearsignature);
-        if (getIntent().getExtras() !=null){
+        Inicializar();
+        if (getIntent().getExtras()!=null){
             añadir = getIntent().getExtras().getInt("añadir");
-            Log.e("añadir llena",añadir+"");
         }
         firma.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
@@ -163,18 +136,6 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             }
         });
         addformulario = findViewById(R.id.addformulariotrampa);
-        addformulario.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LlenarPedf(new File(Environment.getExternalStorageDirectory().toString(),"Reportes")+"",path);
-                añadir ++;
-                Log.e("añadir",añadir+"");
-                Intent intent = new Intent(LlenarFormularioActivity.this,MapaInspectorActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("añadir",añadir);
-                intent.putExtra("CentroAcopio",CentroAcopio.getText()+"");
-                startActivity(intent);
-            }
-        });
 
         Guardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,8 +169,23 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 }
             }
         });
+        addformulario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid());
+                baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
+                trampas = baseDatos.child("Inspecciones");
+                trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
+                if (añadir>5)
+                Enviardatos();
+                else
+                    Toast.makeText(LlenarFormularioActivity.this, "Maximo 5 trampas", Toast.LENGTH_SHORT).show();
+            }
+
+        });
 
     }
+
     private String fechaactual(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Date date = new Date();
@@ -218,6 +194,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
 
         return  fecha;
     }
+
     private void Copiarpdf(){
         File folder = new File(Environment.getExternalStorageDirectory().toString(),"Reportes");
         if (!folder.exists()){
@@ -228,7 +205,6 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             CopyRawToSDCard((R.raw.forma),Environment.getExternalStorageDirectory()+"/forma.pdf");
         }
     }
-
 
     private void CopyRawToSDCard(int id, String path) {
         InputStream in = getResources().openRawResource(id);
@@ -308,6 +284,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         }
         return result;
     }
+
     private void LlenarPedf(String destino,String ruta){
         try {
             PdfReader pdfReader = new PdfReader(getResources().openRawResource(R.raw.forma));
@@ -315,48 +292,176 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             InputStream ims = getResources().openRawResource(R.raw.forma);
             AcroFields acroFields = stamper.getAcroFields();
             Log.e("Datos", acroFields.getFields()+"");
-            acroFields.setField("Centro_de _acopio",CentroAcopio.getText()+"");
-            acroFields.setField("Fecha_ddmmaaaa",fechaactual());
-            acroFields.setField("Semana",semana.getText()+"");
-            acroFields.setField("Oficina",Oficina.getText()+"");
-            acroFields.setField("Responsable",responsable.getText()+"");
-            acroFields.setField("colectorRow1",nombreColector.getText()+"");
-            acroFields.setField("Registro_ruta",registroruta.getText()+"");
-            acroFields.setField("Nombrepredioempresa",Nombredelaruta.getText()+"");
-            acroFields.setField("Codigo_ruta",codigoruta.getText()+"");
-            if (añadir == 1) {
-                acroFields.setField("CODIGOTRAMPARow1.0", CodigoTrampa.getText() + "");
-                acroFields.setField("MUNICIPIORow1", Municipio.getText() + "");
-                acroFields.setField("TIPO_ATRAYENTERow1", Tipo_Atrayente.getText().toString());
-                acroFields.setField("AnastrephaRow1", numeroanas.getText() + "");
-                acroFields.setField("CeratitisRow1", numeroceratis.getText() + "");
-                acroFields.setField("OtrosRow1", numerootros.getText() + "");
-                acroFields.setField("FENOLOGIARow1", fenologia.getText() + "");
-                acroFields.setField("ESTADOTRAMPARow1", Estadotrampa.getText() + "");
-                acroFields.setField("OBSERVACIONESRow1", Observaciones.getText() + "");
-            }if (añadir == 2){
-                acroFields.setField("CODIGOTRAMPARow2", CodigoTrampa.getText() + "");
-                acroFields.setField("MUNICIPIORow2", Municipio.getText() + "");
-                acroFields.setField("TIPO_ATRAYENTERow2", Tipo_Atrayente.getText().toString());
-                acroFields.setField("AnastrephaRow2", numeroanas.getText() + "");
-                acroFields.setField("CeratitisRow2", numeroceratis.getText() + "");
-                acroFields.setField("OtrosRow2", numerootros.getText() + "");
-                acroFields.setField("FENOLOGIARow2", fenologia.getText() + "");
-                acroFields.setField("ESTADOTRAMPARow2", Estadotrampa.getText() + "");
-                acroFields.setField("OBSERVACIONESRow2", Observaciones.getText() + "");
-                acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
-            } if (añadir == 3){
-                acroFields.setField("CODIGOTRAMPARow3", CodigoTrampa.getText() + "");
-                acroFields.setField("MUNICIPIORow3", Municipio.getText() + "");
-                acroFields.setField("TIPO_ATRAYENTERow3", Tipo_Atrayente.getText().toString());
-                acroFields.setField("AnastrephaRow3", numeroanas.getText() + "");
-                acroFields.setField("CeratitisRow3", numeroceratis.getText() + "");
-                acroFields.setField("OtrosRow3", numerootros.getText() + "");
-                acroFields.setField("FENOLOGIARow3", fenologia.getText() + "");
-                acroFields.setField("ESTADOTRAMPARow3", Estadotrampa.getText() + "");
-                acroFields.setField("OBSERVACIONESRow3", Observaciones.getText() + "");
-                acroFields.setField("FIRMAPROPIETARIORow3", "Aqui");
+
+            if (getIntent().getExtras() !=null){
+                añadir = getIntent().getExtras().getInt("añadir");
+                Log.e("añadir llena",añadir+"");
+                acroFields.setField("Centro_de _acopio", getIntent().getExtras().getString("CentroAcopio"));
+                acroFields.setField("Fecha_ddmmaaaa",fechaactual());
+                acroFields.setField("Semana", getIntent().getExtras().getString("semana"));
+                acroFields.setField("Oficina", getIntent().getExtras().getString("oficina"));
+                acroFields.setField("Responsable", getIntent().getExtras().getString("responsable"));
+                acroFields.setField("colectorRow1", getIntent().getExtras().getString("colector"));
+                acroFields.setField("Registro_ruta", getIntent().getExtras().getString("registroruta"));
+                acroFields.setField("Nombrepredioempresa", getIntent().getExtras().getString("nombreruta"));
+                acroFields.setField("Codigo_ruta", getIntent().getExtras().getString("codigoruta"));
+                if (añadir ==1){
+                    Log.e("llenar","entro añadir 1 pdf");
+                    acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
+                    acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
+                    acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
+                    acroFields.setField("AnastrephaRow1", getIntent().getExtras().getString("anastrepha1"));
+                    acroFields.setField("CeratitisRow1", getIntent().getExtras().getString("ceratis1"));
+                    acroFields.setField("OtrosRow1", getIntent().getExtras().getString("otros1"));
+                    acroFields.setField("FENOLOGIARow1", getIntent().getExtras().getString("fenologia1"));
+                    acroFields.setField("ESTADOTRAMPARow1", getIntent().getExtras().getString("estado1"));
+                    acroFields.setField("OBSERVACIONESRow1", getIntent().getExtras().getString("observaciones1"));
+                }
+                if (añadir == 2){
+                    Log.e("llenar","entro añadir 2 pdf");
+                    Toast.makeText(this, "recibir añadir 2", Toast.LENGTH_SHORT).show();
+                    acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
+                    acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
+                    acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
+                    acroFields.setField("AnastrephaRow1", getIntent().getExtras().getString("anastrepha1"));
+                    acroFields.setField("CeratitisRow1", getIntent().getExtras().getString("ceratis1"));
+                    acroFields.setField("OtrosRow1", getIntent().getExtras().getString("otros1"));
+                    acroFields.setField("FENOLOGIARow1", getIntent().getExtras().getString("fenologia1"));
+                    acroFields.setField("ESTADOTRAMPARow1", getIntent().getExtras().getString("estado1"));
+                    acroFields.setField("OBSERVACIONESRow1", getIntent().getExtras().getString("observaciones1"));
+                    acroFields.setField("CODIGOTRAMPARow2", CodigoTrampa.getText() + "");
+                    acroFields.setField("MUNICIPIORow2", Municipio.getText() + "");
+                    acroFields.setField("TIPO_ATRAYENTERow2", Tipo_Atrayente.getText().toString());
+                    acroFields.setField("AnastrephaRow2", numeroanas.getText() + "");
+                    acroFields.setField("CeratitisRow2", numeroceratis.getText() + "");
+                    acroFields.setField("OtrosRow2", numerootros.getText() + "");
+                    acroFields.setField("FENOLOGIARow2", fenologia.getText() + "");
+                    acroFields.setField("ESTADOTRAMPARow2", Estadotrampa.getText() + "");
+                    acroFields.setField("OBSERVACIONESRow2", Observaciones.getText() + "");
+                    acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
+                } if (añadir == 3){
+                    Log.e("llenar","entro añadir 3 pdf");
+                    acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
+                    acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
+                    acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
+                    acroFields.setField("AnastrephaRow1", getIntent().getExtras().getString("anastrepha1"));
+                    acroFields.setField("CeratitisRow1", getIntent().getExtras().getString("ceratis1"));
+                    acroFields.setField("OtrosRow1", getIntent().getExtras().getString("otros1"));
+                    acroFields.setField("FENOLOGIARow1", getIntent().getExtras().getString("fenologia1"));
+                    acroFields.setField("ESTADOTRAMPARow1", getIntent().getExtras().getString("estado1"));
+                    acroFields.setField("OBSERVACIONESRow1", getIntent().getExtras().getString("observaciones1"));
+                    acroFields.setField("CODIGOTRAMPARow2", getIntent().getExtras().getString("codigotrampa2"));
+                    acroFields.setField("MUNICIPIORow2", getIntent().getExtras().getString("municipio2"));
+                    acroFields.setField("TIPO_ATRAYENTERow2", getIntent().getExtras().getString("tipoatrayente2"));
+                    acroFields.setField("AnastrephaRow2", getIntent().getExtras().getString("anastrepha2"));
+                    acroFields.setField("CeratitisRow2", getIntent().getExtras().getString("ceratis2"));
+                    acroFields.setField("OtrosRow2", getIntent().getExtras().getString("otros2"));
+                    acroFields.setField("FENOLOGIARow2", getIntent().getExtras().getString("fenologia2"));
+                    acroFields.setField("ESTADOTRAMPARow2", getIntent().getExtras().getString("estado2"));
+                    acroFields.setField("OBSERVACIONESRow2", getIntent().getExtras().getString("observaciones2"));
+                    acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
+                    acroFields.setField("CODIGOTRAMPARow3", CodigoTrampa.getText() + "");
+                    acroFields.setField("MUNICIPIORow3", Municipio.getText() + "");
+                    acroFields.setField("TIPO_ATRAYENTERow3", Tipo_Atrayente.getText().toString());
+                    acroFields.setField("AnastrephaRow3", numeroanas.getText() + "");
+                    acroFields.setField("CeratitisRow3", numeroceratis.getText() + "");
+                    acroFields.setField("OtrosRow3", numerootros.getText() + "");
+                    acroFields.setField("FENOLOGIARow3", fenologia.getText() + "");
+                    acroFields.setField("ESTADOTRAMPARow3", Estadotrampa.getText() + "");
+                    acroFields.setField("OBSERVACIONESRow3", Observaciones.getText() + "");
+                    acroFields.setField("FIRMAPROPIETARIORow3", "Aqui");
+                }
+                if (añadir==4){
+                    acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
+                    acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
+                    acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
+                    acroFields.setField("AnastrephaRow1", getIntent().getExtras().getString("anastrepha1"));
+                    acroFields.setField("CeratitisRow1", getIntent().getExtras().getString("ceratis1"));
+                    acroFields.setField("OtrosRow1", getIntent().getExtras().getString("otros1"));
+                    acroFields.setField("FENOLOGIARow1", getIntent().getExtras().getString("fenologia1"));
+                    acroFields.setField("ESTADOTRAMPARow1", getIntent().getExtras().getString("estado1"));
+                    acroFields.setField("OBSERVACIONESRow1", getIntent().getExtras().getString("observaciones1"));
+                    acroFields.setField("CODIGOTRAMPARow2", getIntent().getExtras().getString("codigotrampa2"));
+                    acroFields.setField("MUNICIPIORow2", getIntent().getExtras().getString("municipio2"));
+                    acroFields.setField("TIPO_ATRAYENTERow2", getIntent().getExtras().getString("tipoatrayente2"));
+                    acroFields.setField("AnastrephaRow2", getIntent().getExtras().getString("anastrepha2"));
+                    acroFields.setField("CeratitisRow2", getIntent().getExtras().getString("ceratis2"));
+                    acroFields.setField("OtrosRow2", getIntent().getExtras().getString("otros2"));
+                    acroFields.setField("FENOLOGIARow2", getIntent().getExtras().getString("fenologia2"));
+                    acroFields.setField("ESTADOTRAMPARow2", getIntent().getExtras().getString("estado2"));
+                    acroFields.setField("OBSERVACIONESRow2", getIntent().getExtras().getString("observaciones2"));
+                    acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
+                    acroFields.setField("MUNICIPIORow3", getIntent().getExtras().getString("municipio3"));
+                    acroFields.setField("TIPO_ATRAYENTERow3", getIntent().getExtras().getString("tipoatrayente3"));
+                    acroFields.setField("AnastrephaRow3", getIntent().getExtras().getString("anastrepha3"));
+                    acroFields.setField("CeratitisRow3", getIntent().getExtras().getString("ceratis3"));
+                    acroFields.setField("OtrosRow3", getIntent().getExtras().getString("otros3"));
+                    acroFields.setField("FENOLOGIARow3", getIntent().getExtras().getString("fenologia3"));
+                    acroFields.setField("ESTADOTRAMPARow3", getIntent().getExtras().getString("estado3"));
+                    acroFields.setField("OBSERVACIONESRow3", getIntent().getExtras().getString("observaciones3"));
+                    acroFields.setField("FIRMAPROPIETARIORow3", "Aqui");
+                    acroFields.setField("CODIGOTRAMPARow4", CodigoTrampa.getText() + "");
+                    acroFields.setField("MUNICIPIORow4", Municipio.getText() + "");
+                    acroFields.setField("TIPO_ATRAYENTERow4", Tipo_Atrayente.getText().toString());
+                    acroFields.setField("AnastrephaRow4", numeroanas.getText() + "");
+                    acroFields.setField("CeratitisRow4", numeroceratis.getText() + "");
+                    acroFields.setField("OtrosRow4", numerootros.getText() + "");
+                    acroFields.setField("FENOLOGIARow4", fenologia.getText() + "");
+                    acroFields.setField("ESTADOTRAMPARow4", Estadotrampa.getText() + "");
+                    acroFields.setField("OBSERVACIONESRow4", Observaciones.getText() + "");
+                    acroFields.setField("FIRMAPROPIETARIORow4", "Aqui");
+                }
+                if (añadir == 5){
+                    acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
+                    acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
+                    acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
+                    acroFields.setField("AnastrephaRow1", getIntent().getExtras().getString("anastrepha1"));
+                    acroFields.setField("CeratitisRow1", getIntent().getExtras().getString("ceratis1"));
+                    acroFields.setField("OtrosRow1", getIntent().getExtras().getString("otros1"));
+                    acroFields.setField("FENOLOGIARow1", getIntent().getExtras().getString("fenologia1"));
+                    acroFields.setField("ESTADOTRAMPARow1", getIntent().getExtras().getString("estado1"));
+                    acroFields.setField("OBSERVACIONESRow1", getIntent().getExtras().getString("observaciones1"));
+                    acroFields.setField("CODIGOTRAMPARow2", getIntent().getExtras().getString("codigotrampa2"));
+                    acroFields.setField("MUNICIPIORow2", getIntent().getExtras().getString("municipio2"));
+                    acroFields.setField("TIPO_ATRAYENTERow2", getIntent().getExtras().getString("tipoatrayente2"));
+                    acroFields.setField("AnastrephaRow2", getIntent().getExtras().getString("anastrepha2"));
+                    acroFields.setField("CeratitisRow2", getIntent().getExtras().getString("ceratis2"));
+                    acroFields.setField("OtrosRow2", getIntent().getExtras().getString("otros2"));
+                    acroFields.setField("FENOLOGIARow2", getIntent().getExtras().getString("fenologia2"));
+                    acroFields.setField("ESTADOTRAMPARow2", getIntent().getExtras().getString("estado2"));
+                    acroFields.setField("OBSERVACIONESRow2", getIntent().getExtras().getString("observaciones2"));
+                    acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
+                    acroFields.setField("MUNICIPIORow3", getIntent().getExtras().getString("municipio3"));
+                    acroFields.setField("TIPO_ATRAYENTERow3", getIntent().getExtras().getString("tipoatrayente3"));
+                    acroFields.setField("AnastrephaRow3", getIntent().getExtras().getString("anastrepha3"));
+                    acroFields.setField("CeratitisRow3", getIntent().getExtras().getString("ceratis3"));
+                    acroFields.setField("OtrosRow3", getIntent().getExtras().getString("otros3"));
+                    acroFields.setField("FENOLOGIARow3", getIntent().getExtras().getString("fenologia3"));
+                    acroFields.setField("ESTADOTRAMPARow3", getIntent().getExtras().getString("estado3"));
+                    acroFields.setField("OBSERVACIONESRow3", getIntent().getExtras().getString("observaciones3"));
+                    acroFields.setField("FIRMAPROPIETARIORow3", "Aqui");
+                    acroFields.setField("MUNICIPIORow4", getIntent().getExtras().getString("municipio4"));
+                    acroFields.setField("TIPO_ATRAYENTERow4", getIntent().getExtras().getString("tipoatrayente4"));
+                    acroFields.setField("AnastrephaRow4", getIntent().getExtras().getString("anastrepha4"));
+                    acroFields.setField("CeratitisRow4", getIntent().getExtras().getString("ceratis4"));
+                    acroFields.setField("OtrosRow4", getIntent().getExtras().getString("otros4"));
+                    acroFields.setField("FENOLOGIARow4", getIntent().getExtras().getString("fenologia4"));
+                    acroFields.setField("ESTADOTRAMPARow4", getIntent().getExtras().getString("estado4"));
+                    acroFields.setField("OBSERVACIONESRow4", getIntent().getExtras().getString("observaciones4"));
+                    acroFields.setField("FIRMAPROPIETARIORow4", "Aqui");
+                    acroFields.setField("CODIGOTRAMPARow5", CodigoTrampa.getText() + "");
+                    acroFields.setField("MUNICIPIORow5", Municipio.getText() + "");
+                    acroFields.setField("TIPO_ATRAYENTERow5", Tipo_Atrayente.getText().toString());
+                    acroFields.setField("AnastrephaRow5", numeroanas.getText() + "");
+                    acroFields.setField("CeratitisRow5", numeroceratis.getText() + "");
+                    acroFields.setField("OtrosRow5", numerootros.getText() + "");
+                    acroFields.setField("FENOLOGIARow5", fenologia.getText() + "");
+                    acroFields.setField("ESTADOTRAMPARow5", Estadotrampa.getText() + "");
+                    acroFields.setField("OBSERVACIONESRow5", Observaciones.getText() + "");
+                    acroFields.setField("FIRMAPROPIETARIORow5", "Aqui");
+                }
             }
+
 
             stamper.close();
             pdfReader.close();
@@ -368,4 +473,201 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    private void Inicializar(){
+        Oficina = findViewById(R.id.oficina);
+        Municipio = findViewById(R.id.FormularioMunicipio);
+        Tipo_Atrayente = findViewById(R.id.formularioTipoAtrayente);
+        numeroanas = findViewById(R.id.numeroAnastrepha);
+        numeroceratis = findViewById(R.id.NumeroCeratitis);
+        numerootros = findViewById(R.id.numeroOtros);
+        fenologia = findViewById(R.id.FormularioFenologia);
+        Estadotrampa = findViewById(R.id.FormularioEstadotrampa);
+        Observaciones = findViewById(R.id.FomuarioObservaciones);
+        nombreColector = findViewById(R.id.NombreColector);
+        Nombredelaruta = findViewById(R.id.NombreRuta);
+        semana = findViewById(R.id.Numerosemanaepidemiologica);
+        responsable = findViewById(R.id.Responsable);
+        registroruta = findViewById(R.id.RegistroRuta);
+        codigoruta = findViewById(R.id.CodigoRuta);
+        CodigoTrampa = findViewById(R.id.CodigoTrampa);
+        fechacoleccion = findViewById(R.id.FechaColeccion);
+        firma = (SignaturePad) findViewById(R.id.firmadueñopredio);
+        Guardar = findViewById(R.id.GuardarFormulario);
+        auth = FirebaseAuth.getInstance();
+        fechacoleccion.setText(fechaactual());
+        CodigoTrampa.setText(getIntent().getStringExtra("codigotrampa"));
+        baseDatos = FirebaseDatabase.getInstance().getReference();
+        usuarios = baseDatos.child("Usuarios");
+        CentroAcopio = findViewById(R.id.CentroAcopio);
+        Guardarfirma = findViewById(R.id.savesignature);
+        limpiarfirma = findViewById(R.id.clearsignature);
+    }
+    private void Enviardatos(){
+        Log.e("añadir",añadir+"");
+        Intent intent = new Intent(LlenarFormularioActivity.this,MapaInspectorActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        intent.putExtra("CentroAcopio",CentroAcopio.getText()+"");
+        intent.putExtra("semana",semana.getText()+"");
+        intent.putExtra("oficina",Oficina.getText()+"");
+        intent.putExtra("responsable",responsable.getText()+"");
+        intent.putExtra("colector1",nombreColector.getText()+"");
+        intent.putExtra("registroruta",registroruta.getText()+"");
+        intent.putExtra("nombreruta",Nombredelaruta.getText()+"");
+        intent.putExtra("codigoruta",codigoruta.getText()+"");
+        if (añadir == 1){
+            Log.e("llenar","entro añadir 1 enviar");
+            intent.putExtra("codigotrampa1",CodigoTrampa.getText()+"");
+            intent.putExtra("municipio1",Municipio.getText()+"");
+            intent.putExtra("atrayente1",Tipo_Atrayente.getText()+"");
+            intent.putExtra("anastrepha1",numeroanas.getText()+"");
+            intent.putExtra("ceratis1",numeroceratis.getText()+"");
+            intent.putExtra("otros1",numerootros.getText()+"");
+            intent.putExtra("fenologia1",fenologia.getText()+"");
+            intent.putExtra("estado1",Estadotrampa.getText()+"");
+            intent.putExtra("observaciones1",Observaciones.getText()+"");
+        }
+        if (añadir == 2) {
+            if (getIntent().getExtras() != null) {
+                Log.e("llenar","entro añadir 2 enviar");
+                intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
+                intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
+                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
+                intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
+                intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
+                intent.putExtra("fenologia1", getIntent().getExtras().getString("fenologia1"));
+                intent.putExtra("estado1", getIntent().getExtras().getString("estado1"));
+                Log.e("estado", getIntent().getExtras().getString("estado1"));
+                intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
+                intent.putExtra("codigotrampa2", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio2", Municipio.getText() + "");
+                intent.putExtra("atrayente2", Tipo_Atrayente.getText() + "");
+                intent.putExtra("anastrepha2", numeroanas.getText() + "");
+                intent.putExtra("ceratis2", numeroceratis.getText() + "");
+                intent.putExtra("otros2", numerootros.getText() + "");
+                intent.putExtra("fenologia2", fenologia.getText() + "");
+                intent.putExtra("estado2", Estadotrampa.getText() + "");
+                intent.putExtra("observaciones2", Observaciones.getText() + "");
+            }
+            if (añadir == 3) {
+                intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
+                intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
+                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
+                intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
+                intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
+                intent.putExtra("fenologia1", getIntent().getExtras().getString("fenologia1"));
+                intent.putExtra("estado1", getIntent().getExtras().getString("estado1"));
+                intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
+                intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
+                intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
+                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
+                intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
+                intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
+                intent.putExtra("fenologia2", getIntent().getExtras().getString("fenologia2"));
+                intent.putExtra("estado2", getIntent().getExtras().getString("estado2"));
+                intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
+                intent.putExtra("codigotrampa3", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio3", CodigoTrampa.getText() + "");
+                intent.putExtra("atrayente3", CodigoTrampa.getText() + "");
+                intent.putExtra("anastrepha3", CodigoTrampa.getText() + "");
+                intent.putExtra("ceratis3", CodigoTrampa.getText() + "");
+                intent.putExtra("otros3", CodigoTrampa.getText() + "");
+                intent.putExtra("fenologia3", CodigoTrampa.getText() + "");
+                intent.putExtra("estado3", CodigoTrampa.getText() + "");
+                intent.putExtra("observaciones3", CodigoTrampa.getText() + "");
+            }
+            if (añadir == 4) {
+                intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
+                intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
+                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
+                intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
+                intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
+                intent.putExtra("fenologia1", getIntent().getExtras().getString("fenologia1"));
+                intent.putExtra("estado1", getIntent().getExtras().getString("estado1"));
+                intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
+                intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
+                intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
+                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
+                intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
+                intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
+                intent.putExtra("fenologia2", getIntent().getExtras().getString("fenologia2"));
+                intent.putExtra("estado2", getIntent().getExtras().getString("estado2"));
+                intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
+                intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
+                intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
+                intent.putExtra("atrayente3", getIntent().getExtras().getString("tipoatrayente3"));
+                intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
+                intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
+                intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
+                intent.putExtra("fenologia3", getIntent().getExtras().getString("fenologia3"));
+                intent.putExtra("estado3", getIntent().getExtras().getString("estado3"));
+                intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
+                intent.putExtra("codigotrampa4", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio4", CodigoTrampa.getText() + "");
+                intent.putExtra("atrayente4", CodigoTrampa.getText() + "");
+                intent.putExtra("anastrepha4", CodigoTrampa.getText() + "");
+                intent.putExtra("ceratis4", CodigoTrampa.getText() + "");
+                intent.putExtra("otros4", CodigoTrampa.getText() + "");
+                intent.putExtra("fenologia4", CodigoTrampa.getText() + "");
+                intent.putExtra("estado4", CodigoTrampa.getText() + "");
+                intent.putExtra("observaciones4", CodigoTrampa.getText() + "");
+            }
+            if (añadir==5){
+                intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
+                intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
+                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
+                intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
+                intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
+                intent.putExtra("fenologia1", getIntent().getExtras().getString("fenologia1"));
+                intent.putExtra("estado1", getIntent().getExtras().getString("estado1"));
+                intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
+                intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
+                intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
+                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
+                intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
+                intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
+                intent.putExtra("fenologia2", getIntent().getExtras().getString("fenologia2"));
+                intent.putExtra("estado2", getIntent().getExtras().getString("estado2"));
+                intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
+                intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
+                intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
+                intent.putExtra("atrayente3", getIntent().getExtras().getString("tipoatrayente3"));
+                intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
+                intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
+                intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
+                intent.putExtra("fenologia3", getIntent().getExtras().getString("fenologia3"));
+                intent.putExtra("estado3", getIntent().getExtras().getString("estado3"));
+                intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
+                intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa3"));
+                intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
+                intent.putExtra("atrayente4", getIntent().getExtras().getString("tipoatrayente4"));
+                intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
+                intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
+                intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
+                intent.putExtra("fenologia4", getIntent().getExtras().getString("fenologia4"));
+                intent.putExtra("estado4", getIntent().getExtras().getString("estado4"));
+                intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
+                intent.putExtra("codigotrampa5", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio5", CodigoTrampa.getText() + "");
+                intent.putExtra("atrayente5", CodigoTrampa.getText() + "");
+                intent.putExtra("anastrepha5", CodigoTrampa.getText() + "");
+                intent.putExtra("ceratis5", CodigoTrampa.getText() + "");
+                intent.putExtra("otros5", CodigoTrampa.getText() + "");
+                intent.putExtra("fenologia5", CodigoTrampa.getText() + "");
+                intent.putExtra("estado5", CodigoTrampa.getText() + "");
+                intent.putExtra("observaciones5", CodigoTrampa.getText() + "");
+            }
+        }
+        añadir ++;
+        intent.putExtra("añadir",añadir);
+        startActivity(intent);
+
+    }
+
 }

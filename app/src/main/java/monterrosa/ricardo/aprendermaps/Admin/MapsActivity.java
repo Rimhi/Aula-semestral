@@ -3,6 +3,7 @@ package monterrosa.ricardo.aprendermaps.Admin;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -113,6 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 marcador = mMap.addMarker(new MarkerOptions().anchor(0.0f,1.0f).position(latLng));
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                 builder.setTitle("¿Esta es la posicion de una trampa?")
+                        .setCancelable(false)
                         .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -135,8 +138,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     @Override
                                     public void onClick(View view) {
                                         dialog.dismiss();
-
-
                                         Long id = Long.parseLong( idtrampa.getText().toString() );
 
                                         Trampa trampa = new Trampa(
@@ -204,7 +205,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                        Intent intent = new Intent(getApplicationContext(),InformacionTrampaActivity.class);
                        intent.putExtra("codigotrampa",idtrampa[1]);
                        intent.putExtra("indicio",snippet[1]);
-                       intent.putExtra("posicion",marker.getPosition());
+                       intent.putExtra("posicion",marker.getPosition()+"");
                        startActivity(intent);
                    }
                });
@@ -259,7 +260,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if( mMap != null && trampa != null){
                 MarkerOptions markerOptions = new MarkerOptions()
                         .title("Identificacion: "+trampa.id)
-                        .snippet("Referencia: "+trampa.direccion)
+                        .snippet("Fecha: "+trampa.fechaInicio)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail))
                         .position( new LatLng(trampa.latitud, trampa.longitud) );
                 mMap.addMarker(markerOptions);
             }
@@ -292,12 +294,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (mMap != null && modeloRegistro !=null){
                 marcadorinspectores = mMap.addMarker(new MarkerOptions()
                         .title(modeloRegistro.ceduladarposiciontelefonoinspector)
-                        .snippet("Primera o Ultima Conexion a la aplicacion")
+                        .snippet(modeloRegistro.nombredarposicioninspector)
                         .position(new LatLng(modeloRegistro.latitud,modeloRegistro.longitud))
                         .icon(getBitmapFromVector(MapsActivity.this,R.drawable.ic_person_posicion,getResources().getColor(R.color.Ultimaposicion))));
-                if (marcadorinspectores.getTitle().equals(modeloRegistro.ceduladarposiciontelefonoinspector)) {
-                    mMap.setInfoWindowAdapter(new InspectorInfoWindowAdapter(getLayoutInflater()));
-                }
+
             }
         }
 
@@ -307,14 +307,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             final ModeloDarposicion modeloRegistro = dataSnapshot.getValue(ModeloDarposicion.class);
             if (mMap != null && modeloRegistro !=null){
                 marcadorinspectores = mMap.addMarker(new MarkerOptions()
-                        .title(modeloRegistro.ceduladarposiciontelefonoinspector)
-                        .snippet("Telefono: "+modeloRegistro.telefonodarposicioninspector)
+                        .title("Cedula: "+modeloRegistro.ceduladarposiciontelefonoinspector)
+                        .snippet("Nombre: "+modeloRegistro.nombredarposicioninspector)
                         .position(new LatLng(modeloRegistro.latitud,modeloRegistro.longitud))
-                        .icon(getBitmapFromVector(MapsActivity.this,R.drawable.ic_person_posicion,getResources().getColor(R.color.Activo))));
-                if (marcadorinspectores.getTitle().equals(modeloRegistro.ceduladarposiciontelefonoinspector)) {
-                    mMap.setInfoWindowAdapter(new InspectorInfoWindowAdapter(getLayoutInflater()));
-                    marcadorinspectores.showInfoWindow();
-                }
+                        .icon(getBitmapFromVector(MapsActivity.this,R.drawable.ic_person_posicion,getResources().getColor(R.color.colorPrimaryDark))));
             }
 
         }
