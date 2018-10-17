@@ -119,6 +119,7 @@ public class InspectorActivity extends AppCompatActivity
                                 }
                             });
                     dialog = builder.create();
+                    if (dialog!=null || !InspectorActivity.super.isDestroyed())
                     dialog.show();
                     if (dialog.isShowing()) {
                         dialog.dismiss();

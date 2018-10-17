@@ -24,7 +24,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -52,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private  FirebaseAuth.AuthStateListener authStateListener;
     private ProgressDialog progreso;
     private static final int COD_PERMISOS = 3452;
-    private DatabaseReference correosAdmin;
     private DatabaseReference reference;
+    private DatabaseReference acceso;
+    private DatabaseReference inhabilitado;
     private  String Verificacion = "rimhi7@gmail.com";
 
     @Override
@@ -65,27 +70,93 @@ public class MainActivity extends AppCompatActivity {
         contraseña = findViewById(R.id.contraseñaInspector);
         correo = findViewById(R.id.correoInspector);
         progreso = new ProgressDialog(this);
+        reference = FirebaseDatabase.getInstance().getReference();
+        inhabilitado = reference.child("inhabilitarCorreos");
+        acceso = reference.child("habilitarCorreos");
+
+
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
+                acceso.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if (firebaseAuth.getCurrentUser()!=null)
+                        if (dataSnapshot.getValue(String.class).equals(firebaseAuth.getCurrentUser().getEmail()+"")){
+                            inhabilitado.addChildEventListener(new ChildEventListener() {
+                                @Override
+                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                    if (firebaseAuth.getCurrentUser()!=null)
+                                    if (dataSnapshot.getValue().equals(firebaseAuth.getCurrentUser().getEmail()+"")) {
+                                        mAuth.signOut();
+                                        Toast.makeText(MainActivity.this, "has sido INHABILITADO, consulta con tu administrador", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        if (firebaseAuth.getCurrentUser() != null) {
+                                            Log.d(TAG, "signInWithEmail:success");
+                                            FirebaseUser user = mAuth.getCurrentUser();
+                                            if (user.getEmail().equals(Verificacion)) {
+                                                Intent intent = new Intent(MainActivity.this, AdminActivity.class).addFlags(
+                                                        Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
+                                            } else {
+                                                Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
+                                                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
 
-                if (firebaseAuth.getCurrentUser()!=null){
-                    Log.d(TAG, "signInWithEmail:success");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    if (user.getEmail().equals(Verificacion)) {
-                        Intent intent = new Intent(MainActivity.this, AdminActivity.class).addFlags(
-                                Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    } else {
-                        Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                                            }
+
+                                        } else {
+                                            //Toast.makeText(MainActivity.this, "Datos Incorrectos", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                }
+
+                                @Override
+                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                }
+
+                                @Override
+                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        }
 
                     }
 
-                }else {
-                    //Toast.makeText(MainActivity.this, "Datos Incorrectos", Toast.LENGTH_SHORT).show();
-                }
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
 
             }
         };
@@ -130,30 +201,78 @@ public class MainActivity extends AppCompatActivity {
             mAuth.signInWithEmailAndPassword(correo.getText().toString(), contraseña.getText().toString())
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
+                        public void onComplete(@NonNull final Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                if (user.getEmail().equals(Verificacion)) {
-                                    progreso.dismiss();
-                                    Intent intent = new Intent(MainActivity.this, AdminActivity.class)
-                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
-                                } else {
-                                    progreso.dismiss();
-                                    Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
-                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
+                                Log.e("DATOS","CORRECTOS");
+                                acceso.addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        Log.e("entro acceso", dataSnapshot.getValue(String.class));
+                                        if (dataSnapshot.getValue(String.class).equals(correo.getText()+"")) {
+                                            inhabilitado.addChildEventListener(new ChildEventListener() {
+                                                @Override
+                                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                                    if (dataSnapshot.getValue(String.class).equals(correo.getText()+"")){
+                                                        mAuth.signOut();
+                                                        Toast.makeText(MainActivity.this, "has sido INHABILITADO, consulta con tu administrador", Toast.LENGTH_SHORT).show();
+                                                        progreso.dismiss();
+                                                    }
+                                                    else {
+                                                        Log.d(TAG, "signInWithEmail:success");
+                                                        FirebaseUser user = mAuth.getCurrentUser();
+                                                        if (user!=null)
+                                                        if (user.getEmail().equals(Verificacion)) {
+                                                            progreso.dismiss();
+                                                            Intent intent = new Intent(MainActivity.this, AdminActivity.class)
+                                                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                            startActivity(intent);
+                                                        } else {
+                                                            progreso.dismiss();
+                                                            Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
+                                                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                            startActivity(intent);
 
-                                }
+                                                        }
+                                                    }
+                                                }
+                                                @Override
+                                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                                }
+                                                @Override
+                                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                                                        }
+                                                @Override
+                                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                                                        }
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                }
+                                            });
+                                         }
+                                    }
+                                     @Override
+                                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                                            }
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                     }
+                                     @Override
+                                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                      }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                     }
+                                });
+
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(MainActivity.this, "Usuario o Contraseña Erroneos",
-                                        Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Usuario o Contraseña Erroneos",Toast.LENGTH_SHORT).show();
                                 progreso.dismiss();
                             }
+
+
                         }
                     });
         }

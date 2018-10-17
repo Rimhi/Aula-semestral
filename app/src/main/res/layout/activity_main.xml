@@ -12,6 +12,7 @@
          android:layout_height="wrap_content"
          android:id="@+id/correoInspector"
          android:hint="  Correo Electronico"
+         android:inputType="textEmailAddress"
          android:drawableLeft="@drawable/ic_persona"/>
      <EditText
          android:layout_width="match_parent"

@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="monterrosa.ricardo.aprendermaps.Admin.AjustesAdminFragment">
-
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,15 +21,67 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Colectores"
+            android:gravity="center"
+            android:textSize="20dp"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text|textAutoComplete"
+            android:id="@+id/colectorinhabilitado"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inhabilitar Colector"
+                android:id="@+id/inhabilitar"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Habilitar Colector"
+                android:id="@+id/habilitar"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Colectores Inhabilitados"
             android:gravity="center"
             android:textSize="20dp"/>
+
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/ColectoresInhabiitados">
         </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="Permitir acceso a la aplicacion a:"
+            android:layout_marginTop="20dp"
+            android:gravity="center"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/permititacceso"
+            android:inputType="textAutoComplete|textEmailAddress"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Permitir Acceso"
+            android:id="@+id/acesso"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="Correos permitidos:"
+            android:gravity="center"
+            android:layout_marginTop="20dp"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,8 +91,9 @@
             android:textSize="20dp"/>
         <Spinner
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></Spinner>
+            android:layout_height="wrap_content">
+        </Spinner>
     </LinearLayout>
-
+   </ScrollView>
 
 </FrameLayout>

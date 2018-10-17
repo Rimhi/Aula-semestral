@@ -7,6 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import monterrosa.ricardo.aprendermaps.R;
 
@@ -19,6 +28,9 @@ import monterrosa.ricardo.aprendermaps.R;
  * create an instance of this fragment.
  */
 public class AjustesAdminFragment extends Fragment {
+    private EditText correocolector,permitiracceso;
+    private DatabaseReference databaseReference,habilitar,inhabilitar;
+    private Button btn_inhabilitar,btn_habilitar,btn_acceso;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -64,8 +76,139 @@ public class AjustesAdminFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ajustes_admin, container, false);
+        View view = inflater.inflate(R.layout.fragment_ajustes_admin, container, false);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        inhabilitar = databaseReference.child("inhabilitarCorreos");
+        habilitar = databaseReference.child("habilitarCorreos");
+        correocolector = view.findViewById(R.id.colectorinhabilitado);
+        permitiracceso = view.findViewById(R.id.permititacceso);
+        btn_inhabilitar = view.findViewById(R.id.inhabilitar);
+        btn_inhabilitar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inhabilitarcolector();
+            }
+        });
+        btn_acceso = view.findViewById(R.id.acesso);
+        btn_acceso.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                permitirAcceso();
+            }
+        });
+     btn_habilitar = view.findViewById(R.id.habilitar);
+     btn_habilitar.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view) {
+            habilitarColector();
+         }
+     });
+
+        return  view;
+    }
+    public void inhabilitarcolector(){
+        inhabilitar.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String correo = dataSnapshot.getValue(String.class);
+                if (correo.equals(correocolector.getText()+"")){
+                    Toast.makeText(getContext(), "El colector ya esta inhabilitado", Toast.LENGTH_SHORT).show();
+                }else {
+                    inhabilitar.push().setValue(correocolector.getText()+"");
+                    Toast.makeText(getContext(), "inhabilitado", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+    public void habilitarColector(){
+        inhabilitar.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String correo = dataSnapshot.getValue(String.class);
+                if (correo.equals(correocolector.getText()+"")){
+                    dataSnapshot.getRef().setValue(null);
+                    Toast.makeText(getContext(), "Habilitado", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getContext(), "Ya se encuentra habilitado", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    public void permitirAcceso(){
+        habilitar.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String correo = dataSnapshot.getValue(String.class);
+                if (correo.equals(permitiracceso.getText().toString())){
+                    Toast.makeText(getContext(), "Ya tiene acceso.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    habilitar.push().setValue(permitiracceso.getText().toString());
+                    Toast.makeText(getContext(), "Acceso concedido.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event

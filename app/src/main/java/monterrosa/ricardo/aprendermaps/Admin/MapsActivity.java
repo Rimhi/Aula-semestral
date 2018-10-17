@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -127,6 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 final ImageView ifo = view.findViewById(R.id.indicacion1);
                                 final EditText latlangtrampa = view.findViewById(R.id.latlangtrampa);
                                 final Button guardarmarcador = view.findViewById(R.id.guardartrampa);
+                                final Spinner tipo_trampa = view.findViewById(R.id.Tipo_trampa);
                                 ifo.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -145,13 +147,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 fecha.getText().toString(),
                                                 lugartrampa.getText().toString(),
                                                 latLng.latitude,
-                                                latLng.longitude
+                                                latLng.longitude,
+                                                tipo_trampa.getSelectedItem().toString()
+
                                         );
 
                                         miBaseDatos.child("trampas").child(id+"").setValue(trampa);
                                     }
                                 });
-
 
 
                                 AlertDialog.Builder savemarker = new AlertDialog.Builder(MapsActivity.this);
@@ -258,12 +261,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             final Trampa trampa = dataSnapshot.getValue(Trampa.class);
 
             if( mMap != null && trampa != null){
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .title("Identificacion: "+trampa.id)
-                        .snippet("Fecha: "+trampa.fechaInicio)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail))
-                        .position( new LatLng(trampa.latitud, trampa.longitud) );
-                mMap.addMarker(markerOptions);
+                if (trampa.Tipo_trampa.equals("Picudo Algodon")){
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .title("Identificacion: " + trampa.id)
+                            .snippet("Fecha: " + trampa.fechaInicio)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail_picudo))
+                            .position(new LatLng(trampa.latitud, trampa.longitud));
+                    mMap.addMarker(markerOptions);
+                }else {
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .title("Identificacion: " + trampa.id)
+                            .snippet("Fecha: " + trampa.fechaInicio)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail))
+                            .position(new LatLng(trampa.latitud, trampa.longitud));
+                    mMap.addMarker(markerOptions);
+                }
             }
         }
 

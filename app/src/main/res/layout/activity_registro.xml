@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/RegistroCorreoInspector"
             android:hint="  Correo Electronico"
+            android:inputType="textEmailAddress"
             android:drawableLeft="@drawable/ic_email_registro"/>
         <EditText
             android:layout_width="match_parent"
@@ -48,7 +49,7 @@
             android:layout_height="wrap_content"
             android:hint="  Telefono de Contacto"
             android:id="@+id/RegistroTelefono"
-            android:inputType="number"
+            android:inputType="phone"
             android:drawableLeft="@drawable/ic_contact_phone"/>
         <EditText
             android:layout_width="match_parent"

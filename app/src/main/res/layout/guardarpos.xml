@@ -66,6 +66,17 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Trampa para:"
+                android:layout_marginTop="10dp"/>
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/Tipo_trampa"
+                android:layout_marginTop="10dp"
+                android:id="@+id/Tipo_trampa"></Spinner>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Posicion real Actual del marcador de la trampa en latitud y longitud"/>
             <EditText

@@ -45,7 +45,7 @@ import monterrosa.ricardo.aprendermaps.R;
 import monterrosa.ricardo.aprendermaps.Servicios.ServiceNotificacion;
 
 public class AdminActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,VerInspectoresFragment.OnFragmentInteractionListener,AdminPerfilFragment.OnFragmentInteractionListener, AdminVisitasFragment.OnFragmentInteractionListener,ChatAdminFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,VerInspectoresFragment.OnFragmentInteractionListener,AdminPerfilFragment.OnFragmentInteractionListener, AdminVisitasFragment.OnFragmentInteractionListener,ChatAdminFragment.OnFragmentInteractionListener, AjustesAdminFragment.OnFragmentInteractionListener {
     private  static final int GALERY_INTENT = 1;
     private DatabaseReference mibasedatos,databaseReference;
     private FirebaseAuth auth;
@@ -126,6 +126,7 @@ public class AdminActivity extends AppCompatActivity
                                 }
                             });
                     dialog = builder.create();
+                    if (dialog!=null || !AdminActivity.super.isDestroyed())
                     dialog.show();
                     if (dialog.isShowing()) {
                         dialog.dismiss();
@@ -237,6 +238,10 @@ public class AdminActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_admin_chat) {
             final ChatAdminFragment framento = new ChatAdminFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,framento).commit();
+
+        } else if (id == R.id.nav_setting) {
+            final AjustesAdminFragment framento = new AjustesAdminFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,framento).commit();
 
         }
