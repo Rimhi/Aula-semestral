@@ -2,6 +2,8 @@ package monterrosa.ricardo.aprendermaps.Inspector;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -69,6 +71,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private String TAG = "DatoCopiar";
     private int añadir;
+    private AlertDialog dialog;
 
 
     @Override
@@ -78,6 +81,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         Inicializar();
         if (getIntent().getExtras()!=null){
             añadir = getIntent().getExtras().getInt("añadir");
+            CentroAcopio.setText(getIntent().getStringExtra("CentroAcopio"));
         }
         firma.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
@@ -185,10 +189,32 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
                 trampas = baseDatos.child("Inspecciones");
                 trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
-                if (añadir>15)
-                Enviardatos();
+                if (añadir<8) {
+                    if (path==null || path.isEmpty()){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(LlenarFormularioActivity.this);
+                        builder.setCancelable(false);
+                        builder.setMessage("No hay firma, ¿desea continuar?");
+                        builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Enviardatos();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog = builder.create();
+                        dialog.show();
+                    }else {
+                        Enviardatos();
+                    }
+
+                }
                 else
-                    Toast.makeText(LlenarFormularioActivity.this, "Maximo 15 trampas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LlenarFormularioActivity.this, "Maximo 8 trampas", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -1546,10 +1572,11 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("firma7",getIntent().getExtras().getString("firma7"));
                 intent.putExtra("firma8",path);
             }
-            añadir ++;
-            intent.putExtra("añadir",añadir);
-            startActivity(intent);
+
         }
+        añadir ++;
+        intent.putExtra("añadir",añadir);
+        startActivity(intent);
     }
 
 }

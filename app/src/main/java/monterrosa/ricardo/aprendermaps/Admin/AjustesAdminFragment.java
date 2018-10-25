@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +20,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 import monterrosa.ricardo.aprendermaps.R;
+import monterrosa.ricardo.aprendermaps.adapters.AdapterPermisos;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +37,9 @@ public class AjustesAdminFragment extends Fragment {
     private EditText correocolector,permitiracceso;
     private DatabaseReference databaseReference,habilitar,inhabilitar;
     private Button btn_inhabilitar,btn_habilitar,btn_acceso;
+    private RecyclerView colectoresinhabilitados,colectoreshabilitados;
+    private  ArrayList<String>inhabilitados = new ArrayList<String>();
+    private ArrayList<String>habilitados = new ArrayList<String>();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -83,6 +92,11 @@ public class AjustesAdminFragment extends Fragment {
         correocolector = view.findViewById(R.id.colectorinhabilitado);
         permitiracceso = view.findViewById(R.id.permititacceso);
         btn_inhabilitar = view.findViewById(R.id.inhabilitar);
+        colectoresinhabilitados = view.findViewById(R.id.ColectoresInhabiitados);
+        colectoreshabilitados = view.findViewById(R.id.Colectoreshabilitados);
+        colectoresinhabilitados.setHasFixedSize(true);
+        colectoreshabilitados.setHasFixedSize(true);
+        mostrar();
         btn_inhabilitar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,6 +124,7 @@ public class AjustesAdminFragment extends Fragment {
         inhabilitar.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e("entro a inhabilitados","adentro we");
                 String correo = dataSnapshot.getValue(String.class);
                 if (correo.equals(correocolector.getText()+"")){
                     Toast.makeText(getContext(), "El colector ya esta inhabilitado", Toast.LENGTH_SHORT).show();
@@ -117,10 +132,12 @@ public class AjustesAdminFragment extends Fragment {
                     inhabilitar.push().setValue(correocolector.getText()+"");
                     Toast.makeText(getContext(), "inhabilitado", Toast.LENGTH_SHORT).show();
                 }
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
 
             }
 
@@ -145,6 +162,7 @@ public class AjustesAdminFragment extends Fragment {
         inhabilitar.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e("entro a habilitados","adentro we");
                 String correo = dataSnapshot.getValue(String.class);
                 if (correo.equals(correocolector.getText()+"")){
                     dataSnapshot.getRef().setValue(null);
@@ -152,6 +170,7 @@ public class AjustesAdminFragment extends Fragment {
                 }else {
                     Toast.makeText(getContext(), "Ya se encuentra habilitado", Toast.LENGTH_SHORT).show();
                 }
+
             }
 
             @Override
@@ -161,7 +180,6 @@ public class AjustesAdminFragment extends Fragment {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
             }
 
             @Override
@@ -209,6 +227,64 @@ public class AjustesAdminFragment extends Fragment {
 
             }
         });
+    }
+    private void mostrar(){
+        inhabilitar.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                inhabilitados.add(dataSnapshot.getValue(String.class));
+                colectoresinhabilitados.setAdapter(new AdapterPermisos(inhabilitados));
+                colectoresinhabilitados.setLayoutManager(new LinearLayoutManager(getContext()));
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        habilitar.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                habilitados.add(dataSnapshot.getValue(String.class));
+                colectoreshabilitados.setAdapter(new AdapterPermisos(habilitados));
+                colectoreshabilitados.setLayoutManager(new LinearLayoutManager(getContext()));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

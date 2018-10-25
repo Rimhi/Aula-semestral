@@ -28,7 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text|textAutoComplete"
-            android:id="@+id/colectorinhabilitado"/>
+            android:id="@+id/colectorinhabilitado"
+            android:hint="Correo del que quiere inhabilitar"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,20 +56,22 @@
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:id="@+id/ColectoresInhabiitados">
         </android.support.v7.widget.RecyclerView>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:text="Permitir acceso a la aplicacion a:"
-            android:layout_marginTop="20dp"
-            android:gravity="center"/>
+            android:text="Correos permitidos:"
+            android:gravity="center"
+            android:layout_marginTop="20dp"/>
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/permititacceso"
+            android:hint="Correo del que quiere dar permiso"
             android:inputType="textAutoComplete|textEmailAddress"/>
         <Button
             android:layout_width="match_parent"
@@ -79,9 +82,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:text="Correos permitidos:"
-            android:gravity="center"
-            android:layout_marginTop="20dp"/>
+            android:text="Permitir acceso a la aplicacion a:"
+            android:layout_marginTop="20dp"
+            android:gravity="center"/>
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/Colectoreshabilitados">
+        </android.support.v7.widget.RecyclerView>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

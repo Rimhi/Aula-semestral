@@ -17,6 +17,7 @@
                 android:gravity="center"
                 android:text="Cargar Foto"
                 android:padding="10dp"
+                android:visibility="invisible"
                 android:drawableTop="@drawable/ic_insert_photo"/>
             <ImageView
                 android:layout_width="100dp"
@@ -29,6 +30,7 @@
                 android:text="Presiona aqui si la foto no ha cargado"
                 android:gravity="center"
                 android:padding="10dp"
+                android:visibility="invisible"
                 android:drawableTop="@drawable/ic_file_upload"/>
             <EditText
                 android:layout_width="match_parent"
