@@ -78,7 +78,7 @@ public class RegistroActivity extends AppCompatActivity {
     }
     public void registrar(View view){
         if (correo.getText().toString().isEmpty() || contraseña.getText().toString().isEmpty() || contraseña2.getText().toString().isEmpty()
-                || nombre.getText().toString().isEmpty() || direccion.getText().toString().isEmpty() || telefono.getText().toString().isEmpty()) {
+                || nombre.getText().toString().isEmpty() || direccion.getText().toString().isEmpty() || telefono.getText().toString().isEmpty() || file==null || file.toString().isEmpty()) {
             Toast.makeText(RegistroActivity.this,"Campos Vacios",Toast.LENGTH_SHORT).show();
         }else {
             if (contraseña.getText().toString().equals(contraseña2.getText().toString())) {
