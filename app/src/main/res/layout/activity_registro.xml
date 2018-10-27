@@ -33,6 +33,7 @@
         <EditText
             android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
             android:id="@+id/RegistroCorreoInspector"
             android:hint="  Correo Electronico"
             android:inputType="textEmailAddress"
@@ -45,6 +46,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:textColor="@color/colorPrimary"
             android:id="@+id/RegistroContraseñaInspector"
             android:hint="  Contraseña"
             android:inputType="textPassword"
@@ -55,6 +57,7 @@
         <EditText
             android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
             android:layout_margin="5dp"
             android:id="@+id/RegistroRepetirContraseñaInspector"
             android:hint="  Repite tu Contraseña"
@@ -68,6 +71,7 @@
             android:layout_margin="5dp"
             android:layout_height="wrap_content"
             android:inputType="number"
+            android:textColor="@color/colorPrimary"
             android:hint="  Cedula"
             android:id="@+id/RegistroCedula"
             android:background="@drawable/redondo"
@@ -79,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:hint="  Telefono de Contacto"
+            android:textColor="@color/colorPrimary"
             android:id="@+id/RegistroTelefono"
             android:inputType="phone"
             android:background="@drawable/redondo"
@@ -90,6 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:hint="  Direccion de Residencia"
+            android:textColor="@color/colorPrimary"
             android:inputType="textMultiLine"
             android:id="@+id/RegistroDireccion"
             android:background="@drawable/redondo"
@@ -97,11 +103,13 @@
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_direccion"/>
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:text="Cargar foto"
+            android:background="@drawable/redondo"
             android:onClick="ObtenerUri"
             android:padding="10dp"
+            android:layout_gravity="center"
             android:gravity="center"
             android:drawableTop="@drawable/ic_insert_photo"/>
         <ImageView
@@ -109,11 +117,13 @@
             android:layout_height="200px"
             android:id="@+id/RegistroImagen"
             android:layout_gravity="center"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            android:background="@drawable/bordeimagen"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            android:background="@color/btn"
             android:text="Si la imagen aun no carga haz click aqui"
             android:gravity="center"
             android:onClick="SubirArchivosAStorage"
@@ -124,12 +134,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Registrarse"
+            android:background="@drawable/redondo"
             android:onClick="registrar"
             android:drawableTop="@drawable/ic_person_add"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ya tengo una cuenta"
+            android:background="@drawable/redondo"
             android:textColor="#000"
             android:layout_marginTop="60dp"
             android:gravity="center"

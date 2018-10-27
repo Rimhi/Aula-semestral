@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     tools:context="monterrosa.ricardo.aprendermaps.Admin.AdminPerfilFragment">
     <ScrollView
         android:layout_width="match_parent"
@@ -9,7 +10,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,27 +34,43 @@
                 android:visibility="invisible"
                 android:drawableTop="@drawable/ic_file_upload"/>
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
+                android:layout_margin="5dp"
                 android:layout_height="wrap_content"
                 android:hint="  Nombre Completo"
                 android:id="@+id/editarnombreadmin"
+                android:paddingStart="10dp"
                 android:drawableLeft="@drawable/ic_name"/>
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
+                android:paddingStart="10dp"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
+                android:layout_margin="5dp"
                 android:layout_height="wrap_content"
                 android:hint="  Cedula"
                 android:id="@+id/editarcedulaadmin"
                 android:inputType="number"
                 android:drawableLeft="@drawable/ic_chat"/>
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:paddingStart="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_height="wrap_content"
                 android:hint="  Celular"
                 android:inputType="number"
                 android:id="@+id/editarcelularadmin"
                 android:drawableLeft="@drawable/ic_contact_phone"/>
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
+                android:layout_margin="5dp"
                 android:layout_height="wrap_content"
                 android:hint="  Direccion de residencia"
                 android:id="@+id/editardireccionadmin"
@@ -60,6 +78,9 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/redondo"
+                android:layout_margin="5dp"
+                android:padding="7dp"
                 android:text="  Editar"
                 android:layout_marginTop="5dp"
                 android:id="@+id/Editarpefiladmin"
@@ -69,33 +90,47 @@
                 android:layout_height="wrap_content"
                 android:text="Informacion de ingreso"
                 android:textSize="20dp"
+                android:textColor="@color/btn"
                 android:gravity="center"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="20dp"/>
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
+                android:layout_margin="5dp"
                 android:layout_height="wrap_content"
                 android:hint="  Correo Electronico"
                 android:id="@+id/editarcorreoelectronicoadmin"
                 android:focusable="false"
                 android:drawableLeft="@drawable/ic_email_registro"/>
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
+                android:layout_margin="5dp"
                 android:layout_height="wrap_content"
                 android:hint="  Contraseña"
                 android:id="@+id/editarcontraseñaadmin"
                 android:inputType="textPassword"
                 android:drawableLeft="@drawable/ic_lock"/>
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
+                android:layout_margin="5dp"
                 android:layout_height="wrap_content"
                 android:hint="  Repite la Contraeña"
                 android:inputType="textPassword"
+
                 android:id="@+id/editarrepetircontraseñaadmin"
                 android:drawableLeft="@drawable/ic_lock"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/redondo"
+                android:layout_margin="5dp"
+                android:padding="7dp"
                 android:text="Editar"
                 android:layout_marginTop="5dp"
                 android:id="@+id/editaringresoadmin"

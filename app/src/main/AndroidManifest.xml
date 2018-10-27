@@ -44,21 +44,25 @@
         <activity
             android:name=".Inspector.MapaInspectorActivity"
             android:label="@string/title_activiy_maps_inspector" />
-        <activity android:name=".Inspector.LlenarFormularioActivity" />
-        <activity android:name=".Admin.InformacionTrampaActivity" />
+        <activity android:name=".Inspector.LlenarFormularioActivity"
+            android:label="@string/app_name"/>
+        <activity android:name=".Admin.InformacionTrampaActivity"
+            android:label="@string/app_name"/>
         <activity
             android:name=".Inspector.InspectorActivity"
-            android:label="@string/title_activity_inspector"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RegistroActivity" />
+        <activity android:name=".RegistroActivity"
+            android:label="@string/app_name"/>
         <activity
             android:name=".Admin.AdminActivity"
-            android:label="@string/title_activity_admin"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".Servicios.ServiceNotificacion" />
 
-        <activity android:name=".Servicios.ProteccionActivity">
+        <activity android:name=".Servicios.ProteccionActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

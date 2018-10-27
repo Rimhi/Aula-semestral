@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     tools:context="monterrosa.ricardo.aprendermaps.Admin.InformacionTrampaActivity">
     <ScrollView
         android:layout_width="match_parent"
@@ -22,11 +23,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Fecha de colocacion de la trampa :"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="20dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Pulsa aqui Para la fecha"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
                 android:inputType="date"
                 android:focusable="false"
                 android:clickable="true"
@@ -37,28 +41,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Identificacion de la trampa :"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/editaridtrampa"
                 android:inputType="number"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:textColor="@color/btn"
                 android:text="Posicion real Actual del marcador de la trampa en latitud y longitud"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:focusable="false"
+                android:padding="10dp"
+                android:background="@drawable/redondo"
                 android:id="@+id/editarlatlangtrampa"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fechas de Inspeccion: "/>
+                android:text="Fechas de Inspeccion: "
+                android:textColor="@color/btn"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

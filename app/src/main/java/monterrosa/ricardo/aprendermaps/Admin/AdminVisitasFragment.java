@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -122,7 +123,10 @@ public class AdminVisitasFragment extends Fragment {
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                                 final LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
-                                if (llegadaMapa.Fecha.equals(fechaactual())) {
+                                if (!llegadaMapa.Fecha.equals(fechaactual())) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getContext(), "Hoy no hubo inspecciones", Toast.LENGTH_SHORT).show();
+                                }else {
                                     list.add(llegadaMapa);
                                     adapter = new FechaInspeccionAdapter(list);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());

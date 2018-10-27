@@ -305,8 +305,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             final ModeloDarposicion modeloRegistro = dataSnapshot.getValue(ModeloDarposicion.class);
             if (mMap != null && modeloRegistro !=null){
                 marcadorinspectores = mMap.addMarker(new MarkerOptions()
-                        .title(modeloRegistro.ceduladarposiciontelefonoinspector)
-                        .snippet(modeloRegistro.nombredarposicioninspector)
+                        .title("Cedula: "+modeloRegistro.ceduladarposiciontelefonoinspector)
+                        .snippet("Nombre: "+modeloRegistro.nombredarposicioninspector)
                         .position(new LatLng(modeloRegistro.latitud,modeloRegistro.longitud))
                         .icon(getBitmapFromVector(MapsActivity.this,R.drawable.ic_person_posicion,getResources().getColor(R.color.Ultimaposicion))));
 

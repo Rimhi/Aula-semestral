@@ -5,17 +5,34 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@color/colorAccent"
     android:layout_height="match_parent"
     tools:context="monterrosa.ricardo.aprendermaps.MainActivity">
-     <EditText
+     <TextView
          android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:textSize="30dp"
+         android:text="Bienvenido"
+         android:gravity="center"
+         android:textColor="@color/btn"
+         android:layout_margin="5dp"
+         android:padding="10dp"/>
+
+     <EditText
+         android:layout_width="300dp"
+         android:padding="10dp"
+         android:layout_margin="5dp"
          android:layout_height="wrap_content"
          android:id="@+id/correoInspector"
          android:hint="  Correo Electronico"
+         android:background="@drawable/redondo"
          android:inputType="textEmailAddress"
          android:drawableLeft="@drawable/ic_persona"/>
      <EditText
-         android:layout_width="match_parent"
+         android:layout_width="300dp"
+         android:padding="10dp"
+         android:layout_margin="5dp"
+         android:background="@drawable/redondo"
          android:layout_height="wrap_content"
          android:id="@+id/contraseñaInspector"
          android:hint="  Contraseña"
@@ -25,13 +42,16 @@
 
      <Button
          android:layout_marginTop="20dp"
-         android:layout_width="wrap_content"
+         android:layout_width="300dp"
          android:layout_height="wrap_content"
+         android:padding="10dp"
          android:text="Iniciar Sesion"
          android:onClick="irMapInspector"
-         android:drawableTop="@drawable/ic_lock_open" />
+         android:drawableTop="@drawable/ic_lock_open"
+         android:background="@drawable/redondo"/>
      <TextView
-         android:layout_width="match_parent"
+         android:layout_width="300dp"
+         android:padding="10dp"
          android:layout_height="wrap_content"
          android:text="olvide mi contraseña"
          android:textSize="18dp"
@@ -39,14 +59,15 @@
          android:layout_marginTop="30dp"
          android:onClick="recuperarcontraseña"
          android:drawableTop="@drawable/ic_key"
-         android:textColor="@color/colorPrimary"/>
+         android:background="@drawable/redondo"/>
      <TextView
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:layout_marginTop="30dp"
+         android:padding="10dp"
          android:text="¿Aun no tienes tu cuenta?  Registrate pulsando aqui ..."
          android:id="@+id/irRegistro"
-         android:textColor="@color/colorPrimary"
+         android:background="@drawable/redondo"
          android:onClick="onclick"
          android:gravity="center"
          android:drawableBottom="@drawable/ic_person_add"

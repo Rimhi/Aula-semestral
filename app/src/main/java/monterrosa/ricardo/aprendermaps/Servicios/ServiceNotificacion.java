@@ -21,11 +21,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import monterrosa.ricardo.aprendermaps.Admin.AdminActivity;
+import monterrosa.ricardo.aprendermaps.Admin.ChatAdminFragment;
 import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
+import monterrosa.ricardo.aprendermaps.Modelochat;
 import monterrosa.ricardo.aprendermaps.R;
 
 /**
@@ -45,10 +48,10 @@ public class ServiceNotificacion extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "Servicio  ", Toast.LENGTH_SHORT).show();
+        Log.e("Servicio","Iniciado");
         vernotificacion();
+        Notificacionmensaje();
         return  START_STICKY;
-
     }
 
     @Nullable
@@ -76,6 +79,48 @@ public class ServiceNotificacion extends Service {
                    Log.e("entra",llegadaMapa.NombreColector);
                    createNotification(llegadaMapa.NombreColector,"El colector ha hecho una visita",AdminActivity.class);
                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private String ObtenerHora(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        String Hora = "";
+        Calendar c = Calendar.getInstance();
+        Hora = simpleDateFormat.format(c.getTime())+"";
+        return Hora;
+    }
+    public void Notificacionmensaje(){
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        mibasedatos = databaseReference.child("Chat");
+        mibasedatos.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Modelochat llegadaMapa = dataSnapshot.getValue(Modelochat.class);
+                if (llegadaMapa.getHoramensaje().equals(ObtenerHora())){
+                    Log.e("entra",llegadaMapa.getNombre());
+                    createNotification(llegadaMapa.getNombre(),"Tienes un nuevo mensaje",ChatAdminFragment.class);
+                }
+
             }
 
             @Override

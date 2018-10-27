@@ -11,19 +11,23 @@
         android:id="@+id/CardViewClientes"
         card_view:cardCornerRadius="10dp"
         card_view:cardElevation="5dp"
-        card_view:cardUseCompatPadding="true">
+        card_view:cardUseCompatPadding="true"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@drawable/redondo">
 
             <ImageView
                 android:id="@+id/CardviewImagenlistaInspector"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:padding="@dimen/nav_header_vertical_spacing"
-                app:srcCompat="@mipmap/ic_launcher_round" />
+                app:srcCompat="@mipmap/ic_launcher_round"
+                android:background="@drawable/bordeimagen"
+                android:layout_gravity="center"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,20 +35,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="3dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nombre : " />
+                    android:text="Nombre : "
+                    android:textSize="18dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="18dp"
                     android:id="@+id/CardviewNombrelistaInspector"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="3dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -57,7 +65,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="3dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -70,7 +79,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="3dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,7 +93,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="3dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

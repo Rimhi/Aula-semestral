@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     tools:context="monterrosa.ricardo.aprendermaps.Admin.AjustesAdminFragment">
    <ScrollView
        android:layout_width="match_parent"
@@ -9,24 +10,30 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Configuraciones"
             android:gravity="center"
             android:textSize="30dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/btn"
             android:padding="5dp"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Colectores"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/btn"
             android:gravity="center"
             android:textSize="20dp"/>
         <EditText
             android:layout_width="match_parent"
+            android:padding="10dp"
+            android:layout_margin="5dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/redondo"
             android:inputType="text|textAutoComplete"
             android:id="@+id/colectorinhabilitado"
             android:hint="Correo del que quiere inhabilitar"/>
@@ -38,13 +45,18 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/redondo"
                 android:text="Inhabilitar Colector"
-                android:id="@+id/inhabilitar"/>
+                android:id="@+id/inhabilitar"
+                android:padding="10dp"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Habilitar Colector"
-                android:id="@+id/habilitar"/>
+                android:padding="10dp"
+                android:id="@+id/habilitar"
+                android:layout_margin="10dp"
+                android:background="@drawable/redondo"/>
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"
@@ -52,6 +64,7 @@
             android:layout_marginTop="20dp"
             android:text="Colectores Inhabilitados"
             android:gravity="center"
+            android:textColor="@color/btn"
             android:textSize="20dp"/>
 
         <android.support.v7.widget.RecyclerView
@@ -65,11 +78,15 @@
             android:textSize="20dp"
             android:text="Correos permitidos:"
             android:gravity="center"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            android:textColor="@color/btn"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/redondo"
+            android:padding="10dp"
+            android:layout_margin="5dp"
             android:id="@+id/permititacceso"
             android:hint="Correo del que quiere dar permiso"
             android:inputType="textAutoComplete|textEmailAddress"/>
@@ -77,11 +94,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Permitir Acceso"
+            android:background="@drawable/redondo"
+            android:padding="10dp"
+            android:layout_margin="5dp"
             android:id="@+id/acesso"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20dp"
+            android:textColor="@color/btn"
             android:text="Permitir acceso a la aplicacion a:"
             android:layout_marginTop="20dp"
             android:gravity="center"/>
@@ -96,6 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Agregar ajustes"
+            android:textColor="@color/btn"
             android:gravity="center"
             android:textSize="20dp"/>
         <Spinner

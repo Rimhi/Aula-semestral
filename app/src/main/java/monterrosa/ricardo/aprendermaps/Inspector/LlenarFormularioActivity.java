@@ -149,7 +149,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                  * Guarda la fecha de inspeccionde la trampa a la cual se le dio en Informacion
                  */
                 Copiarpdf();
-                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid());
+                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid(),Observaciones.getText()+"");
                 baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
                 trampas = baseDatos.child("Inspecciones");
                 trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
@@ -185,7 +185,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         addformulario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid());
+                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid(),Observaciones.getText()+"");
                 baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
                 trampas = baseDatos.child("Inspecciones");
                 trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
@@ -328,7 +328,35 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             AcroFields acroFields = stamper.getAcroFields();
            // Log.e("Datos", acroFields.getFields()+"");
 
+            if (añadir==1){
+                acroFields.setField("Centro_de _acopio",CentroAcopio.getText()+"");
+                acroFields.setField("Fecha_ddmmaaaa",fechaactual());
+                acroFields.setField("Semana",semana.getText()+"");
+                acroFields.setField("Oficina", Oficina.getText()+"");
+                acroFields.setField("Responsable", responsable.getText()+"");
+                acroFields.setField("colectorRow1", nombreColector.getText()+"");
+                acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+                acroFields.setField("Codigo_ruta", codigoruta.getText()+"");
+                acroFields.setField("CODIGOTRAMPARow1.0", CodigoTrampa.getText() + "");
+                acroFields.setField("MUNICIPIORow1", Municipio.getText() + "");
+                acroFields.setField("TIPO_ATRAYENTERow1", Tipo_Atrayente.getText().toString());
+                acroFields.setField("AnastrephaRow1", numeroanas.getText() + "");
+                acroFields.setField("CeratitisRow1", numeroceratis.getText() + "");
+                acroFields.setField("OtrosRow1", numerootros.getText() + "");
+                acroFields.setField("FENOLOGIARow1", fenologia.getText() + "");
+                acroFields.setField("ESTADOTRAMPARow1", Estadotrampa.getText() + "");
+                acroFields.setField("OBSERVACIONESRow1", Observaciones.getText() + "");
 
+                PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
+                ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
+                ad.setProportionalIcon(false);
+                if (ruta!=null || !ruta.isEmpty()) {
+                    ad.setImage(Image.getInstance(ruta));
+                    acroFields.replacePushbuttonField("Firma1", ad.getField());
+                }
+
+            }
 
             if (getIntent().getExtras() !=null){
                 añadir = getIntent().getExtras().getInt("añadir");

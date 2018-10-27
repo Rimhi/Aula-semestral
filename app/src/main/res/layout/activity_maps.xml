@@ -1,9 +1,44 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="monterrosa.ricardo.aprendermaps.Admin.MapsActivity" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="monterrosa.ricardo.aprendermaps.Admin.MapsActivity">
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="monterrosa.ricardo.aprendermaps.Admin.MapsActivity"
+        />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_alignEnd="@id/map"
+    android:background="@drawable/redondo"
+    android:padding="10dp"
+    android:layout_margin="10dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/jail_picudo"
+        android:text="Picudo Algodon"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/jail"
+        android:text="Mosca de la fruta"
+        android:layout_margin="5dp"/>
+
+</LinearLayout>
+
+
+</RelativeLayout>
+
 
