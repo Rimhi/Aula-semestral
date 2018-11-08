@@ -23,9 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-
-        </activity>
+        <activity android:name=".MainActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -44,16 +42,19 @@
         <activity
             android:name=".Inspector.MapaInspectorActivity"
             android:label="@string/title_activiy_maps_inspector" />
-        <activity android:name=".Inspector.LlenarFormularioActivity"
-            android:label="@string/app_name"/>
-        <activity android:name=".Admin.InformacionTrampaActivity"
-            android:label="@string/app_name"/>
+        <activity
+            android:name=".Inspector.LlenarFormularioActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".Admin.InformacionTrampaActivity"
+            android:label="@string/app_name" />
         <activity
             android:name=".Inspector.InspectorActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RegistroActivity"
-            android:label="@string/app_name"/>
+        <activity
+            android:name=".RegistroActivity"
+            android:label="@string/app_name" />
         <activity
             android:name=".Admin.AdminActivity"
             android:label="@string/app_name"
@@ -61,7 +62,8 @@
 
         <service android:name=".Servicios.ServiceNotificacion" />
 
-        <activity android:name=".Servicios.ProteccionActivity"
+        <activity
+            android:name=".Servicios.ProteccionActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -69,6 +71,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".TutorialActivity"
+            android:label="@string/title_activity_tutorial"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

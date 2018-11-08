@@ -3,6 +3,7 @@ package monterrosa.ricardo.aprendermaps.Admin;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.IllegalFormatCodePointException;
 import java.util.Locale;
 
 import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
@@ -43,6 +46,7 @@ import monterrosa.ricardo.aprendermaps.MainActivity;
 import monterrosa.ricardo.aprendermaps.ModeloRegistro;
 import monterrosa.ricardo.aprendermaps.R;
 import monterrosa.ricardo.aprendermaps.Servicios.ServiceNotificacion;
+import monterrosa.ricardo.aprendermaps.TutorialActivity;
 
 public class AdminActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,VerInspectoresFragment.OnFragmentInteractionListener,AdminPerfilFragment.OnFragmentInteractionListener, AdminVisitasFragment.OnFragmentInteractionListener,ChatAdminFragment.OnFragmentInteractionListener, AjustesAdminFragment.OnFragmentInteractionListener {
@@ -59,6 +63,7 @@ public class AdminActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
+
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,6 +83,8 @@ public class AdminActivity extends AppCompatActivity
         databaseReference = FirebaseDatabase.getInstance().getReference();
         mibasedatos = databaseReference.child("Usuarios");
         mibasedatos.addChildEventListener(addlistener);
+
+
         if (!user.isEmailVerified()) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
             builder.setTitle("Verificacion de email")
@@ -136,6 +143,7 @@ public class AdminActivity extends AppCompatActivity
             }
         };
         startService(new Intent(AdminActivity.this, ServiceNotificacion.class));
+
 
 
 
@@ -206,6 +214,7 @@ public class AdminActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity( new Intent(AdminActivity.this, TutorialActivity.class));
             return true;
         }
 
@@ -269,6 +278,5 @@ public class AdminActivity extends AppCompatActivity
 
         return  fecha;
     }
-
 
 }

@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,6 +29,7 @@ import java.util.Locale;
 import monterrosa.ricardo.aprendermaps.Admin.AdminActivity;
 import monterrosa.ricardo.aprendermaps.Admin.ChatAdminFragment;
 import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
+import monterrosa.ricardo.aprendermaps.ModeloRegistro;
 import monterrosa.ricardo.aprendermaps.Modelochat;
 import monterrosa.ricardo.aprendermaps.R;
 
@@ -39,6 +41,7 @@ public class ServiceNotificacion extends Service {
     private DatabaseReference databaseReference;
     private DatabaseReference mibasedatos;
     private NotificationManager notifManager;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -117,9 +120,12 @@ public class ServiceNotificacion extends Service {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Modelochat llegadaMapa = dataSnapshot.getValue(Modelochat.class);
                 if (llegadaMapa.getHoramensaje().equals(ObtenerHora())){
-                    Log.e("entra",llegadaMapa.getNombre());
-                    createNotification(llegadaMapa.getNombre(),"Tienes un nuevo mensaje",ChatAdminFragment.class);
+                    if (llegadaMapa.getNombre()!=Obtnernombre()) {
+                        Log.e("entra", llegadaMapa.getNombre());
+                        createNotification(llegadaMapa.getNombre(), "Tienes nuevos mensajes", ChatAdminFragment.class);
+                    }
                 }
+
 
             }
 
@@ -192,5 +198,44 @@ public class ServiceNotificacion extends Service {
         }
         Notification notification = builder.build();
         notifManager.notify(NOTIFY_ID, notification);
+    }
+    public String Obtnernombre(){
+        final String[] nombre = {""};
+        DatabaseReference getnombre;
+        final FirebaseAuth auth = FirebaseAuth.getInstance();
+        databaseReference= FirebaseDatabase.getInstance().getReference();
+        getnombre =  databaseReference.child("Usuarios");
+        getnombre.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
+                if (auth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)){
+                    nombre[0] = modeloRegistro.Nombre;
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return nombre[0];
+
     }
 }

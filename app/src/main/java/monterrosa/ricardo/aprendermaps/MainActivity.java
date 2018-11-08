@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private DatabaseReference acceso;
     private DatabaseReference inhabilitado;
+    private DatabaseReference admin;
     private  String Verificacion = "rimhi7@gmail.com";
 
     @Override
@@ -93,17 +94,44 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         if (firebaseAuth.getCurrentUser() != null) {
                                             Log.d(TAG, "signInWithEmail:success");
-                                            FirebaseUser user = mAuth.getCurrentUser();
-                                            if (user.getEmail().equals(Verificacion)) {
-                                                Intent intent = new Intent(MainActivity.this, AdminActivity.class).addFlags(
-                                                        Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                startActivity(intent);
-                                            } else {
-                                                Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
-                                                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                startActivity(intent);
+                                            final FirebaseUser user = mAuth.getCurrentUser();
+                                            admin = reference.child("Admin");
+                                            admin.addChildEventListener(new ChildEventListener() {
+                                                @Override
+                                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                                    if (user.getEmail().equals(dataSnapshot.getValue())) {
+                                                        Intent intent = new Intent(MainActivity.this, AdminActivity.class).addFlags(
+                                                                Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                        startActivity(intent);
+                                                    } else {
+                                                        Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
+                                                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                        startActivity(intent);
 
-                                            }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                                }
+
+                                                @Override
+                                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                                }
+
+                                                @Override
+                                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+
 
                                         } else {
                                             //Toast.makeText(MainActivity.this, "Datos Incorrectos", Toast.LENGTH_SHORT).show();
