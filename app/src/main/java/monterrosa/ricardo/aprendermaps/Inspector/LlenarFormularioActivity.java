@@ -3,6 +3,7 @@ package monterrosa.ricardo.aprendermaps.Inspector;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,7 +14,9 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,7 +73,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     private String Nombre,Cedula,correo;
     private FirebaseAuth auth;
     private String TAG = "DatoCopiar";
-    private int añadir;
+    private int añadir = 0;
     private AlertDialog dialog;
 
 
@@ -155,15 +158,16 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
                 LlenarPedf(new File(Environment.getExternalStorageDirectory().toString(),"Reportes")+"",path);
                 Toast.makeText(LlenarFormularioActivity.this, path, Toast.LENGTH_SHORT).show();
-                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reportes/","forma.pdf" ));
+                Context context = LlenarFormularioActivity.this;
                 String[] mailto = {""};
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "");
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reporte "+fechaactual());
                 emailIntent.putExtra(android.content.Intent.EXTRA_TEXT,"");
                 emailIntent.setType("application/pdf");
-                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-              //  startActivity(Intent.createChooser(emailIntent, ""));
+                emailIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"/Reportes/forma.pdf" )));
+                emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(Intent.createChooser(emailIntent, ""));
             }
         });
         Guardarfirma.setOnClickListener(new View.OnClickListener() {
@@ -328,67 +332,50 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             AcroFields acroFields = stamper.getAcroFields();
            // Log.e("Datos", acroFields.getFields()+"");
 
-            if (añadir==1){
-                acroFields.setField("Centro_de _acopio",CentroAcopio.getText()+"");
-                acroFields.setField("Fecha_ddmmaaaa",fechaactual());
-                acroFields.setField("Semana",semana.getText()+"");
-                acroFields.setField("Oficina", Oficina.getText()+"");
-                acroFields.setField("Responsable", responsable.getText()+"");
-                acroFields.setField("colectorRow1", nombreColector.getText()+"");
-                acroFields.setField("Registro_ruta",registroruta.getText()+"");
-                acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
-                acroFields.setField("Codigo_ruta", codigoruta.getText()+"");
-                acroFields.setField("CODIGOTRAMPARow1.0", CodigoTrampa.getText() + "");
-                acroFields.setField("MUNICIPIORow1", Municipio.getText() + "");
-                acroFields.setField("TIPO_ATRAYENTERow1", Tipo_Atrayente.getText().toString());
-                acroFields.setField("AnastrephaRow1", numeroanas.getText() + "");
-                acroFields.setField("CeratitisRow1", numeroceratis.getText() + "");
-                acroFields.setField("OtrosRow1", numerootros.getText() + "");
-                acroFields.setField("FENOLOGIARow1", fenologia.getText() + "");
-                acroFields.setField("ESTADOTRAMPARow1", Estadotrampa.getText() + "");
-                acroFields.setField("OBSERVACIONESRow1", Observaciones.getText() + "");
 
-                PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
-                ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
-                ad.setProportionalIcon(false);
-                if (ruta!=null || !ruta.isEmpty()) {
-                    ad.setImage(Image.getInstance(ruta));
-                    acroFields.replacePushbuttonField("Firma1", ad.getField());
-                }
 
-            }
-
-            if (getIntent().getExtras() !=null){
+            if (getIntent().getExtras() !=null || getIntent().getExtras().getString("Semana") != null) {
                 añadir = getIntent().getExtras().getInt("añadir");
-                Log.e("añadir llena",añadir+"");
+                Log.e("añadir llena", añadir + "");
                 acroFields.setField("Centro_de _acopio", getIntent().getExtras().getString("CentroAcopio"));
-                acroFields.setField("Fecha_ddmmaaaa",fechaactual());
+                acroFields.setField("Fecha_ddmmaaaa", fechaactual());
                 acroFields.setField("Semana", getIntent().getExtras().getString("semana"));
                 acroFields.setField("Oficina", getIntent().getExtras().getString("oficina"));
                 acroFields.setField("Responsable", getIntent().getExtras().getString("responsable"));
-                acroFields.setField("colectorRow1", getIntent().getExtras().getString("colector"));
+                acroFields.setField("Nombre del colectorRow1", getIntent().getExtras().getString("colector"));
                 acroFields.setField("Registro_ruta", getIntent().getExtras().getString("registroruta"));
                 acroFields.setField("Nombrepredioempresa", getIntent().getExtras().getString("nombreruta"));
                 acroFields.setField("Codigo_ruta", getIntent().getExtras().getString("codigoruta"));
-                if (añadir ==1){
-                    Log.e("llenar","entro añadir 1 pdf");
-                    acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
-                    acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
-                    acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
-                    acroFields.setField("AnastrephaRow1", getIntent().getExtras().getString("anastrepha1"));
-                    acroFields.setField("CeratitisRow1", getIntent().getExtras().getString("ceratis1"));
-                    acroFields.setField("OtrosRow1", getIntent().getExtras().getString("otros1"));
-                    acroFields.setField("FENOLOGIARow1", getIntent().getExtras().getString("fenologia1"));
-                    acroFields.setField("ESTADOTRAMPARow1", getIntent().getExtras().getString("estado1"));
-                    acroFields.setField("OBSERVACIONESRow1", getIntent().getExtras().getString("observaciones1"));
+                if (añadir<=1){
+                    acroFields.setField("Centro_de _acopio",CentroAcopio.getText()+"");
+                    acroFields.setField("Fecha_ddmmaaaa",fechaactual());
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+                    acroFields.setField("Codigo_ruta", codigoruta.getText()+"");
+                    acroFields.setField("CODIGOTRAMPARow1.0", CodigoTrampa.getText() + "");
+                    acroFields.setField("MUNICIPIORow1", Municipio.getText() + "");
+                    acroFields.setField("TIPO_ATRAYENTERow1", Tipo_Atrayente.getText().toString());
+                    acroFields.setField("AnastrephaRow1", numeroanas.getText() + "");
+                    acroFields.setField("CeratitisRow1", numeroceratis.getText() + "");
+                    acroFields.setField("OtrosRow1", numerootros.getText() + "");
+                    acroFields.setField("FENOLOGIARow1", fenologia.getText() + "");
+                    acroFields.setField("ESTADOTRAMPARow1", Estadotrampa.getText() + "");
+                    acroFields.setField("OBSERVACIONESRow1", Observaciones.getText() + "");
+
                     PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
-                    if (getIntent().getExtras().getString("firma1")!=null) {
-                        ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
+                    if (ruta!=null || !ruta.isEmpty()) {
+                        ad.setImage(Image.getInstance(ruta));
                         acroFields.replacePushbuttonField("Firma1", ad.getField());
                     }
+
                 }
+
                 if (añadir == 2){
                     Log.e("llenar","entro añadir 2 pdf");
                     Toast.makeText(this, "recibir añadir 2", Toast.LENGTH_SHORT).show();

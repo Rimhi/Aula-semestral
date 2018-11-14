@@ -27,11 +27,7 @@
             <item
                 android:id="@+id/nav_inspector_chat"
                 android:icon="@drawable/ic_chat"
-                android:title="Sala de char" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Sala de chat" />
         </menu>
     </item>
 

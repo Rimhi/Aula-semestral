@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
                 acceso.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        progreso.setMessage("Iniciando...");
+                        progreso.setCancelable(false);
+                        progreso.show();
                         if (firebaseAuth.getCurrentUser()!=null)
                         if (dataSnapshot.getValue(String.class).equals(firebaseAuth.getCurrentUser().getEmail()+"")){
                             inhabilitado.addChildEventListener(new ChildEventListener() {
@@ -102,10 +105,12 @@ public class MainActivity extends AppCompatActivity {
                                                     if (user.getEmail().equals(dataSnapshot.getValue())) {
                                                         Intent intent = new Intent(MainActivity.this, AdminActivity.class).addFlags(
                                                                 Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                        progreso.dismiss();
                                                         startActivity(intent);
                                                     } else {
                                                         Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
                                                                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                        progreso.dismiss();
                                                         startActivity(intent);
 
                                                     }
@@ -247,20 +252,47 @@ public class MainActivity extends AppCompatActivity {
                                                     }
                                                     else {
                                                         Log.d(TAG, "signInWithEmail:success");
-                                                        FirebaseUser user = mAuth.getCurrentUser();
+                                                        final FirebaseUser user = mAuth.getCurrentUser();
                                                         if (user!=null)
-                                                        if (user.getEmail().equals(Verificacion)) {
-                                                            progreso.dismiss();
-                                                            Intent intent = new Intent(MainActivity.this, AdminActivity.class)
-                                                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                            startActivity(intent);
-                                                        } else {
-                                                            progreso.dismiss();
-                                                            Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
-                                                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                            startActivity(intent);
+                                                            admin = reference.child("Admin");
+                                                        admin.addChildEventListener(new ChildEventListener() {
+                                                            @Override
+                                                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                                                if (user.getEmail().equals(dataSnapshot.getValue(String.class))) {
+                                                                    progreso.dismiss();
+                                                                    Intent intent = new Intent(MainActivity.this, AdminActivity.class)
+                                                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                    startActivity(intent);
+                                                                } else {
+                                                                    progreso.dismiss();
+                                                                    Intent intent = new Intent(MainActivity.this, InspectorActivity.class)
+                                                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                    startActivity(intent);
 
-                                                        }
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+
                                                     }
                                                 }
                                                 @Override

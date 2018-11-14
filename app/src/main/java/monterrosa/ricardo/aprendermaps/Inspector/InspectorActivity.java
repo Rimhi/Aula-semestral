@@ -232,8 +232,6 @@ public class InspectorActivity extends AppCompatActivity
             final ChatAdminFragment framento = new ChatAdminFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.contenedorInspector,framento).commit();
 
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
