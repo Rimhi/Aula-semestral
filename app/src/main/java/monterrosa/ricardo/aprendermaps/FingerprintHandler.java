@@ -21,7 +21,6 @@ import monterrosa.ricardo.aprendermaps.Admin.AdminActivity;
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class FingerprintHandler extends FingerprintManager.AuthenticationCallback{
     private Context context;
-    private  String Verificacion = "rimhi7@gmail.com";
 
     public FingerprintHandler(Context context) {
         this.context = context;

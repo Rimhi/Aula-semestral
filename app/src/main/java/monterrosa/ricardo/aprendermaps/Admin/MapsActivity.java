@@ -66,7 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private DatabaseReference posciosionesInspector;
     private static final int COD_PERMISOS = 3452;
     private LatLngBounds MONTERIA_CORDOBA_COLOMBIA = new LatLngBounds(new LatLng(8.726606067497622, -75.90802716634767),
-            new LatLng(8.824689, -75.826778));
+            new LatLng(8.934689, -75.820078));
     private AlertDialog dialog;
     private DatabaseReference miBaseDatos;
 
@@ -124,35 +124,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 final View view = layoutInflater.inflate(R.layout.guardarpos,null);
                                 final EditText fecha = view.findViewById(R.id.fechaingresotrampa);
                                 final EditText idtrampa = view.findViewById(R.id.idtrampa);
-                                final EditText lugartrampa = view.findViewById(R.id.Lugardelatrampa);
-                                final ImageView ifo = view.findViewById(R.id.indicacion1);
-                                final EditText latlangtrampa = view.findViewById(R.id.latlangtrampa);
+
+                                final EditText lattrampa = view.findViewById(R.id.lattrampa);
+                                final EditText lngtrampa = view.findViewById(R.id.lngtrampa);
                                 final Button guardarmarcador = view.findViewById(R.id.guardartrampa);
                                 final Spinner tipo_trampa = view.findViewById(R.id.Tipo_trampa);
-                                ifo.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Toast.makeText(getApplicationContext(),"Info: debes guardar indicios del lugar como por ejemplo: barrio buenavista calle 4, o algun otro indicio",Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                                latlangtrampa.setText(latLng+"");
+
+                                lattrampa.setText(latLng.latitude+"");
+                                lngtrampa.setText(latLng.longitude+"");
                                 guardarmarcador.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         dialog.dismiss();
-                                        Long id = Long.parseLong( idtrampa.getText().toString() );
+
 
                                         Trampa trampa = new Trampa(
-                                                id,
+                                                idtrampa.getText().toString(),
                                                 fecha.getText().toString(),
-                                                lugartrampa.getText().toString(),
-                                                latLng.latitude,
-                                                latLng.longitude,
+                                                Double.parseDouble(lattrampa.getText()+""),
+                                                Double.parseDouble(lngtrampa.getText()+""),
                                                 tipo_trampa.getSelectedItem().toString()
 
                                         );
 
-                                        miBaseDatos.child("trampas").child(id+"").setValue(trampa);
+                                        miBaseDatos.child("trampas").child(idtrampa.getText()+"").setValue(trampa);
                                     }
                                 });
 
@@ -208,7 +203,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                        Intent intent = new Intent(getApplicationContext(),InformacionTrampaActivity.class);
                        intent.putExtra("codigotrampa",idtrampa[1]);
                        intent.putExtra("indicio",snippet[1]);
-                       intent.putExtra("posicion",marker.getPosition()+"");
+                       intent.putExtra("lat",marker.getPosition().latitude+"");
+                       intent.putExtra("lng",marker.getPosition().longitude+"");
                        startActivity(intent);
                    }
                });

@@ -39,27 +39,31 @@ public class ProteccionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_proteccion);
+    /*
         KeyguardManager keyguardManager =(KeyguardManager)getSystemService(KEYGUARD_SERVICE);
         FingerprintManager fingerprintManager =(FingerprintManager)getSystemService(FINGERPRINT_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!fingerprintManager.isHardwareDetected()){
-                Toast.makeText(this, "Dispositivo no compatible con hella dactilar", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(ProteccionActivity.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-            }else {
-                if (!fingerprintManager.hasEnrolledFingerprints()){
-                    Toast.makeText(this, "Registra al menos una huella digital en las configuraciones", Toast.LENGTH_SHORT).show();
+            if(fingerprintManager != null) {
+                if (!fingerprintManager.isHardwareDetected()) {
+                    Toast.makeText(this, "Dispositivo no compatible con hella dactilar", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(ProteccionActivity.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                }else {
-                    if (!keyguardManager.isKeyguardSecure()){
-                        Toast.makeText(this, "No tienes habilitado el bloqueo de pantalla", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (!fingerprintManager.hasEnrolledFingerprints()) {
+                        Toast.makeText(this, "Registra al menos una huella digital en las configuraciones", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(ProteccionActivity.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                    }else {
-                        genkey();
-                    }if (cipherInit()){
-                        FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
-                        FingerprintHandler helper = new FingerprintHandler(this);
-                        helper.startAuthentication(fingerprintManager,cryptoObject);
+                    } else {
+                        if (!keyguardManager.isKeyguardSecure()) {
+                            Toast.makeText(this, "No tienes habilitado el bloqueo de pantalla", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(ProteccionActivity.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        } else {
+                            genkey();
+                        }
+                        if (cipherInit()) {
+                            FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
+                            FingerprintHandler helper = new FingerprintHandler(this);
+                            helper.startAuthentication(fingerprintManager, cryptoObject);
+                        }
                     }
                 }
             }
@@ -133,7 +137,7 @@ public class ProteccionActivity extends AppCompatActivity {
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
-
+*/
     }
 
 }

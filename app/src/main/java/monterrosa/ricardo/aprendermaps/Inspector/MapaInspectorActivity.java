@@ -1,6 +1,8 @@
 package monterrosa.ricardo.aprendermaps.Inspector;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -59,8 +61,9 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
     private DatabaseReference posicionesinspector;
     private DatabaseReference perfinInspector;
     private AlertDialog dialog;
-    private LatLngBounds MONTERIA_CORDOBA_COLOMBIA = new LatLngBounds(new LatLng(8.726606067497622, -75.90802716634767),
-            new LatLng(8.824689, -75.826778));
+    Location ultimaPosConocida;
+    private LatLngBounds MONTERIA_CORDOBA_COLOMBIA =  new LatLngBounds(new LatLng(8.726606067497622, -75.90802716634767),
+            new LatLng(8.934689, -75.820078));
     private static final double RADIO_TIERRA = 6378.137;
     private static final String TAG = "UtilidadesCoordenadas";
     private int numero = 1;
@@ -71,6 +74,8 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
     private FirebaseAuth auth;
     private String NombreInspector,CedulaInspector,TelefonoInspector;
     private int añadir = 1;
+    private int page = 1;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,11 +98,27 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         progressDialog.setTitle("Cargando Mapa");
         progressDialog.setMessage("Por favor espera");
         progressDialog.setCancelable(false);
-        progressDialog.show();
-        Recibirdatos();
-        //Eliminarpolilinea();
         locationListener = new MiLocationListener();
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            return;
+        }
+
+        locationManager = (LocationManager) getApplicationContext()
+                .getSystemService(Context.LOCATION_SERVICE);
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+        ultimaPosConocida = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (ultimaPosConocida != null)
+            userlocation = new LatLng(ultimaPosConocida.getLatitude(),ultimaPosConocida.getLongitude());
+         progressDialog.show();
+        if (userlocation != null){
+            progressDialog.dismiss();
+        }
+
+
+        //Eliminarpolilinea();
 
     }
     ChildEventListener perfillistener = new ChildEventListener() {
@@ -149,12 +170,14 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         @Override
         public void onLocationChanged(Location location) {
             userlocation = new LatLng(location.getLatitude(), location.getLongitude());
-            ModeloDarposicion modeloDarposicion = new ModeloDarposicion(userlocation.latitude,userlocation.longitude,auth.getCurrentUser().getUid(),
-                    NombreInspector,TelefonoInspector,CedulaInspector);
-            posicionesinspector.child(auth.getCurrentUser().getUid()).setValue(modeloDarposicion);
-            if (userlocation != null){
-                    progressDialog.dismiss();
-            }
+           if (userlocation != null) {
+               ModeloDarposicion modeloDarposicion = new ModeloDarposicion(userlocation.latitude, userlocation.longitude, auth.getCurrentUser().getUid(),
+                       NombreInspector, TelefonoInspector, CedulaInspector);
+               if (modeloDarposicion != null){
+                   posicionesinspector.child(auth.getCurrentUser().getUid()).setValue(modeloDarposicion);
+                }
+               progressDialog.dismiss();
+           }
         }
 
         @Override
@@ -207,7 +230,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             @Override
             public void onInfoWindowClick(final Marker marker) {
             if (userlocation!=null) {
-                if (calcularDistancia(userlocation, marker.getPosition()) <= 5) {
+                if (calcularDistancia(userlocation, marker.getPosition()) <= 100000) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MapaInspectorActivity.this);
                     builder.setTitle("¿Desea llenar formulario?")
                             .setNegativeButton("no", new DialogInterface.OnClickListener() {
@@ -219,10 +242,14 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             final String[] tipo = marker.getSnippet().split(":");
+                            Log.e("completo",marker.getSnippet()+"");
+                            Log.e("trampa",tipo[0]);
+                            Log.e("trampa",tipo[1]);
                             if (tipo[1].equals(" Picudo Algodon")){
-
-                            }else {
+                                picudoAlgodon(marker);
+                            } else {
                                moscafruta(marker);
+
                             }
 
                         }
@@ -500,7 +527,6 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             }
         }
     }
-
     /***
      * Eliminar polyline
      * con 3 clicks
@@ -527,35 +553,28 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         });
     }
 
-    private void Recibirdatos(){
-    if (getIntent().getExtras()!= null){
-        añadir = getIntent().getExtras().getInt("añadir");
-        Log.e("añadir Mpa",añadir+"");
-        if (añadir==1){
-
-        }
-
-    }
-}
-
     private void moscafruta(Marker marker){
     final String[] idtrampa = marker.getTitle().split(" ");
     Intent intent = new Intent(MapaInspectorActivity.this, LlenarFormularioActivity.class);
     intent.putExtra("codigotrampa", idtrampa[1]);
-    intent.putExtra("añadir", añadir);
+    intent.putExtra("añadir", getIntent().getExtras().getInt("añadir")+1);
+    if (getIntent().getExtras().getString("nombreInspector") != null) {
+        intent.putExtra("NombreInspector", getIntent().getExtras().getString("nombreInspector"));
+    }
     if (getIntent().getExtras() != null) {
         intent.putExtra("CentroAcopio", getIntent().getExtras().getString("CentroAcopio"));
         intent.putExtra("semana", getIntent().getExtras().getString("semana"));
         intent.putExtra("oficina", getIntent().getExtras().getString("oficina"));
-        intent.putExtra("responsable", getIntent().getExtras().getString("responsable"));
-        intent.putExtra("colector1", getIntent().getExtras().getString("colector1"));
+        intent.putExtra("responsable1", getIntent().getExtras().getString("responsable"));
+        intent.putExtra("colector", getIntent().getExtras().getString("colector1"));
         intent.putExtra("registroruta", getIntent().getExtras().getString("registroruta"));
         intent.putExtra("codigoruta", getIntent().getExtras().getString("codigoruta"));
-        if (añadir == 1) {
+        intent.putExtra("nombreruta1", getIntent().getExtras().getString("nombreruta"));
+        if (getIntent().getExtras().getInt("añadir") == 1) {
             Log.e("map", "entro añadir 1 " + getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-            intent.putExtra("atrayente1", getIntent().getExtras().getString("atrayente1"));
+            intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
             intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
             intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
             intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -563,12 +582,13 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("estado1", getIntent().getExtras().getString("estado1"));
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("firma1", getIntent().getExtras().getString("firma1"));
+            Log.e("firma1",getIntent().getExtras().getString("firma1"));
         }
-        if (añadir == 2) {
+        if (getIntent().getExtras().getInt("añadir")== 2) {
             Log.e("map", "entro añadir 2 " + getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-            intent.putExtra("atrayente1", getIntent().getExtras().getString("atrayente1"));
+            intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
             intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
             intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
             intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -586,12 +606,14 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
             intent.putExtra("firma1", getIntent().getExtras().getString("firma1"));
             intent.putExtra("firma2", getIntent().getExtras().getString("firma2"));
+            Log.e("firma1",getIntent().getExtras().getString("firma1"));
+            Log.e("firma2",getIntent().getExtras().getString("firma2"));
         }
-        if (añadir == 3) {
+        if (getIntent().getExtras().getInt("añadir") == 3) {
             Log.e("map", "entro añadir 3 " + getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-            intent.putExtra("atrayente1", getIntent().getExtras().getString("atrayente1"));
+            intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
             intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
             intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
             intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -619,11 +641,14 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("firma1", getIntent().getExtras().getString("firma1"));
             intent.putExtra("firma2", getIntent().getExtras().getString("firma2"));
             intent.putExtra("firma3", getIntent().getExtras().getString("firma3"));
+            Log.e("firma1",getIntent().getExtras().getString("firma1"));
+            Log.e("firma2",getIntent().getExtras().getString("firma2"));
+            Log.e("firma3",getIntent().getExtras().getString("firma3"));
         }
-        if (añadir == 4) {
+        if (getIntent().getExtras().getInt("añadir") == 4) {
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-            intent.putExtra("atrayente1", getIntent().getExtras().getString("atrayente1"));
+            intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
             intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
             intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
             intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -661,11 +686,15 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("firma2", getIntent().getExtras().getString("firma2"));
             intent.putExtra("firma3", getIntent().getExtras().getString("firma3"));
             intent.putExtra("firma4", getIntent().getExtras().getString("firma4"));
+            Log.e("firma1",getIntent().getExtras().getString("firma1"));
+            Log.e("firma2",getIntent().getExtras().getString("firma2"));
+            Log.e("firma3",getIntent().getExtras().getString("firma3"));
+            Log.e("firma4",getIntent().getExtras().getString("firma4"));
         }
-        if (añadir == 5) {
+        if (getIntent().getExtras().getInt("añadir") == 5) {
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-            intent.putExtra("atrayente1", getIntent().getExtras().getString("atrayente1"));
+            intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
             intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
             intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
             intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -714,10 +743,10 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("firma4", getIntent().getExtras().getString("firma4"));
             intent.putExtra("firma5", getIntent().getExtras().getString("firma5"));
         }
-        if (añadir == 6) {
+        if (getIntent().getExtras().getInt("añadir") == 6) {
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-            intent.putExtra("atrayente1", getIntent().getExtras().getString("atrayente1"));
+            intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
             intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
             intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
             intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -776,10 +805,10 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("firma5", getIntent().getExtras().getString("firma5"));
             intent.putExtra("firma6", getIntent().getExtras().getString("firma6"));
         }
-        if (añadir == 7) {
+        if (getIntent().getExtras().getInt("añadir")== 7) {
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-            intent.putExtra("atrayente1", getIntent().getExtras().getString("atrayente1"));
+            intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
             intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
             intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
             intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -848,10 +877,10 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("firma6", getIntent().getExtras().getString("firma6"));
             intent.putExtra("firma7", getIntent().getExtras().getString("firma7"));
         }
-        if (añadir == 8) {
+        if (getIntent().getExtras().getInt("añadir") == 8) {
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-            intent.putExtra("atrayente1", getIntent().getExtras().getString("atrayente1"));
+            intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
             intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
             intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
             intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -933,4 +962,488 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
     }
     startActivity(intent);
 }
+
+    private  void picudoAlgodon(Marker marker){
+
+        final String[] idtrampa = marker.getTitle().split(" ");
+        Intent intent = new Intent(MapaInspectorActivity.this, LlenarFormularioPicudoActivity.class);
+        intent.putExtra("codigotrampa", idtrampa[1]);
+        intent.putExtra("añadir",getIntent().getExtras().getInt("page")+1);
+        if(getIntent().getExtras().getString("llave") !=null) {
+            Log.e("añadir mapa", getIntent().getExtras().getInt("page") + "");
+            intent.putExtra("Funcionario", getIntent().getExtras().getString("Funcionario"));
+            intent.putExtra("Year", getIntent().getExtras().getString("Year"));
+            intent.putExtra("CambioFeromona", getIntent().getExtras().getString("CambioFeromona"));
+            intent.putExtra("NumeroFeromona", getIntent().getExtras().getString("NumeroFeromona"));
+            intent.putExtra("Mes", getIntent().getExtras().getString("Mes"));
+            if (getIntent().getExtras().getInt("page") == 1) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+            }
+            if (getIntent().getExtras().getInt("page") == 2) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+
+                intent.putExtra("DiaRow2", getIntent().getExtras().getString("DiaRow2"));
+                intent.putExtra("CodigoTrampaRow2", getIntent().getExtras().getString("CodigoTrampaRow2"));
+                intent.putExtra("MunicipioRow2", getIntent().getExtras().getString("MunicipioRow2"));
+                intent.putExtra("VeredaRow2", getIntent().getExtras().getString("VeredaRow2"));
+                intent.putExtra("PredioRow2", getIntent().getExtras().getString("PredioRow2"));
+                intent.putExtra("NegrosRow2", getIntent().getExtras().getString("NegrosRow2"));
+                intent.putExtra("RojosRow2", getIntent().getExtras().getString("RojosRow2"));
+                intent.putExtra("EstadoCultivoRow2", getIntent().getExtras().getString("EstadoCultivoRow2"));
+                intent.putExtra("ObservacionesRow2", getIntent().getExtras().getString("ObservacionesRow2"));
+
+            }
+            if (getIntent().getExtras().getInt("page") ==  3) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+
+                intent.putExtra("DiaRow2", getIntent().getExtras().getString("DiaRow2"));
+                intent.putExtra("CodigoTrampaRow2", getIntent().getExtras().getString("CodigoTrampaRow2"));
+                intent.putExtra("MunicipioRow2", getIntent().getExtras().getString("MunicipioRow2"));
+                intent.putExtra("VeredaRow2", getIntent().getExtras().getString("VeredaRow2"));
+                intent.putExtra("PredioRow2", getIntent().getExtras().getString("PredioRow2"));
+                intent.putExtra("NegrosRow2", getIntent().getExtras().getString("NegrosRow2"));
+                intent.putExtra("RojosRow2", getIntent().getExtras().getString("RojosRow2"));
+                intent.putExtra("EstadoCultivoRow2", getIntent().getExtras().getString("EstadoCultivoRow2"));
+                intent.putExtra("ObservacionesRow2", getIntent().getExtras().getString("ObservacionesRow2"));
+
+                intent.putExtra("DiaRow3", getIntent().getExtras().getString("DiaRow3"));
+                intent.putExtra("CodigoTrampaRow3", getIntent().getExtras().getString("CodigoTrampaRow3"));
+                intent.putExtra("MunicipioRow3", getIntent().getExtras().getString("MunicipioRow3"));
+                intent.putExtra("VeredaRow3", getIntent().getExtras().getString("VeredaRow3"));
+                intent.putExtra("PredioRow3", getIntent().getExtras().getString("PredioRow3"));
+                intent.putExtra("NegrosRow3", getIntent().getExtras().getString("NegrosRow3"));
+                intent.putExtra("RojosRow3", getIntent().getExtras().getString("RojosRow3"));
+                intent.putExtra("EstadoCultivoRow3", getIntent().getExtras().getString("EstadoCultivoRow3"));
+                intent.putExtra("ObservacionesRow3", getIntent().getExtras().getString("ObservacionesRow3"));
+
+            }
+            if (getIntent().getExtras().getInt("page") ==  4) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+
+                intent.putExtra("DiaRow2", getIntent().getExtras().getString("DiaRow2"));
+                intent.putExtra("CodigoTrampaRow2", getIntent().getExtras().getString("CodigoTrampaRow2"));
+                intent.putExtra("MunicipioRow2", getIntent().getExtras().getString("MunicipioRow2"));
+                intent.putExtra("VeredaRow2", getIntent().getExtras().getString("VeredaRow2"));
+                intent.putExtra("PredioRow2", getIntent().getExtras().getString("PredioRow2"));
+                intent.putExtra("NegrosRow2", getIntent().getExtras().getString("NegrosRow2"));
+                intent.putExtra("RojosRow2", getIntent().getExtras().getString("RojosRow2"));
+                intent.putExtra("EstadoCultivoRow2", getIntent().getExtras().getString("EstadoCultivoRow2"));
+                intent.putExtra("ObservacionesRow2", getIntent().getExtras().getString("ObservacionesRow2"));
+
+                intent.putExtra("DiaRow3", getIntent().getExtras().getString("DiaRow3"));
+                intent.putExtra("CodigoTrampaRow3", getIntent().getExtras().getString("CodigoTrampaRow3"));
+                intent.putExtra("MunicipioRow3", getIntent().getExtras().getString("MunicipioRow3"));
+                intent.putExtra("VeredaRow3", getIntent().getExtras().getString("VeredaRow3"));
+                intent.putExtra("PredioRow3", getIntent().getExtras().getString("PredioRow3"));
+                intent.putExtra("NegrosRow3", getIntent().getExtras().getString("NegrosRow3"));
+                intent.putExtra("RojosRow3", getIntent().getExtras().getString("RojosRow3"));
+                intent.putExtra("EstadoCultivoRow3", getIntent().getExtras().getString("EstadoCultivoRow3"));
+                intent.putExtra("ObservacionesRow3", getIntent().getExtras().getString("ObservacionesRow3"));
+
+                intent.putExtra("DiaRow4", getIntent().getExtras().getString("DiaRow4"));
+                intent.putExtra("CodigoTrampaRow4", getIntent().getExtras().getString("CodigoTrampaRow4"));
+                intent.putExtra("MunicipioRow4", getIntent().getExtras().getString("MunicipioRow4"));
+                intent.putExtra("VeredaRow4", getIntent().getExtras().getString("VeredaRow4"));
+                intent.putExtra("PredioRow4", getIntent().getExtras().getString("PredioRow4"));
+                intent.putExtra("NegrosRow4", getIntent().getExtras().getString("NegrosRow4"));
+                intent.putExtra("RojosRow4", getIntent().getExtras().getString("RojosRow4"));
+                intent.putExtra("EstadoCultivoRow4", getIntent().getExtras().getString("EstadoCultivoRow4"));
+                intent.putExtra("ObservacionesRow4", getIntent().getExtras().getString("ObservacionesRow4"));
+
+            }
+            if (getIntent().getExtras().getInt("page") ==  5) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+
+                intent.putExtra("DiaRow2", getIntent().getExtras().getString("DiaRow2"));
+                intent.putExtra("CodigoTrampaRow2", getIntent().getExtras().getString("CodigoTrampaRow2"));
+                intent.putExtra("MunicipioRow2", getIntent().getExtras().getString("MunicipioRow2"));
+                intent.putExtra("VeredaRow2", getIntent().getExtras().getString("VeredaRow2"));
+                intent.putExtra("PredioRow2", getIntent().getExtras().getString("PredioRow2"));
+                intent.putExtra("NegrosRow2", getIntent().getExtras().getString("NegrosRow2"));
+                intent.putExtra("RojosRow2", getIntent().getExtras().getString("RojosRow2"));
+                intent.putExtra("EstadoCultivoRow2", getIntent().getExtras().getString("EstadoCultivoRow2"));
+                intent.putExtra("ObservacionesRow2", getIntent().getExtras().getString("ObservacionesRow2"));
+
+                intent.putExtra("DiaRow3", getIntent().getExtras().getString("DiaRow3"));
+                intent.putExtra("CodigoTrampaRow3", getIntent().getExtras().getString("CodigoTrampaRow3"));
+                intent.putExtra("MunicipioRow3", getIntent().getExtras().getString("MunicipioRow3"));
+                intent.putExtra("VeredaRow3", getIntent().getExtras().getString("VeredaRow3"));
+                intent.putExtra("PredioRow3", getIntent().getExtras().getString("PredioRow3"));
+                intent.putExtra("NegrosRow3", getIntent().getExtras().getString("NegrosRow3"));
+                intent.putExtra("RojosRow3", getIntent().getExtras().getString("RojosRow3"));
+                intent.putExtra("EstadoCultivoRow3", getIntent().getExtras().getString("EstadoCultivoRow3"));
+                intent.putExtra("ObservacionesRow3", getIntent().getExtras().getString("ObservacionesRow3"));
+
+                intent.putExtra("DiaRow4", getIntent().getExtras().getString("DiaRow4"));
+                intent.putExtra("CodigoTrampaRow4", getIntent().getExtras().getString("CodigoTrampaRow4"));
+                intent.putExtra("MunicipioRow4", getIntent().getExtras().getString("MunicipioRow4"));
+                intent.putExtra("VeredaRow4", getIntent().getExtras().getString("VeredaRow4"));
+                intent.putExtra("PredioRow4", getIntent().getExtras().getString("PredioRow4"));
+                intent.putExtra("NegrosRow4", getIntent().getExtras().getString("NegrosRow4"));
+                intent.putExtra("RojosRow4", getIntent().getExtras().getString("RojosRow4"));
+                intent.putExtra("EstadoCultivoRow4", getIntent().getExtras().getString("EstadoCultivoRow4"));
+                intent.putExtra("ObservacionesRow4", getIntent().getExtras().getString("ObservacionesRow4"));
+
+                intent.putExtra("DiaRow5", getIntent().getExtras().getString("DiaRow5"));
+                intent.putExtra("CodigoTrampaRow5", getIntent().getExtras().getString("CodigoTrampaRow5"));
+                intent.putExtra("MunicipioRow5", getIntent().getExtras().getString("MunicipioRow5"));
+                intent.putExtra("VeredaRow5", getIntent().getExtras().getString("VeredaRow5"));
+                intent.putExtra("PredioRow5", getIntent().getExtras().getString("PredioRow5"));
+                intent.putExtra("NegrosRow5", getIntent().getExtras().getString("NegrosRow5"));
+                intent.putExtra("RojosRow5", getIntent().getExtras().getString("RojosRow5"));
+                intent.putExtra("EstadoCultivoRow5", getIntent().getExtras().getString("EstadoCultivoRow5"));
+                intent.putExtra("ObservacionesRow5", getIntent().getExtras().getString("ObservacionesRow5"));
+
+            }
+            if (getIntent().getExtras().getInt("page") ==  6) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+
+                intent.putExtra("DiaRow2", getIntent().getExtras().getString("DiaRow2"));
+                intent.putExtra("CodigoTrampaRow2", getIntent().getExtras().getString("CodigoTrampaRow2"));
+                intent.putExtra("MunicipioRow2", getIntent().getExtras().getString("MunicipioRow2"));
+                intent.putExtra("VeredaRow2", getIntent().getExtras().getString("VeredaRow2"));
+                intent.putExtra("PredioRow2", getIntent().getExtras().getString("PredioRow2"));
+                intent.putExtra("NegrosRow2", getIntent().getExtras().getString("NegrosRow2"));
+                intent.putExtra("RojosRow2", getIntent().getExtras().getString("RojosRow2"));
+                intent.putExtra("EstadoCultivoRow2", getIntent().getExtras().getString("EstadoCultivoRow2"));
+                intent.putExtra("ObservacionesRow2", getIntent().getExtras().getString("ObservacionesRow2"));
+
+                intent.putExtra("DiaRow3", getIntent().getExtras().getString("DiaRow3"));
+                intent.putExtra("CodigoTrampaRow3", getIntent().getExtras().getString("CodigoTrampaRow3"));
+                intent.putExtra("MunicipioRow3", getIntent().getExtras().getString("MunicipioRow3"));
+                intent.putExtra("VeredaRow3", getIntent().getExtras().getString("VeredaRow3"));
+                intent.putExtra("PredioRow3", getIntent().getExtras().getString("PredioRow3"));
+                intent.putExtra("NegrosRow3", getIntent().getExtras().getString("NegrosRow3"));
+                intent.putExtra("RojosRow3", getIntent().getExtras().getString("RojosRow3"));
+                intent.putExtra("EstadoCultivoRow3", getIntent().getExtras().getString("EstadoCultivoRow3"));
+                intent.putExtra("ObservacionesRow3", getIntent().getExtras().getString("ObservacionesRow3"));
+
+                intent.putExtra("DiaRow4", getIntent().getExtras().getString("DiaRow4"));
+                intent.putExtra("CodigoTrampaRow4", getIntent().getExtras().getString("CodigoTrampaRow4"));
+                intent.putExtra("MunicipioRow4", getIntent().getExtras().getString("MunicipioRow4"));
+                intent.putExtra("VeredaRow4", getIntent().getExtras().getString("VeredaRow4"));
+                intent.putExtra("PredioRow4", getIntent().getExtras().getString("PredioRow4"));
+                intent.putExtra("NegrosRow4", getIntent().getExtras().getString("NegrosRow4"));
+                intent.putExtra("RojosRow4", getIntent().getExtras().getString("RojosRow4"));
+                intent.putExtra("EstadoCultivoRow4", getIntent().getExtras().getString("EstadoCultivoRow4"));
+                intent.putExtra("ObservacionesRow4", getIntent().getExtras().getString("ObservacionesRow4"));
+
+                intent.putExtra("DiaRow5", getIntent().getExtras().getString("DiaRow5"));
+                intent.putExtra("CodigoTrampaRow5", getIntent().getExtras().getString("CodigoTrampaRow5"));
+                intent.putExtra("MunicipioRow5", getIntent().getExtras().getString("MunicipioRow5"));
+                intent.putExtra("VeredaRow5", getIntent().getExtras().getString("VeredaRow5"));
+                intent.putExtra("PredioRow5", getIntent().getExtras().getString("PredioRow5"));
+                intent.putExtra("NegrosRow5", getIntent().getExtras().getString("NegrosRow5"));
+                intent.putExtra("RojosRow5", getIntent().getExtras().getString("RojosRow5"));
+                intent.putExtra("EstadoCultivoRow5", getIntent().getExtras().getString("EstadoCultivoRow5"));
+                intent.putExtra("ObservacionesRow5", getIntent().getExtras().getString("ObservacionesRow5"));
+
+                intent.putExtra("DiaRow6", getIntent().getExtras().getString("DiaRow6"));
+                intent.putExtra("CodigoTrampaRow6", getIntent().getExtras().getString("CodigoTrampaRow6"));
+                intent.putExtra("MunicipioRow6", getIntent().getExtras().getString("MunicipioRow6"));
+                intent.putExtra("VeredaRow6", getIntent().getExtras().getString("VeredaRow6"));
+                intent.putExtra("PredioRow6", getIntent().getExtras().getString("PredioRow6"));
+                intent.putExtra("NegrosRow6", getIntent().getExtras().getString("NegrosRow6"));
+                intent.putExtra("RojosRow6", getIntent().getExtras().getString("RojosRow6"));
+                intent.putExtra("EstadoCultivoRow6", getIntent().getExtras().getString("EstadoCultivoRow6"));
+                intent.putExtra("ObservacionesRow6", getIntent().getExtras().getString("ObservacionesRow6"));
+
+            }
+            if (getIntent().getExtras().getInt("page") ==  7) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+
+                intent.putExtra("DiaRow2", getIntent().getExtras().getString("DiaRow2"));
+                intent.putExtra("CodigoTrampaRow2", getIntent().getExtras().getString("CodigoTrampaRow2"));
+                intent.putExtra("MunicipioRow2", getIntent().getExtras().getString("MunicipioRow2"));
+                intent.putExtra("VeredaRow2", getIntent().getExtras().getString("VeredaRow2"));
+                intent.putExtra("PredioRow2", getIntent().getExtras().getString("PredioRow2"));
+                intent.putExtra("NegrosRow2", getIntent().getExtras().getString("NegrosRow2"));
+                intent.putExtra("RojosRow2", getIntent().getExtras().getString("RojosRow2"));
+                intent.putExtra("EstadoCultivoRow2", getIntent().getExtras().getString("EstadoCultivoRow2"));
+                intent.putExtra("ObservacionesRow2", getIntent().getExtras().getString("ObservacionesRow2"));
+
+                intent.putExtra("DiaRow3", getIntent().getExtras().getString("DiaRow3"));
+                intent.putExtra("CodigoTrampaRow3", getIntent().getExtras().getString("CodigoTrampaRow3"));
+                intent.putExtra("MunicipioRow3", getIntent().getExtras().getString("MunicipioRow3"));
+                intent.putExtra("VeredaRow3", getIntent().getExtras().getString("VeredaRow3"));
+                intent.putExtra("PredioRow3", getIntent().getExtras().getString("PredioRow3"));
+                intent.putExtra("NegrosRow3", getIntent().getExtras().getString("NegrosRow3"));
+                intent.putExtra("RojosRow3", getIntent().getExtras().getString("RojosRow3"));
+                intent.putExtra("EstadoCultivoRow3", getIntent().getExtras().getString("EstadoCultivoRow3"));
+                intent.putExtra("ObservacionesRow3", getIntent().getExtras().getString("ObservacionesRow3"));
+
+                intent.putExtra("DiaRow4", getIntent().getExtras().getString("DiaRow4"));
+                intent.putExtra("CodigoTrampaRow4", getIntent().getExtras().getString("CodigoTrampaRow4"));
+                intent.putExtra("MunicipioRow4", getIntent().getExtras().getString("MunicipioRow4"));
+                intent.putExtra("VeredaRow4", getIntent().getExtras().getString("VeredaRow4"));
+                intent.putExtra("PredioRow4", getIntent().getExtras().getString("PredioRow4"));
+                intent.putExtra("NegrosRow4", getIntent().getExtras().getString("NegrosRow4"));
+                intent.putExtra("RojosRow4", getIntent().getExtras().getString("RojosRow4"));
+                intent.putExtra("EstadoCultivoRow4", getIntent().getExtras().getString("EstadoCultivoRow4"));
+                intent.putExtra("ObservacionesRow4", getIntent().getExtras().getString("ObservacionesRow4"));
+
+                intent.putExtra("DiaRow5", getIntent().getExtras().getString("DiaRow5"));
+                intent.putExtra("CodigoTrampaRow5", getIntent().getExtras().getString("CodigoTrampaRow5"));
+                intent.putExtra("MunicipioRow5", getIntent().getExtras().getString("MunicipioRow5"));
+                intent.putExtra("VeredaRow5", getIntent().getExtras().getString("VeredaRow5"));
+                intent.putExtra("PredioRow5", getIntent().getExtras().getString("PredioRow5"));
+                intent.putExtra("NegrosRow5", getIntent().getExtras().getString("NegrosRow5"));
+                intent.putExtra("RojosRow5", getIntent().getExtras().getString("RojosRow5"));
+                intent.putExtra("EstadoCultivoRow5", getIntent().getExtras().getString("EstadoCultivoRow5"));
+                intent.putExtra("ObservacionesRow5", getIntent().getExtras().getString("ObservacionesRow5"));
+
+                intent.putExtra("DiaRow6", getIntent().getExtras().getString("DiaRow6"));
+                intent.putExtra("CodigoTrampaRow6", getIntent().getExtras().getString("CodigoTrampaRow6"));
+                intent.putExtra("MunicipioRow6", getIntent().getExtras().getString("MunicipioRow6"));
+                intent.putExtra("VeredaRow6", getIntent().getExtras().getString("VeredaRow6"));
+                intent.putExtra("PredioRow6", getIntent().getExtras().getString("PredioRow6"));
+                intent.putExtra("NegrosRow6", getIntent().getExtras().getString("NegrosRow6"));
+                intent.putExtra("RojosRow6", getIntent().getExtras().getString("RojosRow6"));
+                intent.putExtra("EstadoCultivoRow6", getIntent().getExtras().getString("EstadoCultivoRow6"));
+                intent.putExtra("ObservacionesRow6", getIntent().getExtras().getString("ObservacionesRow6"));
+
+                intent.putExtra("DiaRow7", getIntent().getExtras().getString("DiaRow7"));
+                intent.putExtra("CodigoTrampaRow7", getIntent().getExtras().getString("CodigoTrampaRow7"));
+                intent.putExtra("MunicipioRow7", getIntent().getExtras().getString("MunicipioRow7"));
+                intent.putExtra("VeredaRow7", getIntent().getExtras().getString("VeredaRow7"));
+                intent.putExtra("PredioRow7", getIntent().getExtras().getString("PredioRow7"));
+                intent.putExtra("NegrosRow7", getIntent().getExtras().getString("NegrosRow7"));
+                intent.putExtra("RojosRow7", getIntent().getExtras().getString("RojosRow7"));
+                intent.putExtra("EstadoCultivoRow7", getIntent().getExtras().getString("EstadoCultivoRow7"));
+                intent.putExtra("ObservacionesRow7", getIntent().getExtras().getString("ObservacionesRow7"));
+
+            }
+            if (getIntent().getExtras().getInt("page") ==  8) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+
+                intent.putExtra("DiaRow2", getIntent().getExtras().getString("DiaRow2"));
+                intent.putExtra("CodigoTrampaRow2", getIntent().getExtras().getString("CodigoTrampaRow2"));
+                intent.putExtra("MunicipioRow2", getIntent().getExtras().getString("MunicipioRow2"));
+                intent.putExtra("VeredaRow2", getIntent().getExtras().getString("VeredaRow2"));
+                intent.putExtra("PredioRow2", getIntent().getExtras().getString("PredioRow2"));
+                intent.putExtra("NegrosRow2", getIntent().getExtras().getString("NegrosRow2"));
+                intent.putExtra("RojosRow2", getIntent().getExtras().getString("RojosRow2"));
+                intent.putExtra("EstadoCultivoRow2", getIntent().getExtras().getString("EstadoCultivoRow2"));
+                intent.putExtra("ObservacionesRow2", getIntent().getExtras().getString("ObservacionesRow2"));
+
+                intent.putExtra("DiaRow3", getIntent().getExtras().getString("DiaRow3"));
+                intent.putExtra("CodigoTrampaRow3", getIntent().getExtras().getString("CodigoTrampaRow3"));
+                intent.putExtra("MunicipioRow3", getIntent().getExtras().getString("MunicipioRow3"));
+                intent.putExtra("VeredaRow3", getIntent().getExtras().getString("VeredaRow3"));
+                intent.putExtra("PredioRow3", getIntent().getExtras().getString("PredioRow3"));
+                intent.putExtra("NegrosRow3", getIntent().getExtras().getString("NegrosRow3"));
+                intent.putExtra("RojosRow3", getIntent().getExtras().getString("RojosRow3"));
+                intent.putExtra("EstadoCultivoRow3", getIntent().getExtras().getString("EstadoCultivoRow3"));
+                intent.putExtra("ObservacionesRow3", getIntent().getExtras().getString("ObservacionesRow3"));
+
+                intent.putExtra("DiaRow4", getIntent().getExtras().getString("DiaRow4"));
+                intent.putExtra("CodigoTrampaRow4", getIntent().getExtras().getString("CodigoTrampaRow4"));
+                intent.putExtra("MunicipioRow4", getIntent().getExtras().getString("MunicipioRow4"));
+                intent.putExtra("VeredaRow4", getIntent().getExtras().getString("VeredaRow4"));
+                intent.putExtra("PredioRow4", getIntent().getExtras().getString("PredioRow4"));
+                intent.putExtra("NegrosRow4", getIntent().getExtras().getString("NegrosRow4"));
+                intent.putExtra("RojosRow4", getIntent().getExtras().getString("RojosRow4"));
+                intent.putExtra("EstadoCultivoRow4", getIntent().getExtras().getString("EstadoCultivoRow4"));
+                intent.putExtra("ObservacionesRow4", getIntent().getExtras().getString("ObservacionesRow4"));
+
+                intent.putExtra("DiaRow5", getIntent().getExtras().getString("DiaRow5"));
+                intent.putExtra("CodigoTrampaRow5", getIntent().getExtras().getString("CodigoTrampaRow5"));
+                intent.putExtra("MunicipioRow5", getIntent().getExtras().getString("MunicipioRow5"));
+                intent.putExtra("VeredaRow5", getIntent().getExtras().getString("VeredaRow5"));
+                intent.putExtra("PredioRow5", getIntent().getExtras().getString("PredioRow5"));
+                intent.putExtra("NegrosRow5", getIntent().getExtras().getString("NegrosRow5"));
+                intent.putExtra("RojosRow5", getIntent().getExtras().getString("RojosRow5"));
+                intent.putExtra("EstadoCultivoRow5", getIntent().getExtras().getString("EstadoCultivoRow5"));
+                intent.putExtra("ObservacionesRow5", getIntent().getExtras().getString("ObservacionesRow5"));
+
+                intent.putExtra("DiaRow6", getIntent().getExtras().getString("DiaRow6"));
+                intent.putExtra("CodigoTrampaRow6", getIntent().getExtras().getString("CodigoTrampaRow6"));
+                intent.putExtra("MunicipioRow6", getIntent().getExtras().getString("MunicipioRow6"));
+                intent.putExtra("VeredaRow6", getIntent().getExtras().getString("VeredaRow6"));
+                intent.putExtra("PredioRow6", getIntent().getExtras().getString("PredioRow6"));
+                intent.putExtra("NegrosRow6", getIntent().getExtras().getString("NegrosRow6"));
+                intent.putExtra("RojosRow6", getIntent().getExtras().getString("RojosRow6"));
+                intent.putExtra("EstadoCultivoRow6", getIntent().getExtras().getString("EstadoCultivoRow6"));
+                intent.putExtra("ObservacionesRow6", getIntent().getExtras().getString("ObservacionesRow6"));
+
+                intent.putExtra("DiaRow7", getIntent().getExtras().getString("DiaRow7"));
+                intent.putExtra("CodigoTrampaRow7", getIntent().getExtras().getString("CodigoTrampaRow7"));
+                intent.putExtra("MunicipioRow7", getIntent().getExtras().getString("MunicipioRow7"));
+                intent.putExtra("VeredaRow7", getIntent().getExtras().getString("VeredaRow7"));
+                intent.putExtra("PredioRow7", getIntent().getExtras().getString("PredioRow7"));
+                intent.putExtra("NegrosRow7", getIntent().getExtras().getString("NegrosRow7"));
+                intent.putExtra("RojosRow7", getIntent().getExtras().getString("RojosRow7"));
+                intent.putExtra("EstadoCultivoRow7", getIntent().getExtras().getString("EstadoCultivoRow7"));
+                intent.putExtra("ObservacionesRow7", getIntent().getExtras().getString("ObservacionesRow7"));
+
+                intent.putExtra("DiaRow8", getIntent().getExtras().getString("DiaRow8"));
+                intent.putExtra("CodigoTrampaRow8", getIntent().getExtras().getString("CodigoTrampaRow8"));
+                intent.putExtra("MunicipioRow8", getIntent().getExtras().getString("MunicipioRow8"));
+                intent.putExtra("VeredaRow8", getIntent().getExtras().getString("VeredaRow8"));
+                intent.putExtra("PredioRow8", getIntent().getExtras().getString("PredioRow8"));
+                intent.putExtra("NegrosRow8", getIntent().getExtras().getString("NegrosRow8"));
+                intent.putExtra("RojosRow8", getIntent().getExtras().getString("RojosRow8"));
+                intent.putExtra("EstadoCultivoRow8", getIntent().getExtras().getString("EstadoCultivoRow8"));
+                intent.putExtra("ObservacionesRow8", getIntent().getExtras().getString("ObservacionesRow8"));
+
+            }
+            if (getIntent().getExtras().getInt("page") ==  9) {
+                intent.putExtra("DiaRow1", getIntent().getExtras().getString("DiaRow1"));
+                intent.putExtra("CodigoTrampaRow1", getIntent().getExtras().getString("CodigoTrampaRow1"));
+                intent.putExtra("MunicipioRow1", getIntent().getExtras().getString("MunicipioRow1"));
+                intent.putExtra("VeredaRow1", getIntent().getExtras().getString("VeredaRow1"));
+                intent.putExtra("PredioRow1", getIntent().getExtras().getString("PredioRow1"));
+                intent.putExtra("NegrosRow1", getIntent().getExtras().getString("NegrosRow1"));
+                intent.putExtra("RojosRow1", getIntent().getExtras().getString("RojosRow1"));
+                intent.putExtra("EstadoCultivoRow1", getIntent().getExtras().getString("EstadoCultivoRow1"));
+                intent.putExtra("ObservacionesRow1", getIntent().getExtras().getString("ObservacionesRow1"));
+
+                intent.putExtra("DiaRow2", getIntent().getExtras().getString("DiaRow2"));
+                intent.putExtra("CodigoTrampaRow2", getIntent().getExtras().getString("CodigoTrampaRow2"));
+                intent.putExtra("MunicipioRow2", getIntent().getExtras().getString("MunicipioRow2"));
+                intent.putExtra("VeredaRow2", getIntent().getExtras().getString("VeredaRow2"));
+                intent.putExtra("PredioRow2", getIntent().getExtras().getString("PredioRow2"));
+                intent.putExtra("NegrosRow2", getIntent().getExtras().getString("NegrosRow2"));
+                intent.putExtra("RojosRow2", getIntent().getExtras().getString("RojosRow2"));
+                intent.putExtra("EstadoCultivoRow2", getIntent().getExtras().getString("EstadoCultivoRow2"));
+                intent.putExtra("ObservacionesRow2", getIntent().getExtras().getString("ObservacionesRow2"));
+
+                intent.putExtra("DiaRow3", getIntent().getExtras().getString("DiaRow3"));
+                intent.putExtra("CodigoTrampaRow3", getIntent().getExtras().getString("CodigoTrampaRow3"));
+                intent.putExtra("MunicipioRow3", getIntent().getExtras().getString("MunicipioRow3"));
+                intent.putExtra("VeredaRow3", getIntent().getExtras().getString("VeredaRow3"));
+                intent.putExtra("PredioRow3", getIntent().getExtras().getString("PredioRow3"));
+                intent.putExtra("NegrosRow3", getIntent().getExtras().getString("NegrosRow3"));
+                intent.putExtra("RojosRow3", getIntent().getExtras().getString("RojosRow3"));
+                intent.putExtra("EstadoCultivoRow3", getIntent().getExtras().getString("EstadoCultivoRow3"));
+                intent.putExtra("ObservacionesRow3", getIntent().getExtras().getString("ObservacionesRow3"));
+
+                intent.putExtra("DiaRow4", getIntent().getExtras().getString("DiaRow4"));
+                intent.putExtra("CodigoTrampaRow4", getIntent().getExtras().getString("CodigoTrampaRow4"));
+                intent.putExtra("MunicipioRow4", getIntent().getExtras().getString("MunicipioRow4"));
+                intent.putExtra("VeredaRow4", getIntent().getExtras().getString("VeredaRow4"));
+                intent.putExtra("PredioRow4", getIntent().getExtras().getString("PredioRow4"));
+                intent.putExtra("NegrosRow4", getIntent().getExtras().getString("NegrosRow4"));
+                intent.putExtra("RojosRow4", getIntent().getExtras().getString("RojosRow4"));
+                intent.putExtra("EstadoCultivoRow4", getIntent().getExtras().getString("EstadoCultivoRow4"));
+                intent.putExtra("ObservacionesRow4", getIntent().getExtras().getString("ObservacionesRow4"));
+
+                intent.putExtra("DiaRow5", getIntent().getExtras().getString("DiaRow5"));
+                intent.putExtra("CodigoTrampaRow5", getIntent().getExtras().getString("CodigoTrampaRow5"));
+                intent.putExtra("MunicipioRow5", getIntent().getExtras().getString("MunicipioRow5"));
+                intent.putExtra("VeredaRow5", getIntent().getExtras().getString("VeredaRow5"));
+                intent.putExtra("PredioRow5", getIntent().getExtras().getString("PredioRow5"));
+                intent.putExtra("NegrosRow5", getIntent().getExtras().getString("NegrosRow5"));
+                intent.putExtra("RojosRow5", getIntent().getExtras().getString("RojosRow5"));
+                intent.putExtra("EstadoCultivoRow5", getIntent().getExtras().getString("EstadoCultivoRow5"));
+                intent.putExtra("ObservacionesRow5", getIntent().getExtras().getString("ObservacionesRow5"));
+
+                intent.putExtra("DiaRow6", getIntent().getExtras().getString("DiaRow6"));
+                intent.putExtra("CodigoTrampaRow6", getIntent().getExtras().getString("CodigoTrampaRow6"));
+                intent.putExtra("MunicipioRow6", getIntent().getExtras().getString("MunicipioRow6"));
+                intent.putExtra("VeredaRow6", getIntent().getExtras().getString("VeredaRow6"));
+                intent.putExtra("PredioRow6", getIntent().getExtras().getString("PredioRow6"));
+                intent.putExtra("NegrosRow6", getIntent().getExtras().getString("NegrosRow6"));
+                intent.putExtra("RojosRow6", getIntent().getExtras().getString("RojosRow6"));
+                intent.putExtra("EstadoCultivoRow6", getIntent().getExtras().getString("EstadoCultivoRow6"));
+                intent.putExtra("ObservacionesRow6", getIntent().getExtras().getString("ObservacionesRow6"));
+
+                intent.putExtra("DiaRow7", getIntent().getExtras().getString("DiaRow7"));
+                intent.putExtra("CodigoTrampaRow7", getIntent().getExtras().getString("CodigoTrampaRow7"));
+                intent.putExtra("MunicipioRow7", getIntent().getExtras().getString("MunicipioRow7"));
+                intent.putExtra("VeredaRow7", getIntent().getExtras().getString("VeredaRow7"));
+                intent.putExtra("PredioRow7", getIntent().getExtras().getString("PredioRow7"));
+                intent.putExtra("NegrosRow7", getIntent().getExtras().getString("NegrosRow7"));
+                intent.putExtra("RojosRow7", getIntent().getExtras().getString("RojosRow7"));
+                intent.putExtra("EstadoCultivoRow7", getIntent().getExtras().getString("EstadoCultivoRow7"));
+                intent.putExtra("ObservacionesRow7", getIntent().getExtras().getString("ObservacionesRow7"));
+
+                intent.putExtra("DiaRow8", getIntent().getExtras().getString("DiaRow8"));
+                intent.putExtra("CodigoTrampaRow8", getIntent().getExtras().getString("CodigoTrampaRow8"));
+                intent.putExtra("MunicipioRow8", getIntent().getExtras().getString("MunicipioRow8"));
+                intent.putExtra("VeredaRow8", getIntent().getExtras().getString("VeredaRow8"));
+                intent.putExtra("PredioRow8", getIntent().getExtras().getString("PredioRow8"));
+                intent.putExtra("NegrosRow8", getIntent().getExtras().getString("NegrosRow8"));
+                intent.putExtra("RojosRow8", getIntent().getExtras().getString("RojosRow8"));
+                intent.putExtra("EstadoCultivoRow8", getIntent().getExtras().getString("EstadoCultivoRow8"));
+                intent.putExtra("ObservacionesRow8", getIntent().getExtras().getString("ObservacionesRow8"));
+
+                intent.putExtra("DiaRow9", getIntent().getExtras().getString("DiaRow9"));
+                intent.putExtra("CodigoTrampaRow9", getIntent().getExtras().getString("CodigoTrampaRow9"));
+                intent.putExtra("MunicipioRow9", getIntent().getExtras().getString("MunicipioRow9"));
+                intent.putExtra("VeredaRow9", getIntent().getExtras().getString("VeredaRow9"));
+                intent.putExtra("PredioRow9", getIntent().getExtras().getString("PredioRow9"));
+                intent.putExtra("NegrosRow9", getIntent().getExtras().getString("NegrosRow9"));
+                intent.putExtra("RojosRow9", getIntent().getExtras().getString("RojosRow9"));
+                intent.putExtra("EstadoCultivoRow9", getIntent().getExtras().getString("EstadoCultivoRow9"));
+                intent.putExtra("ObservacionesRow9", getIntent().getExtras().getString("ObservacionesRow9"));
+            }
+        }
+            startActivity(intent);
+
+    }
 }

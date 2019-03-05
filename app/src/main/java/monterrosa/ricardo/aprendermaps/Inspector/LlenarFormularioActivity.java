@@ -3,6 +3,7 @@ package monterrosa.ricardo.aprendermaps.Inspector;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,6 +57,8 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import monterrosa.ricardo.aprendermaps.ModeloForma;
 import monterrosa.ricardo.aprendermaps.ModeloRegistro;
 import monterrosa.ricardo.aprendermaps.R;
 
@@ -69,12 +72,23 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     private SignaturePad firma;
     private DatabaseReference baseDatos;
     private DatabaseReference usuarios;
-    private DatabaseReference trampas;
+    private DatabaseReference trampas,informe;
     private String Nombre,Cedula,correo;
     private FirebaseAuth auth;
     private String TAG = "DatoCopiar";
     private int añadir = 0;
     private AlertDialog dialog;
+    private ProgressDialog progressDialog;
+    private File photo;
+
+    /**
+     *
+     *  Eliminar modificaciond e cedula y nombre para el inspector
+     *  Pedir datos predeterminados para volverlos spiners
+     *  Cambiar de color el user off
+
+     * @param savedInstanceState
+     */
 
 
     @Override
@@ -82,9 +96,19 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_llenar_formulario);
         Inicializar();
+        VerInforme();
+        progressDialog = new ProgressDialog(this);
         if (getIntent().getExtras()!=null){
             añadir = getIntent().getExtras().getInt("añadir");
+            Toast.makeText(this,"añadir = "+añadir,Toast.LENGTH_SHORT).show();
             CentroAcopio.setText(getIntent().getStringExtra("CentroAcopio"));
+            Oficina.setText(getIntent().getStringExtra("oficina"));
+            nombreColector.setText(getIntent().getStringExtra("colector"));
+            semana.setText(getIntent().getStringExtra("semana"));
+            responsable.setText(getIntent().getExtras().getString("responsable1"));
+            registroruta.setText(getIntent().getExtras().getString("registroruta"));
+            codigoruta.setText(getIntent().getExtras().getString("codigoruta"));
+            Nombredelaruta.setText(getIntent().getExtras().getString("nombreruta1"));
         }
         firma.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
@@ -142,7 +166,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
 
             }
         });
-        addformulario = findViewById(R.id.addformulariotrampa);
+
 
         Guardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,12 +176,19 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                  * Guarda la fecha de inspeccionde la trampa a la cual se le dio en Informacion
                  */
                 Copiarpdf();
-                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid(),Observaciones.getText()+"");
+                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid(),Observaciones.getText()+"","Mosca de la fruta");
                 baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
                 trampas = baseDatos.child("Inspecciones");
                 trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
+                ModeloForma modeloForma = new ModeloForma(CentroAcopio.getText()+"",fechaactual()+"",semana.getText()+"",
+                        Oficina.getText()+"",responsable.getText()+"",nombreColector.getText()+"",registroruta.getText()+"",
+                        Nombredelaruta+"",codigoruta.getText()+"",CodigoTrampa.getText()+"",Municipio.getText()+"",
+                        Tipo_Atrayente.getText()+"",numeroanas.getText()+"",numeroceratis.getText()+"",numerootros.getText()+"",
+                        fenologia.getText()+"",Estadotrampa.getText()+"",Observaciones.getText()+"");
+                baseDatos.child("Formulario").push().setValue(modeloForma);
                 LlenarPedf(new File(Environment.getExternalStorageDirectory().toString(),"Reportes")+"",path);
                 Toast.makeText(LlenarFormularioActivity.this, path, Toast.LENGTH_SHORT).show();
+                photo.delete();
                 Context context = LlenarFormularioActivity.this;
                 String[] mailto = {""};
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -167,32 +198,51 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 emailIntent.setType("application/pdf");
                 emailIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"/Reportes/forma.pdf" )));
                 emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                 startActivity(Intent.createChooser(emailIntent, ""));
+
             }
         });
         Guardarfirma.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog.setMessage("consiguiendo firma");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
                 Bitmap signatureBitmap = firma.getSignatureBitmap();
                 if (addJpgSignatureToGallery(signatureBitmap)) {
                     Toast.makeText(LlenarFormularioActivity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
                 } else {
                     Toast.makeText(LlenarFormularioActivity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
                 }
                 if (addSvgSignatureToGallery(firma.getSignatureSvg())) {
                     Toast.makeText(LlenarFormularioActivity.this, "SVG Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
                 } else {
                     Toast.makeText(LlenarFormularioActivity.this, "Unable to store the SVG signature", Toast.LENGTH_SHORT).show();
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
                 }
             }
         });
         addformulario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid(),Observaciones.getText()+"");
+                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid(),Observaciones.getText()+"","Mosca de la fruta");
                 baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
                 trampas = baseDatos.child("Inspecciones");
                 trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
+                ModeloForma modeloForma = new ModeloForma(CentroAcopio.getText()+"",fechaactual()+"",semana.getText()+"",
+                        Oficina.getText()+"",responsable.getText()+"",nombreColector.getText()+"",registroruta.getText()+"",
+                        Nombredelaruta.getText()+"",codigoruta.getText()+"",CodigoTrampa.getText()+"",Municipio.getText()+"",
+                        Tipo_Atrayente.getText()+"",numeroanas.getText()+"",numeroceratis.getText()+"",numerootros.getText()+"",
+                        fenologia.getText()+"",Estadotrampa.getText()+"",Observaciones.getText()+"");
+                baseDatos.child("Formulario").push().setValue(modeloForma);
                 if (añadir<8) {
                     if (path==null || path.isEmpty()){
                         AlertDialog.Builder builder = new AlertDialog.Builder(LlenarFormularioActivity.this);
@@ -288,10 +338,10 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     public boolean addJpgSignatureToGallery(Bitmap signature) {
         boolean result = false;
         try {
-            File photo = new File(getAlbumStorageDir("SignaturePad"), String.format("Signature_%d.jpg", System.currentTimeMillis()));
+            photo = new File(getAlbumStorageDir("SignaturePad"), String.format("Signature_%d.jpg", System.currentTimeMillis()));
             saveBitmapToJPG(signature, photo);
             scanMediaFile(photo);
-            path= photo+"";
+            path = photo+"";
             result = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -330,7 +380,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             PdfStamper stamper = new PdfStamper(pdfReader,new FileOutputStream(destino+"/forma.pdf"));
             InputStream ims = getResources().openRawResource(R.raw.forma);
             AcroFields acroFields = stamper.getAcroFields();
-           // Log.e("Datos", acroFields.getFields()+"");
+            Log.e("Datos", acroFields.getFields()+"");
 
 
 
@@ -358,7 +408,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("Codigo_ruta", codigoruta.getText()+"");
                     acroFields.setField("CODIGOTRAMPARow1.0", CodigoTrampa.getText() + "");
                     acroFields.setField("MUNICIPIORow1", Municipio.getText() + "");
-                    acroFields.setField("TIPO_ATRAYENTERow1", Tipo_Atrayente.getText().toString());
+                    acroFields.setField("TIPO_ATRAYENTERow1", Tipo_Atrayente.getText()+"");
                     acroFields.setField("AnastrephaRow1", numeroanas.getText() + "");
                     acroFields.setField("CeratitisRow1", numeroceratis.getText() + "");
                     acroFields.setField("OtrosRow1", numerootros.getText() + "");
@@ -366,18 +416,26 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("ESTADOTRAMPARow1", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow1", Observaciones.getText() + "");
 
-                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
+                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
-                    if (ruta!=null || !ruta.isEmpty()) {
-                        ad.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                    if (ruta!=null) {
+                        if (!ruta.isEmpty()) {
+                            ad.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma1", ad.getField());
+                        }
                     }
 
                 }
 
                 if (añadir == 2){
                     Log.e("llenar","entro añadir 2 pdf");
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
                     Toast.makeText(this, "recibir añadir 2", Toast.LENGTH_SHORT).show();
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
@@ -390,7 +448,8 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("OBSERVACIONESRow1", getIntent().getExtras().getString("observaciones1"));
                     acroFields.setField("CODIGOTRAMPARow2", CodigoTrampa.getText() + "");
                     acroFields.setField("MUNICIPIORow2", Municipio.getText() + "");
-                    acroFields.setField("TIPO_ATRAYENTERow2", Tipo_Atrayente.getText().toString());
+                    acroFields.setField("TIPO_ATRAYENTERow2", Tipo_Atrayente.getText()+"");
+                    Log.e("tipo atrayente 2",Tipo_Atrayente.getText()+"");
                     acroFields.setField("AnastrephaRow2", numeroanas.getText() + "");
                     acroFields.setField("CeratitisRow2", numeroceratis.getText() + "");
                     acroFields.setField("OtrosRow2", numerootros.getText() + "");
@@ -399,19 +458,21 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("OBSERVACIONESRow2", Observaciones.getText() + "");
                     acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
 
-                        PushbuttonField ad = acroFields.getNewPushbuttonFromField("Firma1");
-                        ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
-                        ad.setProportionalIcon(false);
+                    PushbuttonField ad = acroFields.getNewPushbuttonFromField("firma1");
+                    ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
+                    ad.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma1")!=null) {
                         ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                        acroFields.replacePushbuttonField("firma1", ad.getField());
                     }
-                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("Firma2");
+                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("firma2");
                     ad2.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad2.setProportionalIcon(false);
-                    if (getIntent().getExtras().getString("firma2")!=null){
-                        ad2.setImage(Image.getInstance(getIntent().getExtras().getString("firma2")));
-                        acroFields.replacePushbuttonField("Firma2", ad.getField());
+                    if (ruta!=null) {
+                        if (!ruta.isEmpty()) {
+                            ad2.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma2", ad2.getField());
+                        }
                     }
 
                 } if (añadir == 3){
@@ -444,29 +505,33 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("FENOLOGIARow3", fenologia.getText() + "");
                     acroFields.setField("ESTADOTRAMPARow3", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow3", Observaciones.getText() + "");
-                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
+                    Log.e("firma1-final",getIntent().getExtras().getString("firma1"));
+                    Log.e("firma2-final",getIntent().getExtras().getString("firma2"));
+                    Log.e("firma3-final",ruta);
+                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma1")!=null) {
                         ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                        acroFields.replacePushbuttonField("firma1", ad.getField());
                     }
 
-                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("Firma2");
+                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("firma2");
                     ad2.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad2.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma2")!=null) {
                         ad2.setImage(Image.getInstance(getIntent().getExtras().getString("firma2")));
-                        acroFields.replacePushbuttonField("Firma2", ad.getField());
+                        acroFields.replacePushbuttonField("firma2", ad2.getField());
                     }
 
-                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("Firma3");
+                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("firma3");
                     ad3.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad3.setProportionalIcon(false);
-                    if (getIntent().getExtras().getString("firma3")!=null) {
-                        ad3.setImage(Image.getInstance(getIntent().getExtras().getString("firma3")));
-                        acroFields.replacePushbuttonField("Firma3", ad.getField());
+                    if (ruta!=null || !ruta.isEmpty()) {
+                        ad3.setImage(Image.getInstance(ruta));
+                        acroFields.replacePushbuttonField("firma3", ad3.getField());
                     }
+
 
                 }
                 if (añadir==4){
@@ -489,6 +554,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("ESTADOTRAMPARow2", getIntent().getExtras().getString("estado2"));
                     acroFields.setField("OBSERVACIONESRow2", getIntent().getExtras().getString("observaciones2"));
                     acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
+                    acroFields.setField("CODIGOTRAMPARow3", getIntent().getExtras().getString("codigotrampa3"));
                     acroFields.setField("MUNICIPIORow3", getIntent().getExtras().getString("municipio3"));
                     acroFields.setField("TIPO_ATRAYENTERow3", getIntent().getExtras().getString("tipoatrayente3"));
                     acroFields.setField("AnastrephaRow3", getIntent().getExtras().getString("anastrepha3"));
@@ -507,36 +573,41 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("FENOLOGIARow4", fenologia.getText() + "");
                     acroFields.setField("ESTADOTRAMPARow4", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow4", Observaciones.getText() + "");
-                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
+                    Log.e("firma1-final",getIntent().getExtras().getString("firma1"));
+                    Log.e("firma2-final",getIntent().getExtras().getString("firma2"));
+                    Log.e("firma3-final",getIntent().getExtras().getString("firma3"));
+                    Log.e("firma4-final",ruta);
+                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma1")!=null) {
                         ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                        acroFields.replacePushbuttonField("firma1", ad.getField());
                     }
 
-                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("Firma2");
+
+                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("firma2");
                     ad2.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad2.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma2")!=null) {
                         ad2.setImage(Image.getInstance(getIntent().getExtras().getString("firma2")));
-                        acroFields.replacePushbuttonField("Firma2", ad.getField());
+                        acroFields.replacePushbuttonField("firma2", ad2.getField());
                     }
 
-                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("Firma3");
+                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("firma3");
                     ad3.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad3.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma3")!=null) {
                         ad3.setImage(Image.getInstance(getIntent().getExtras().getString("firma3")));
-                        acroFields.replacePushbuttonField("Firma3", ad.getField());
+                        acroFields.replacePushbuttonField("firma3", ad3.getField());
                     }
 
-                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("Firma4");
+                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("firma4");
                     ad4.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad4.setProportionalIcon(false);
-                    if (getIntent().getExtras().getString("firma4")!=null) {
-                        ad4.setImage(Image.getInstance(getIntent().getExtras().getString("firma4")));
-                        acroFields.replacePushbuttonField("Firma4", ad.getField());
+                    if (ruta!=null) {
+                        ad4.setImage(Image.getInstance(ruta));
+                        acroFields.replacePushbuttonField("firma4", ad4.getField());
                     }
 
 
@@ -590,20 +661,20 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("FENOLOGIARow5", fenologia.getText() + "");
                     acroFields.setField("ESTADOTRAMPARow5", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow5", Observaciones.getText() + "");
-                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
+                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma1")!=null) {
                         ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                        acroFields.replacePushbuttonField("firma1", ad.getField());
                     }
 
-                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("Firma2");
+                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("firma2");
                     ad2.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad2.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma2")!=null) {
                         ad2.setImage(Image.getInstance(getIntent().getExtras().getString("firma2")));
-                        acroFields.replacePushbuttonField("Firma2", ad.getField());
+                        acroFields.replacePushbuttonField("firma2", ad2.getField());
                     }
 
                     PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("Firma3");
@@ -611,23 +682,23 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     ad3.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma3")!=null) {
                         ad3.setImage(Image.getInstance(getIntent().getExtras().getString("firma3")));
-                        acroFields.replacePushbuttonField("Firma3", ad.getField());
+                        acroFields.replacePushbuttonField("firma3", ad3.getField());
                     }
 
-                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("Firma4");
+                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("firma4");
                     ad4.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad4.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma4")!=null) {
                         ad4.setImage(Image.getInstance(getIntent().getExtras().getString("firma4")));
-                        acroFields.replacePushbuttonField("Firma4", ad.getField());
+                        acroFields.replacePushbuttonField("firma4", ad4.getField());
                     }
 
                     PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("Firma5");
                     ad5.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad5.setProportionalIcon(false);
-                    if (getIntent().getExtras().getString("firma5")!=null) {
-                        ad5.setImage(Image.getInstance(getIntent().getExtras().getString("firma5")));
-                        acroFields.replacePushbuttonField("Firma5", ad.getField());
+                    if (ruta!=null) {
+                        ad5.setImage(Image.getInstance(ruta));
+                        acroFields.replacePushbuttonField("Firma5", ad5.getField());
                     }
                 }
                 if (añadir==6){
@@ -693,46 +764,46 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     ad.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma1")!=null) {
                         ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                        acroFields.replacePushbuttonField("firma1", ad.getField());
                     }
 
-                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("Firma2");
+                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("firma2");
                     ad2.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad2.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma2")!=null) {
                         ad2.setImage(Image.getInstance(getIntent().getExtras().getString("firma2")));
-                        acroFields.replacePushbuttonField("Firma2", ad.getField());
+                        acroFields.replacePushbuttonField("firma2", ad2.getField());
                     }
 
-                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("Firma3");
+                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("firma3");
                     ad3.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad3.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma3")!=null) {
                         ad3.setImage(Image.getInstance(getIntent().getExtras().getString("firma3")));
-                        acroFields.replacePushbuttonField("Firma3", ad.getField());
+                        acroFields.replacePushbuttonField("firma3", ad3.getField());
                     }
 
-                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("Firma4");
+                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("firma4");
                     ad4.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad4.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma4")!=null) {
                         ad4.setImage(Image.getInstance(getIntent().getExtras().getString("firma4")));
-                        acroFields.replacePushbuttonField("Firma4", ad.getField());
+                        acroFields.replacePushbuttonField("firma4", ad4.getField());
                     }
 
-                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("Firma5");
+                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("firma5");
                     ad5.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad5.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma5")!=null) {
                         ad5.setImage(Image.getInstance(getIntent().getExtras().getString("firma5")));
-                        acroFields.replacePushbuttonField("Firma5", ad.getField());
+                        acroFields.replacePushbuttonField("firma5", ad5.getField());
                     }
-                    PushbuttonField ad6  = acroFields.getNewPushbuttonFromField("Firma6");
+                    PushbuttonField ad6  = acroFields.getNewPushbuttonFromField("firma6");
                     ad6.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad6.setProportionalIcon(false);
-                    if (getIntent().getExtras().getString("firma6")!=null) {
-                        ad6.setImage(Image.getInstance(getIntent().getExtras().getString("firma6")));
-                        acroFields.replacePushbuttonField("Firma6", ad.getField());
+                    if (ruta!=null) {
+                        ad6.setImage(Image.getInstance(ruta));
+                        acroFields.replacePushbuttonField("firma6", ad6.getField());
                     }
                 }
                 if (añadir==7){
@@ -803,58 +874,58 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("ESTADOTRAMPARow7", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow7", Observaciones.getText() + "");
 
-                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
+                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma1")!=null) {
                         ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                        acroFields.replacePushbuttonField("firma1", ad.getField());
                     }
 
-                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("Firma2");
+                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("firma2");
                     ad2.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad2.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma2")!=null) {
                         ad2.setImage(Image.getInstance(getIntent().getExtras().getString("firma2")));
-                        acroFields.replacePushbuttonField("Firma2", ad.getField());
+                        acroFields.replacePushbuttonField("firma2", ad2.getField());
                     }
 
-                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("Firma3");
+                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("firma3");
                     ad3.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad3.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma3")!=null) {
                         ad3.setImage(Image.getInstance(getIntent().getExtras().getString("firma3")));
-                        acroFields.replacePushbuttonField("Firma3", ad.getField());
+                        acroFields.replacePushbuttonField("firma3", ad3.getField());
                     }
 
-                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("Firma4");
+                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("firma4");
                     ad4.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad4.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma4")!=null) {
                         ad4.setImage(Image.getInstance(getIntent().getExtras().getString("firma4")));
-                        acroFields.replacePushbuttonField("Firma4", ad.getField());
+                        acroFields.replacePushbuttonField("firma4", ad4.getField());
                     }
 
-                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("Firma5");
+                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("firma5");
                     ad5.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad5.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma5")!=null) {
                         ad5.setImage(Image.getInstance(getIntent().getExtras().getString("firma5")));
-                        acroFields.replacePushbuttonField("Firma5", ad.getField());
+                        acroFields.replacePushbuttonField("firma5", ad5.getField());
                     }
-                    PushbuttonField ad6  = acroFields.getNewPushbuttonFromField("Firma6");
+                    PushbuttonField ad6  = acroFields.getNewPushbuttonFromField("firma6");
                     ad6.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad6.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma6")!=null) {
                         ad6.setImage(Image.getInstance(getIntent().getExtras().getString("firma6")));
-                        acroFields.replacePushbuttonField("Firma6", ad.getField());
+                        acroFields.replacePushbuttonField("firma6", ad6.getField());
                     }
-                    PushbuttonField ad7  = acroFields.getNewPushbuttonFromField("Firma7");
+                    PushbuttonField ad7  = acroFields.getNewPushbuttonFromField("firma7");
                     ad7.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad7.setProportionalIcon(false);
-                    if (getIntent().getExtras().getString("firma7")!=null) {
-                        ad7.setImage(Image.getInstance(getIntent().getExtras().getString("firma7")));
-                        acroFields.replacePushbuttonField("Firma7", ad.getField());
+                    if (ruta!=null) {
+                        ad7.setImage(Image.getInstance(ruta));
+                        acroFields.replacePushbuttonField("firma7", ad7.getField());
                     }
                 }
                 if (añadir==8){
@@ -934,66 +1005,66 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("ESTADOTRAMPARow8", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow8", Observaciones.getText() + "");
 
-                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
+                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma1")!=null) {
                         ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                        acroFields.replacePushbuttonField("firma1", ad.getField());
                     }
 
-                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("Firma2");
+                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("firma2");
                     ad2.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad2.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma2")!=null) {
                         ad2.setImage(Image.getInstance(getIntent().getExtras().getString("firma2")));
-                        acroFields.replacePushbuttonField("Firma2", ad.getField());
+                        acroFields.replacePushbuttonField("firma2", ad2.getField());
                     }
 
-                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("Firma3");
+                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("firma3");
                     ad3.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad3.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma3")!=null) {
                         ad3.setImage(Image.getInstance(getIntent().getExtras().getString("firma3")));
-                        acroFields.replacePushbuttonField("Firma3", ad.getField());
+                        acroFields.replacePushbuttonField("firma3", ad3.getField());
                     }
 
-                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("Firma4");
+                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("firma4");
                     ad4.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad4.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma4")!=null) {
                         ad4.setImage(Image.getInstance(getIntent().getExtras().getString("firma4")));
-                        acroFields.replacePushbuttonField("Firma4", ad.getField());
+                        acroFields.replacePushbuttonField("firma4", ad4.getField());
                     }
 
-                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("Firma5");
+                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("firma5");
                     ad5.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad5.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma5")!=null) {
                         ad5.setImage(Image.getInstance(getIntent().getExtras().getString("firma5")));
-                        acroFields.replacePushbuttonField("Firma5", ad.getField());
+                        acroFields.replacePushbuttonField("firma5", ad5.getField());
                     }
-                    PushbuttonField ad6  = acroFields.getNewPushbuttonFromField("Firma6");
+                    PushbuttonField ad6  = acroFields.getNewPushbuttonFromField("firma6");
                     ad6.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad6.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma6")!=null) {
                         ad6.setImage(Image.getInstance(getIntent().getExtras().getString("firma6")));
-                        acroFields.replacePushbuttonField("Firma6", ad.getField());
+                        acroFields.replacePushbuttonField("firma6", ad6.getField());
                     }
-                    PushbuttonField ad7  = acroFields.getNewPushbuttonFromField("Firma7");
+                    PushbuttonField ad7  = acroFields.getNewPushbuttonFromField("firma7");
                     ad7.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad7.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma7")!=null) {
                         ad7.setImage(Image.getInstance(getIntent().getExtras().getString("firma7")));
-                        acroFields.replacePushbuttonField("Firma7", ad.getField());
+                        acroFields.replacePushbuttonField("firma7", ad7.getField());
                     }
 
-                    PushbuttonField ad8  = acroFields.getNewPushbuttonFromField("Firma8");
+                    PushbuttonField ad8  = acroFields.getNewPushbuttonFromField("firma8");
                     ad8.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad8.setProportionalIcon(false);
-                    if (getIntent().getExtras().getString("firma8")!=null) {
-                        ad8.setImage(Image.getInstance(getIntent().getExtras().getString("firma8")));
-                        acroFields.replacePushbuttonField("Firma8", ad.getField());
+                    if (ruta!=null) {
+                        ad8.setImage(Image.getInstance(ruta));
+                        acroFields.replacePushbuttonField("firma8", ad8.getField());
                     }
                 }if(añadir==9){
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
@@ -1081,58 +1152,58 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("ESTADOTRAMPARow9", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow9", Observaciones.getText() + "");
 
-                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("Firma1");
+                    PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma1")!=null) {
                         ad.setImage(Image.getInstance(getIntent().getExtras().getString("firma1")));
-                        acroFields.replacePushbuttonField("Firma1", ad.getField());
+                        acroFields.replacePushbuttonField("firma1", ad.getField());
                     }
 
-                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("Firma2");
+                    PushbuttonField ad2  = acroFields.getNewPushbuttonFromField("firma2");
                     ad2.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad2.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma2")!=null) {
                         ad2.setImage(Image.getInstance(getIntent().getExtras().getString("firma2")));
-                        acroFields.replacePushbuttonField("Firma2", ad.getField());
+                        acroFields.replacePushbuttonField("firma2", ad2.getField());
                     }
 
-                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("Firma3");
+                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("firma3");
                     ad3.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad3.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma3")!=null) {
                         ad3.setImage(Image.getInstance(getIntent().getExtras().getString("firma3")));
-                        acroFields.replacePushbuttonField("Firma3", ad.getField());
+                        acroFields.replacePushbuttonField("firma3", ad3.getField());
                     }
 
-                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("Firma4");
+                    PushbuttonField ad4  = acroFields.getNewPushbuttonFromField("firma4");
                     ad4.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad4.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma4")!=null) {
                         ad4.setImage(Image.getInstance(getIntent().getExtras().getString("firma4")));
-                        acroFields.replacePushbuttonField("Firma4", ad.getField());
+                        acroFields.replacePushbuttonField("firma4", ad4.getField());
                     }
 
-                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("Firma5");
+                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("firma5");
                     ad5.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad5.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma5")!=null) {
                         ad5.setImage(Image.getInstance(getIntent().getExtras().getString("firma5")));
-                        acroFields.replacePushbuttonField("Firma5", ad.getField());
+                        acroFields.replacePushbuttonField("firma5", ad5.getField());
                     }
-                    PushbuttonField ad6  = acroFields.getNewPushbuttonFromField("Firma6");
+                    PushbuttonField ad6  = acroFields.getNewPushbuttonFromField("firma6");
                     ad6.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad6.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma6")!=null) {
                         ad6.setImage(Image.getInstance(getIntent().getExtras().getString("firma6")));
-                        acroFields.replacePushbuttonField("Firma6", ad.getField());
+                        acroFields.replacePushbuttonField("firma6", ad6.getField());
                     }
-                    PushbuttonField ad7  = acroFields.getNewPushbuttonFromField("Firma7");
+                    PushbuttonField ad7  = acroFields.getNewPushbuttonFromField("firma7");
                     ad7.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad7.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma7")!=null) {
                         ad7.setImage(Image.getInstance(getIntent().getExtras().getString("firma7")));
-                        acroFields.replacePushbuttonField("Firma7", ad.getField());
+                        acroFields.replacePushbuttonField("firma7", ad7.getField());
                     }
 
                     PushbuttonField ad8  = acroFields.getNewPushbuttonFromField("Firma8");
@@ -1140,15 +1211,15 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     ad8.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma8")!=null) {
                         ad8.setImage(Image.getInstance(getIntent().getExtras().getString("firma8")));
-                        acroFields.replacePushbuttonField("Firma8", ad.getField());
+                        acroFields.replacePushbuttonField("firma8", ad8.getField());
                     }
 
-                    PushbuttonField ad9  = acroFields.getNewPushbuttonFromField("Firma9");
+                    PushbuttonField ad9  = acroFields.getNewPushbuttonFromField("firma9");
                     ad9.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad9.setProportionalIcon(false);
                     if (ruta!=null || !ruta.isEmpty()) {
                         ad9.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("Firma9", ad.getField());
+                        acroFields.replacePushbuttonField("firma9", ad9.getField());
                     }
                 }
             }
@@ -1166,6 +1237,10 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     }
 
     private void Inicializar(){
+        String Nombre = "";
+        if (getIntent().getExtras().getString("NombreInspector") != null){
+            Nombre = getIntent().getExtras().getString("NombreInspector");
+        }
         Oficina = findViewById(R.id.oficina);
         Municipio = findViewById(R.id.FormularioMunicipio);
         Tipo_Atrayente = findViewById(R.id.formularioTipoAtrayente);
@@ -1176,6 +1251,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         Estadotrampa = findViewById(R.id.FormularioEstadotrampa);
         Observaciones = findViewById(R.id.FomuarioObservaciones);
         nombreColector = findViewById(R.id.NombreColector);
+        nombreColector.setText(Nombre);
         Nombredelaruta = findViewById(R.id.NombreRuta);
         semana = findViewById(R.id.Numerosemanaepidemiologica);
         responsable = findViewById(R.id.Responsable);
@@ -1191,6 +1267,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         baseDatos = FirebaseDatabase.getInstance().getReference();
         usuarios = baseDatos.child("Usuarios");
         CentroAcopio = findViewById(R.id.CentroAcopio);
+        addformulario = findViewById(R.id.addformulariotrampa);
         Guardarfirma = findViewById(R.id.savesignature);
         limpiarfirma = findViewById(R.id.clearsignature);
     }
@@ -1207,11 +1284,12 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         intent.putExtra("registroruta",registroruta.getText()+"");
         intent.putExtra("nombreruta",Nombredelaruta.getText()+"");
         intent.putExtra("codigoruta",codigoruta.getText()+"");
+        Toast.makeText(LlenarFormularioActivity.this,"Oficina:" +nombreColector.getText()+"",Toast.LENGTH_SHORT).show();
         if (añadir == 1){
             Log.e("llenar","entro añadir 1 enviar");
             intent.putExtra("codigotrampa1",CodigoTrampa.getText()+"");
             intent.putExtra("municipio1",Municipio.getText()+"");
-            intent.putExtra("atrayente1",Tipo_Atrayente.getText()+"");
+            intent.putExtra("tipoatrayente1",Tipo_Atrayente.getText()+"");
             intent.putExtra("anastrepha1",numeroanas.getText()+"");
             intent.putExtra("ceratis1",numeroceratis.getText()+"");
             intent.putExtra("otros1",numerootros.getText()+"");
@@ -1220,18 +1298,17 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             intent.putExtra("observaciones1",Observaciones.getText()+"");
             intent.putExtra("firma1",path);
         }
-        if (añadir == 2) {
-            if (getIntent().getExtras() != null) {
+        if (getIntent().getExtras() != null) {
+            if (añadir==2) {
                 Log.e("llenar","entro añadir 2 enviar");
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
                 intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
                 intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
                 intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
                 intent.putExtra("fenologia1", getIntent().getExtras().getString("fenologia1"));
                 intent.putExtra("estado1", getIntent().getExtras().getString("estado1"));
-                Log.e("estado", getIntent().getExtras().getString("estado1"));
                 intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
                 intent.putExtra("firma1", getIntent().getExtras().getString("firma1"));
                 intent.putExtra("codigotrampa2", CodigoTrampa.getText() + "");
@@ -1244,11 +1321,16 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("estado2", Estadotrampa.getText() + "");
                 intent.putExtra("observaciones2", Observaciones.getText() + "");
                 intent.putExtra("firma2",path);
+                Log.e("formulario-firma2",path);
+                Log.e("formulario-firma1",getIntent().getExtras().getString("firma1"));
+                Log.e("formulario-firma","añadir "+añadir);
             }
+
             if (añadir == 3) {
+                Log.e("firma-enviar","entro añadir 3" +añadir);
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
                 intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
                 intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
                 intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -1265,23 +1347,26 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("estado2", getIntent().getExtras().getString("estado2"));
                 intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
                 intent.putExtra("codigotrampa3", CodigoTrampa.getText() + "");
-                intent.putExtra("municipio3", CodigoTrampa.getText() + "");
-                intent.putExtra("atrayente3", CodigoTrampa.getText() + "");
-                intent.putExtra("anastrepha3", CodigoTrampa.getText() + "");
-                intent.putExtra("ceratis3", CodigoTrampa.getText() + "");
-                intent.putExtra("otros3", CodigoTrampa.getText() + "");
-                intent.putExtra("fenologia3", CodigoTrampa.getText() + "");
-                intent.putExtra("estado3", CodigoTrampa.getText() + "");
-                intent.putExtra("observaciones3", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio3", Municipio.getText() + "");
+                intent.putExtra("atrayente3", Tipo_Atrayente.getText() + "");
+                intent.putExtra("anastrepha3", numeroanas.getText() + "");
+                intent.putExtra("ceratis3", numeroceratis.getText() + "");
+                intent.putExtra("otros3", numerootros.getText() + "");
+                intent.putExtra("fenologia3", fenologia.getText() + "");
+                intent.putExtra("estado3", Estadotrampa.getText() + "");
+                intent.putExtra("observaciones3", Observaciones.getText() + "");
                 intent.putExtra("firma1",getIntent().getExtras().getString("firma1"));
                 intent.putExtra("firma2",getIntent().getExtras().getString("firma2"));
                 intent.putExtra("firma3",path);
+                Log.e("firma1-enviar",getIntent().getExtras().getString("firma1"));
+                Log.e("firma2-enviar",getIntent().getExtras().getString("firma2"));
+                Log.e("firma3-enviar",path);
 
             }
             if (añadir == 4) {
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
                 intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
                 intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
                 intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -1306,15 +1391,15 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("fenologia3", getIntent().getExtras().getString("fenologia3"));
                 intent.putExtra("estado3", getIntent().getExtras().getString("estado3"));
                 intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
-                intent.putExtra("codigotrampa4", CodigoTrampa.getText() + "");
-                intent.putExtra("municipio4", CodigoTrampa.getText() + "");
-                intent.putExtra("atrayente4", CodigoTrampa.getText() + "");
-                intent.putExtra("anastrepha4", CodigoTrampa.getText() + "");
-                intent.putExtra("ceratis4", CodigoTrampa.getText() + "");
-                intent.putExtra("otros4", CodigoTrampa.getText() + "");
-                intent.putExtra("fenologia4", CodigoTrampa.getText() + "");
-                intent.putExtra("estado4", CodigoTrampa.getText() + "");
-                intent.putExtra("observaciones4", CodigoTrampa.getText() + "");
+                intent.putExtra("codigotrampa3", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio3", Municipio.getText() + "");
+                intent.putExtra("atrayente3", Tipo_Atrayente.getText() + "");
+                intent.putExtra("anastrepha3", numeroanas.getText() + "");
+                intent.putExtra("ceratis3", numeroceratis.getText() + "");
+                intent.putExtra("otros3", numerootros.getText() + "");
+                intent.putExtra("fenologia3", fenologia.getText() + "");
+                intent.putExtra("estado3", Estadotrampa.getText() + "");
+                intent.putExtra("observaciones3", Observaciones.getText() + "");
                 intent.putExtra("firma1",getIntent().getExtras().getString("firma1"));
                 intent.putExtra("firma2",getIntent().getExtras().getString("firma2"));
                 intent.putExtra("firma3",getIntent().getExtras().getString("firma3"));
@@ -1323,7 +1408,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             if (añadir==5){
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
                 intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
                 intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
                 intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -1358,14 +1443,14 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("estado4", getIntent().getExtras().getString("estado4"));
                 intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
                 intent.putExtra("codigotrampa5", CodigoTrampa.getText() + "");
-                intent.putExtra("municipio5", CodigoTrampa.getText() + "");
-                intent.putExtra("atrayente5", CodigoTrampa.getText() + "");
-                intent.putExtra("anastrepha5", CodigoTrampa.getText() + "");
-                intent.putExtra("ceratis5", CodigoTrampa.getText() + "");
-                intent.putExtra("otros5", CodigoTrampa.getText() + "");
-                intent.putExtra("fenologia5", CodigoTrampa.getText() + "");
-                intent.putExtra("estado5", CodigoTrampa.getText() + "");
-                intent.putExtra("observaciones5", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio5", Municipio.getText() + "");
+                intent.putExtra("atrayente5", Tipo_Atrayente.getText() + "");
+                intent.putExtra("anastrepha5", numeroanas.getText() + "");
+                intent.putExtra("ceratis5", numeroceratis.getText() + "");
+                intent.putExtra("otros5", numerootros.getText() + "");
+                intent.putExtra("fenologia5", fenologia.getText() + "");
+                intent.putExtra("estado5", Estadotrampa.getText() + "");
+                intent.putExtra("observaciones5", Observaciones.getText() + "");
                 intent.putExtra("firma1",getIntent().getExtras().getString("firma1"));
                 intent.putExtra("firma2",getIntent().getExtras().getString("firma2"));
                 intent.putExtra("firma3",getIntent().getExtras().getString("firma3"));
@@ -1374,7 +1459,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             }  if (añadir==6){
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
                 intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
                 intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
                 intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -1418,14 +1503,14 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("estado5", getIntent().getExtras().getString("estado5"));
                 intent.putExtra("observaciones5", getIntent().getExtras().getString("observaciones5"));
                 intent.putExtra("codigotrampa6", CodigoTrampa.getText() + "");
-                intent.putExtra("municipio6", CodigoTrampa.getText() + "");
-                intent.putExtra("atrayente6", CodigoTrampa.getText() + "");
-                intent.putExtra("anastrepha6", CodigoTrampa.getText() + "");
-                intent.putExtra("ceratis6", CodigoTrampa.getText() + "");
-                intent.putExtra("otros6", CodigoTrampa.getText() + "");
-                intent.putExtra("fenologia6", CodigoTrampa.getText() + "");
-                intent.putExtra("estado6", CodigoTrampa.getText() + "");
-                intent.putExtra("observaciones6", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio6", Municipio.getText() + "");
+                intent.putExtra("atrayente6", Tipo_Atrayente.getText() + "");
+                intent.putExtra("anastrepha6", numeroanas.getText() + "");
+                intent.putExtra("ceratis6", numeroceratis.getText() + "");
+                intent.putExtra("otros6", numerootros.getText() + "");
+                intent.putExtra("fenologia6", fenologia.getText() + "");
+                intent.putExtra("estado6", Estadotrampa.getText() + "");
+                intent.putExtra("observaciones6", Observaciones.getText() + "");
                 intent.putExtra("firma1",getIntent().getExtras().getString("firma1"));
                 intent.putExtra("firma2",getIntent().getExtras().getString("firma2"));
                 intent.putExtra("firma3",getIntent().getExtras().getString("firma3"));
@@ -1436,7 +1521,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             if (añadir==7){
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
                 intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
                 intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
                 intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -1489,14 +1574,14 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("estado6", getIntent().getExtras().getString("estado6"));
                 intent.putExtra("observaciones6", getIntent().getExtras().getString("observaciones6"));
                 intent.putExtra("codigotrampa7", CodigoTrampa.getText() + "");
-                intent.putExtra("municipio7", CodigoTrampa.getText() + "");
-                intent.putExtra("atrayente7", CodigoTrampa.getText() + "");
-                intent.putExtra("anastrepha7", CodigoTrampa.getText() + "");
-                intent.putExtra("ceratis7", CodigoTrampa.getText() + "");
-                intent.putExtra("otros7", CodigoTrampa.getText() + "");
-                intent.putExtra("fenologia7", CodigoTrampa.getText() + "");
-                intent.putExtra("estado7", CodigoTrampa.getText() + "");
-                intent.putExtra("observaciones7", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio7", Municipio.getText() + "");
+                intent.putExtra("atrayente7", Tipo_Atrayente.getText() + "");
+                intent.putExtra("anastrepha7", numeroanas.getText() + "");
+                intent.putExtra("ceratis7", numeroceratis.getText() + "");
+                intent.putExtra("otros7", numerootros.getText() + "");
+                intent.putExtra("fenologia7", fenologia.getText() + "");
+                intent.putExtra("estado7", Estadotrampa.getText() + "");
+                intent.putExtra("observaciones7", Observaciones.getText() + "");
                 intent.putExtra("firma1",getIntent().getExtras().getString("firma1"));
                 intent.putExtra("firma2",getIntent().getExtras().getString("firma2"));
                 intent.putExtra("firma3",getIntent().getExtras().getString("firma3"));
@@ -1507,7 +1592,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             }if (añadir==8){
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
-                intent.putExtra("atrayente1", getIntent().getExtras().getString("tipoatrayente1"));
+                intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
                 intent.putExtra("anastrepha1", getIntent().getExtras().getString("anastrepha1"));
                 intent.putExtra("ceratis1", getIntent().getExtras().getString("ceratis1"));
                 intent.putExtra("otros1", getIntent().getExtras().getString("otros1"));
@@ -1570,14 +1655,14 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("estado7", getIntent().getExtras().getString("estado7"));
                 intent.putExtra("observaciones7", getIntent().getExtras().getString("observaciones7"));
                 intent.putExtra("codigotrampa8", CodigoTrampa.getText() + "");
-                intent.putExtra("municipio8", CodigoTrampa.getText() + "");
-                intent.putExtra("atrayente8", CodigoTrampa.getText() + "");
-                intent.putExtra("anastrepha8", CodigoTrampa.getText() + "");
-                intent.putExtra("ceratis8", CodigoTrampa.getText() + "");
-                intent.putExtra("otros8", CodigoTrampa.getText() + "");
-                intent.putExtra("fenologia8", CodigoTrampa.getText() + "");
-                intent.putExtra("estado8", CodigoTrampa.getText() + "");
-                intent.putExtra("observaciones8", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio8", Municipio.getText() + "");
+                intent.putExtra("atrayente8", Tipo_Atrayente.getText() + "");
+                intent.putExtra("anastrepha8", numeroanas.getText() + "");
+                intent.putExtra("ceratis8", numeroceratis.getText() + "");
+                intent.putExtra("otros8", numerootros.getText() + "");
+                intent.putExtra("fenologia8", fenologia.getText() + "");
+                intent.putExtra("estado8", Estadotrampa.getText() + "");
+                intent.putExtra("observaciones8", Observaciones.getText() + "");
                 intent.putExtra("firma1",getIntent().getExtras().getString("firma1"));
                 intent.putExtra("firma2",getIntent().getExtras().getString("firma2"));
                 intent.putExtra("firma3",getIntent().getExtras().getString("firma3"));
@@ -1589,9 +1674,70 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             }
 
         }
-        añadir ++;
         intent.putExtra("añadir",añadir);
         startActivity(intent);
+    }
+
+    private void VerInforme() {
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getStringExtra("id") != null) {
+                final String id = getIntent().getStringExtra("id");
+                informe = baseDatos.child("Formulario");
+                informe.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        ModeloForma modeloForma = dataSnapshot.getValue(ModeloForma.class);
+                        if (modeloForma.codigo_trampa.equals(id)) {
+                            Oficina.setText(modeloForma.oficina);
+                            Municipio.setText(modeloForma.municipio);
+                            Tipo_Atrayente.setText(modeloForma.tipo_atrayente);
+                            numeroanas.setText(modeloForma.anastrepha);
+                            numeroceratis.setText(modeloForma.ceratis);
+                            numerootros.setText(modeloForma.otro);
+                            fenologia.setText(modeloForma.fenologia);
+                            Estadotrampa.setText(modeloForma.estado_trampa);
+                            Observaciones.setText(modeloForma.observaciones);
+                            nombreColector.setText(modeloForma.nombre_colector);
+                            Nombredelaruta.setText(modeloForma.nombre_predio);
+                            semana.setText(modeloForma.semana);
+                            responsable.setText(modeloForma.responsabe);
+                            registroruta.setText(modeloForma.registro_ruta);
+                            codigoruta.setText(modeloForma.codigo_ruta);
+                            CodigoTrampa.setText(modeloForma.codigo_trampa);
+                            fechacoleccion.setText(modeloForma.fecha_actual);
+                            CodigoTrampa.setText(modeloForma.codigo_trampa);
+                            CentroAcopio.setText(modeloForma.centro_acopio);
+                            Guardar.setEnabled(false);
+                            Guardarfirma.setEnabled(false);
+                            limpiarfirma.setEnabled(false);
+                            firma.setEnabled(false);
+                            addformulario.setEnabled(false);
+
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
     }
 
 }

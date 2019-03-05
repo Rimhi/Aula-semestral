@@ -195,7 +195,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/GuardarFormulario"
-            android:text="Guardar"/>
+            android:text="Terminado"
+            android:background="@drawable/redondo"
+            android:padding="10dp"/>
     </LinearLayout>
    </ScrollView>
 </RelativeLayout>

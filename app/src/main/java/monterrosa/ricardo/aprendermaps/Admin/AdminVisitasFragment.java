@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,7 +102,7 @@ public class AdminVisitasFragment extends Fragment {
         inspecciones = databaseReference.child("Inspecciones");
         decidirquemostrar = view.findViewById(R.id.MostrarVisitasdeinspectores);
         listavisitasinspectores = view.findViewById(R.id.listavisitasinspectores);
-        contenido = new String[]{"Hoy","Todos los tiempos"};
+        contenido = new String[]{"Todos los tiempos","Hoy"};
         adaptadorspinner = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,contenido);
         decidirquemostrar.setAdapter(adaptadorspinner);
         progressDialog = new ProgressDialog(getContext());
@@ -116,7 +117,7 @@ public class AdminVisitasFragment extends Fragment {
                 progressDialog.setMessage("Cargando ...");
                 progressDialog.show();
                 switch (i){
-                    case 0:
+                    case 1:
                         list.clear();
                         inspecciones.addChildEventListener(new ChildEventListener() {
                             @Override
@@ -127,8 +128,9 @@ public class AdminVisitasFragment extends Fragment {
                                     progressDialog.dismiss();
                                     Toast.makeText(getContext(), "Hoy no hubo inspecciones", Toast.LENGTH_SHORT).show();
                                 }else {
+                                    Log.e("hoy","entro a si hay inspecciones");
                                     list.add(llegadaMapa);
-                                    adapter = new FechaInspeccionAdapter(list);
+                                    adapter = new FechaInspeccionAdapter(list,getContext());
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                                     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                                     listavisitasinspectores.setLayoutManager(linearLayoutManager);
@@ -159,21 +161,22 @@ public class AdminVisitasFragment extends Fragment {
                             }
                         });
                         break;
-                    case 1:
+                    case 0:
                         listtodos.clear();
                         inspecciones.addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
+                                Log.e("siempre","entro a si hay inspecciones");
                                 final LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
                                     listtodos.add(llegadaMapa);
-                                    adapter = new FechaInspeccionAdapter(listtodos);
+                                    adapter = new FechaInspeccionAdapter(listtodos,getContext());
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                                     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                                     listavisitasinspectores.setLayoutManager(linearLayoutManager);
                                     listavisitasinspectores.setAdapter(adapter);
                                     adapter.notifyDataSetChanged();
                                     progressDialog.dismiss();
+
                             }
 
                             @Override

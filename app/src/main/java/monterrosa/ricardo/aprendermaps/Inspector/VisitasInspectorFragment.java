@@ -100,7 +100,7 @@ public class VisitasInspectorFragment extends Fragment {
             LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
             if (auth.getCurrentUser().getUid().equals(llegadaMapa.idinspector)) {
                 list.add(llegadaMapa);
-                adapter = new FechaInspeccionAdapter(list);
+                adapter = new FechaInspeccionAdapter(list,getContext());
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                 linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 listavisitas.setLayoutManager(linearLayoutManager);

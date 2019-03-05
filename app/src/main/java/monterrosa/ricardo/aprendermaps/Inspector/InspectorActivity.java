@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,9 +31,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import monterrosa.ricardo.aprendermaps.Admin.ChatAdminFragment;
+import monterrosa.ricardo.aprendermaps.ContactameActivity;
 import monterrosa.ricardo.aprendermaps.MainActivity;
 import monterrosa.ricardo.aprendermaps.ModeloRegistro;
 import monterrosa.ricardo.aprendermaps.R;
+import monterrosa.ricardo.aprendermaps.TutorialInspectorActivity;
 
 public class InspectorActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,
@@ -119,8 +122,8 @@ public class InspectorActivity extends AppCompatActivity
                                 }
                             });
                     dialog = builder.create();
-                    if (dialog!=null || !InspectorActivity.super.isDestroyed())
-                    dialog.show();
+                    if (dialog!=null || !InspectorActivity.super.isDestroyed() || !InspectorActivity.super.isFinishing())
+                        dialog.show();
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
@@ -202,9 +205,11 @@ public class InspectorActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            startActivity(new Intent(InspectorActivity.this, TutorialInspectorActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }
-
+        if (id == R.id.inspector_contactame){
+            startActivity(new Intent(InspectorActivity.this, ContactameActivity.class));
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -216,6 +221,8 @@ public class InspectorActivity extends AppCompatActivity
 
         if (id == R.id.nav_MapaInspector) {
             Intent intent = new Intent(InspectorActivity.this,MapaInspectorActivity.class);
+            intent.putExtra("nombreInspector",NombreInspector.getText()+"");
+            Toast.makeText(InspectorActivity.this, "nombre inspector "+ NombreInspector.getText()+"", Toast.LENGTH_SHORT).show();
             startActivity(intent);
         } else if (id == R.id.nav_VisitaInspector) {
             VisitasInspectorFragment fragment = new VisitasInspectorFragment();

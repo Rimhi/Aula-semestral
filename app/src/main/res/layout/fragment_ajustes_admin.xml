@@ -58,6 +58,7 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/redondo"/>
         </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,14 +117,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Agregar ajustes"
+            android:text="Otros ajustes"
             android:textColor="@color/btn"
             android:gravity="center"
             android:textSize="20dp"/>
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </Spinner>
     </LinearLayout>
    </ScrollView>
 

@@ -6,4 +6,9 @@
         android:orderInCategory="100"
         android:title="Tutorial"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/admin_contactame"
+        android:orderInCategory="100"
+        android:title="Contactame"
+        app:showAsAction="never" />
 </menu>

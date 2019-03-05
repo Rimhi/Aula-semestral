@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
@@ -41,6 +42,8 @@ import java.util.Date;
 import java.util.IllegalFormatCodePointException;
 import java.util.Locale;
 
+import monterrosa.ricardo.aprendermaps.ContactameActivity;
+import monterrosa.ricardo.aprendermaps.Inspector.InspectorActivity;
 import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
 import monterrosa.ricardo.aprendermaps.MainActivity;
 import monterrosa.ricardo.aprendermaps.ModeloRegistro;
@@ -53,7 +56,7 @@ public class AdminActivity extends AppCompatActivity
     private  static final int GALERY_INTENT = 1;
     private DatabaseReference mibasedatos,databaseReference;
     private FirebaseAuth auth;
-    private TextView correo,nombre;
+    private TextView correo,nombre,bienvenido;
     private ImageView Adminimagen;
     private AlertDialog dialog;
     private FirebaseUser user;
@@ -78,6 +81,7 @@ public class AdminActivity extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
         correo = header.findViewById(R.id.adminCorreo);
         nombre = header.findViewById(R.id.adminNombre);
+        bienvenido = findViewById(R.id.bienvenido);
         correo.setText(auth.getCurrentUser().getEmail());
         Adminimagen = header.findViewById(R.id.adminimageView);
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -133,8 +137,10 @@ public class AdminActivity extends AppCompatActivity
                                 }
                             });
                     dialog = builder.create();
-                    if (dialog!=null || !AdminActivity.super.isDestroyed())
-                    dialog.show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (dialog!=null || !AdminActivity.super.isDestroyed() || AdminActivity.super.isActivityTransitionRunning())
+                        dialog.show();
+                    }
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
@@ -154,6 +160,7 @@ public class AdminActivity extends AppCompatActivity
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
             if (auth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
+                bienvenido.setText("Bienvenido sr(a) "+modeloRegistro.Nombre);
                 nombre.setText(modeloRegistro.Nombre);
                 correo.setText(modeloRegistro.correo);
                 String imagen = modeloRegistro.imagen;
@@ -216,6 +223,9 @@ public class AdminActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             startActivity( new Intent(AdminActivity.this, TutorialActivity.class));
             return true;
+        }
+        if (id == R.id.admin_contactame){
+            startActivity(new Intent(AdminActivity.this, ContactameActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

@@ -46,36 +46,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:inputType="number"
                 android:background="@drawable/redondo"
                 android:padding="10dp"
                 android:layout_margin="5dp"/>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/btn"
-                    android:text="Lugar en donde se encuentra la trampa :"/>
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="20dp"
-                    android:id="@+id/indicacion1"
-                    android:src="@mipmap/informacion"/>
-            </LinearLayout>
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/Lugardelatrampa"
-                android:background="@drawable/redondo"
-                android:padding="10dp"
-                android:layout_margin="5dp"
-                android:inputType="textMultiLine"
-                android:hint="indicio de la trampa"
-                android:layout_marginTop="10dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,13 +66,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/btn"
-                android:text="Posicion real Actual del marcador de la trampa en latitud y longitud"/>
+                android:text="Latitud"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:focusable="false"
-                android:id="@+id/latlangtrampa"
+                android:id="@+id/lattrampa"
+                android:background="@drawable/redondo"
+                android:padding="10dp"
+                android:layout_margin="5dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/btn"
+                android:text="Longitud"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:id="@+id/lngtrampa"
                 android:background="@drawable/redondo"
                 android:padding="10dp"
                 android:layout_margin="5dp"/>

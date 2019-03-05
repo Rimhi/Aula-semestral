@@ -1,5 +1,6 @@
 package monterrosa.ricardo.aprendermaps.adapters;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -7,6 +8,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +30,27 @@ public class InspectoresAdapter extends RecyclerView.Adapter<InspectoresAdapter.
     public InspectoresAdapter(ArrayList<ModeloRegistro>l,Context c) {
         list = l;
         context = c;
+    }
+
+    @Override
+    public void onViewAttachedToWindow(ViewHolderInspector holder) {
+        super.onViewAttachedToWindow(holder);
+        animateCircularReveal(holder.itemView);
+    }
+
+    public void animateCircularReveal(View view){
+        int CenterX = 0;
+        int CenterY = 0;
+        int StartRadius = 0;
+        int EndRadius = Math.max(view.getWidth(),view.getHeight());
+        Animator animator = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            animator = ViewAnimationUtils.createCircularReveal(view,CenterX,CenterY,StartRadius,EndRadius);
+        }
+        view.setVisibility(View.VISIBLE);
+        animator.start();
+
+
     }
 
     @Override

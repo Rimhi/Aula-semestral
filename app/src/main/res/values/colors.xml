@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
 <resources>
     <color name="colorPrimary">#156902</color>
     <color name="colorPrimaryDark">#439f30</color>
@@ -6,4 +7,13 @@
     <color name="Ultimaposicion">#140cf4</color>
     <color name="Activo">#a1c45a</color>
     <color name="btn">#fff9e0</color>
+</resources>
+-->
+<resources>
+    <color name="colorPrimary">#5c8d89</color>
+    <color name="colorPrimaryDark">#a7d7c5</color>
+    <color name="colorAccent">#f9f8eb</color>
+    <color name="Ultimaposicion">#140cf4</color>
+    <color name="Activo">#a1c45a</color>
+    <color name="btn">#74b49b</color>
 </resources>

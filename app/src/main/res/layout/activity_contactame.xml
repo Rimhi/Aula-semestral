@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context="monterrosa.ricardo.aprendermaps.ContactameActivity">
+ <TextView
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:layout_gravity="center"
+     android:text="Informacion basica de contacto"
+     android:textSize="25dp"
+     android:background="@drawable/redondo"
+     android:padding="10dp"
+     android:layout_margin="10dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Telefono: 3108265084"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:background="@drawable/redondo"
+        android:textSize="18dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Correo: rimhi7@gmail.com"
+        android:padding="10dp"
+        android:background="@drawable/redondo"
+        android:textSize="18dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="GitHub: Ricardo Monterrosa Higuita"
+        android:padding="10dp"
+        android:background="@drawable/redondo"
+        android:textSize="18dp"
+        android:id="@+id/iraGithub"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Otras redes sociales: Ricardo Monterrosa Higuita"
+        android:padding="10dp"
+        android:background="@drawable/redondo"
+        android:textSize="18dp"/>
+</LinearLayout>

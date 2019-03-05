@@ -3,6 +3,7 @@ package monterrosa.ricardo.aprendermaps.Admin;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -34,12 +36,14 @@ import monterrosa.ricardo.aprendermaps.adapters.AdapterPermisos;
  * create an instance of this fragment.
  */
 public class AjustesAdminFragment extends Fragment {
-    private EditText correocolector,permitiracceso;
-    private DatabaseReference databaseReference,habilitar,inhabilitar;
-    private Button btn_inhabilitar,btn_habilitar,btn_acceso;
-    private RecyclerView colectoresinhabilitados,colectoreshabilitados;
-    private  ArrayList<String>inhabilitados = new ArrayList<String>();
-    private ArrayList<String>habilitados = new ArrayList<String>();
+    private EditText correocolector, permitiracceso;
+    private DatabaseReference databaseReference, habilitar, inhabilitar,usuario_final;
+    private Button btn_inhabilitar, btn_habilitar, btn_acceso;
+    private RecyclerView colectoresinhabilitados, colectoreshabilitados;
+    private ArrayList<String> inhabilitados = new ArrayList<String>();
+    private ArrayList<String> habilitados = new ArrayList<String>();
+    private boolean verdad1 = false;
+    private boolean verdad2 = false;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -89,6 +93,7 @@ public class AjustesAdminFragment extends Fragment {
         databaseReference = FirebaseDatabase.getInstance().getReference();
         inhabilitar = databaseReference.child("inhabilitarCorreos");
         habilitar = databaseReference.child("habilitarCorreos");
+        usuario_final = databaseReference.child("usuario_final");
         correocolector = view.findViewById(R.id.colectorinhabilitado);
         permitiracceso = view.findViewById(R.id.permititacceso);
         btn_inhabilitar = view.findViewById(R.id.inhabilitar);
@@ -110,27 +115,27 @@ public class AjustesAdminFragment extends Fragment {
                 permitirAcceso();
             }
         });
-     btn_habilitar = view.findViewById(R.id.habilitar);
-     btn_habilitar.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
-            habilitarColector();
-         }
-     });
+        btn_habilitar = view.findViewById(R.id.habilitar);
+        btn_habilitar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                habilitarColector();
+            }
+        });
 
-        return  view;
+        return view;
     }
-    public void inhabilitarcolector(){
+
+    public void inhabilitarcolector() {
         inhabilitar.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.e("entro a inhabilitados","adentro we");
+                Log.e("entro a inhabilitados", "adentro we");
                 String correo = dataSnapshot.getValue(String.class);
-                if (correo.equals(correocolector.getText()+"")){
+                if (correo.equals(correocolector.getText() + "")) {
                     Toast.makeText(getContext(), "El colector ya esta inhabilitado", Toast.LENGTH_SHORT).show();
-                }else {
-                    inhabilitar.push().setValue(correocolector.getText()+"");
-                    Toast.makeText(getContext(), "inhabilitado", Toast.LENGTH_SHORT).show();
+                } else {
+                    verdad1 = true;
                 }
 
             }
@@ -156,18 +161,23 @@ public class AjustesAdminFragment extends Fragment {
 
             }
         });
+        if (verdad1) {
+            inhabilitar.push().setValue(correocolector.getText() + "");
+            Toast.makeText(getContext(), "inhabilitado", Toast.LENGTH_SHORT).show();
+        }
 
     }
-    public void habilitarColector(){
+
+    public void habilitarColector() {
         inhabilitar.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.e("entro a habilitados","adentro we");
+                Log.e("entro a habilitados", "adentro we");
                 String correo = dataSnapshot.getValue(String.class);
-                if (correo.equals(correocolector.getText()+"")){
+                if (correo.equals(correocolector.getText() + "")) {
                     dataSnapshot.getRef().setValue(null);
                     Toast.makeText(getContext(), "Habilitado", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     Toast.makeText(getContext(), "Ya se encuentra habilitado", Toast.LENGTH_SHORT).show();
                 }
 
@@ -193,17 +203,16 @@ public class AjustesAdminFragment extends Fragment {
             }
         });
     }
-    public void permitirAcceso(){
+
+    public void permitirAcceso() {
         habilitar.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String correo = dataSnapshot.getValue(String.class);
-                if (correo.equals(permitiracceso.getText().toString())){
+                if (correo.equals(permitiracceso.getText().toString())) {
                     Toast.makeText(getContext(), "Ya tiene acceso.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    habilitar.push().setValue(permitiracceso.getText().toString());
-                    Toast.makeText(getContext(), "Acceso concedido.", Toast.LENGTH_SHORT).show();
+                } else {
+                    verdad2 = true;
                 }
             }
 
@@ -227,6 +236,11 @@ public class AjustesAdminFragment extends Fragment {
 
             }
         });
+        if (verdad2) {
+            habilitar.push().setValue(permitiracceso.getText().toString());
+            usuario_final.push().setValue(permitiracceso.getText().toString());
+            Toast.makeText(getContext(), "Acceso concedido.", Toast.LENGTH_SHORT).show();
+        }
     }
     private void mostrar(){
         inhabilitar.addChildEventListener(new ChildEventListener() {

@@ -7,9 +7,10 @@ import java.util.ArrayList;
  */
 
 public class LlegadaMapa {
-    public String Fecha, idTrampa,NombreColector,cedula,correo,idinspector,descripcion;
+    public String Fecha, idTrampa,NombreColector,cedula,correo,idinspector,descripcion,tipo;
 
-    public LlegadaMapa(String fecha, String idTrampa, String nombreColector,String cedula,String correo,String idInpector, String descripcion) {
+    public LlegadaMapa(String fecha, String idTrampa, String nombreColector,String cedula,String correo,String idInpector, String descripcion,String tipo) {
+        this.tipo = tipo;
         Fecha = fecha;
         this.idTrampa = idTrampa;
         NombreColector = nombreColector;
