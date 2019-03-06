@@ -109,15 +109,18 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
         addFormulario = findViewById(R.id.addformulariotrampapicudo);
         if (getIntent().getExtras() != null){
             añadir = getIntent().getExtras().getInt("añadir");
+            CodigoTrampa.setText(getIntent().getExtras().getString("codigotrampa"));
             if (getIntent().getExtras().getString("Funcionario") != null){
                 FuncionarioLectura.setText(getIntent().getExtras().getString("Funcionario"));
                 CambioFeromona.setText(getIntent().getExtras().getString("CambioFeromona"));
                 NumeroFeromona.setText(getIntent().getExtras().getString("NumeroFeromona"));
-                Year.setText(getIntent().getExtras().getString("Year"));
-                Mes.setText(getIntent().getExtras().getString("Mes"));
             }
         }
+        Mes.setText(mes());
+        Year.setText(year());
+        Dia.setText(dia());
     }
+
 
     public void firmas(){
         FirmaSupervisor.setOnSignedListener(new SignaturePad.OnSignedListener() {
@@ -218,7 +221,30 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
             }
         });
     }
+    private String dia(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd", Locale.getDefault());
+        Date date = new Date();
 
+        String fecha = dateFormat.format(date);
+
+        return  fecha;
+    }
+    private String mes(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM", Locale.getDefault());
+        Date date = new Date();
+
+        String fecha = dateFormat.format(date);
+
+        return  fecha;
+    }
+    private String year(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
+        Date date = new Date();
+
+        String fecha = dateFormat.format(date);
+
+        return  fecha;
+    }
     private String fechaactual(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Date date = new Date();

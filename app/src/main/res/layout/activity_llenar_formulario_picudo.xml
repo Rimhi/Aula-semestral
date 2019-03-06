@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     android:orientation="vertical"
     tools:context="monterrosa.ricardo.aprendermaps.Inspector.LlenarFormularioPicudoActivity">
 
@@ -13,146 +14,265 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"
                 android:text="Funcionario que realiza la lectura: "/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/FuncionarioLectura"/>
+                android:id="@+id/FuncionarioLectura"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"
                 android:text="Se realizo cambio de feromona: "/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/CambioFeromona"/>
+                android:id="@+id/CambioFeromona"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"
                 android:text="Numero de lote nueva feromona" />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/LoteFeromona"/>
+                android:id="@+id/LoteFeromona"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"
                 android:text="Año: "/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/AñoPicudo"/>
+                android:id="@+id/AñoPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"
                 android:text="Mes: " />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/MesPicudo"/>
+                android:id="@+id/MesPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"
                 android:text="Dia: " />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/DiaPicudo"/>
+                android:id="@+id/DiaPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Codigo Trampa: " />
+                android:text="Codigo Trampa: "
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"
+                />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/CodigoTrampaPicudo"/>
+                android:id="@+id/CodigoTrampaPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Municipio"/>
+                android:text="Municipio"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/MunicipioPicudo"/>
+                android:id="@+id/MunicipioPicudo"
+                android:text="Monteria"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Vereda: " />
+                android:text="Vereda: "
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/VeredaPicudo"/>
+                android:id="@+id/VeredaPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Predio: "/>
+                android:text="Predio: "
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/PredioPicudo"/>
+                android:id="@+id/PredioPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Negros: "/>
+                android:text="Negros: "
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/NegrosPicudo"/>
+                android:id="@+id/NegrosPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Rojos: "/>
+                android:text="Rojos: "
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/RojosPicudo"/>
+                android:id="@+id/RojosPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estado Cultivo: "/>
+                android:text="Estado Cultivo: "
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/EstadoCultivoPicudo"/>
+                android:id="@+id/EstadoCultivoPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Observaciones: "/>
+                android:text="Observaciones: "
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/ObservacionesPicudo"/>
+                android:id="@+id/ObservacionesPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center"
+                android:textColor="@color/btn"
                 android:text="***Solo al finalizar todas las trampas***"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"
                 android:text="Observaciones Generales"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
-                android:id="@+id/ObservacionesGeneralesPicudo"/>
+                android:id="@+id/ObservacionesGeneralesPicudo"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cedula Supervisor: "/>
+                android:text="Cedula Supervisor: "
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/CedulaSupervisorPicudo"
+                android:inputType="text"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/redondo"
                 />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Firma Supervisor"/>
+                android:text="Firma Supervisor"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <com.github.gcacace.signaturepad.views.SignaturePad
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -185,7 +305,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Firma Supervisor"/>
+                android:text="Firma Supervisor"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/btn"/>
             <com.github.gcacace.signaturepad.views.SignaturePad
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -219,11 +341,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Agregar otra trampa"
+                android:background="@drawable/redondo"
                 android:id="@+id/addformulariotrampapicudo"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Guardar Formulario"
+                android:background="@drawable/redondo"
                 android:id="@+id/GuardarFormularioPicudo"/>
         </LinearLayout>
     </ScrollView>
