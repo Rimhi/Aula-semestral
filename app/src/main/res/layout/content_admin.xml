@@ -10,16 +10,25 @@
     tools:showIn="@layout/app_bar_admin"
     android:background="@color/colorAccent">
 
-
-    <TextView
-        android:id="@+id/bienvenido"
+    <FrameLayout
+        android:id="@+id/frame_prueba"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="27dp"
-        android:gravity="center"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        android:layout_gravity="center" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/bienvenido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="27dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+
+
 
 
 </LinearLayout>

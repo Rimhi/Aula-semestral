@@ -240,7 +240,7 @@ public class AdminActivity extends AppCompatActivity
             startActivity(new Intent(AdminActivity.this,MapsActivity.class));
         } else if (id == R.id.nav_admin_visitas) {
             AdminVisitasFragment fragment = new AdminVisitasFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_prueba,fragment).commit();
 
 
         } else if (id == R.id.nav_admin_salir) {
@@ -248,20 +248,21 @@ public class AdminActivity extends AppCompatActivity
             startActivity(new Intent(AdminActivity.this,MainActivity.class));
 
         } else if (id == R.id.nav_admin_inspectores) {
+            Log.w("Mirar", "Cambió a inspectores");
             VerInspectoresFragment fragment = new VerInspectoresFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_prueba,fragment).commit();
 
         } else if (id == R.id.nav_admin_modificar) {
             AdminPerfilFragment fragment = new AdminPerfilFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_prueba,fragment).commit();
 
         } else if (id == R.id.nav_admin_chat) {
             final ChatAdminFragment framento = new ChatAdminFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,framento).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_prueba,framento).commit();
 
         } else if (id == R.id.nav_setting) {
             final AjustesAdminFragment framento = new AjustesAdminFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.ContenedorAdmin,framento).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_prueba,framento).commit();
 
         }
 

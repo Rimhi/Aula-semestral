@@ -19,6 +19,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.AcroFields;
@@ -37,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import monterrosa.ricardo.aprendermaps.ModeloForma3007;
 import monterrosa.ricardo.aprendermaps.R;
 
 public class LlenarFormularioPicudoActivity extends AppCompatActivity {
@@ -49,16 +56,30 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
     private AlertDialog dialog;
     private ProgressDialog progressDialog;
     private File photo,photo2;
+    private DatabaseReference baseDatos;
+    private DatabaseReference usuarios;
+    private DatabaseReference trampas,informe;
+    private FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_llenar_formulario_picudo);
         inicializar();
+        verInforme();
         progressDialog = new ProgressDialog(this);
         firmas();
         GuardarFormulario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText()+"",auth.getCurrentUser().getDisplayName(),auth.getCurrentUser().getProviderId(),auth.getCurrentUser().getEmail(),auth.getCurrentUser().getUid(),Observaciones.getText()+"","Picudo de Algodon");
+                trampas.child(fechaactual()+" "+CodigoTrampa.getText()+"").setValue(llegadaMapa);
+                ModeloForma3007 modeloForma3007 = new ModeloForma3007(FuncionarioLectura.getText()+"",
+                        CambioFeromona.getText()+"",NumeroFeromona.getText()+"",
+                        Year.getText()+"",Mes.getText()+"",Dia.getText()+"",
+                        CodigoTrampa.getText()+"",Municipio.getText()+"",
+                        Vereda.getText()+"",Predio.getText()+"",Negros.getText()+"",
+                        Rojos.getText()+"",EstadoCultivo.getText()+"",Observaciones.getText()+"");
+                informe.setValue(modeloForma3007);
                 llenarpdf(new File(Environment.getExternalStorageDirectory().toString(),"Reportes")+"",path,path2);
                 Copiarpdf();
                 Context context = LlenarFormularioPicudoActivity.this;
@@ -77,6 +98,15 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
         addFormulario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText()+"",auth.getCurrentUser().getDisplayName(),auth.getCurrentUser().getProviderId(),auth.getCurrentUser().getEmail(),auth.getCurrentUser().getUid(),Observaciones.getText()+"","Picudo de Algodon");
+                trampas.child(fechaactual()+" "+CodigoTrampa.getText()+"").setValue(llegadaMapa);
+                ModeloForma3007 modeloForma3007 = new ModeloForma3007(FuncionarioLectura.getText()+"",
+                        CambioFeromona.getText()+"",NumeroFeromona.getText()+"",
+                        Year.getText()+"",Mes.getText()+"",Dia.getText()+"",
+                        CodigoTrampa.getText()+"",Municipio.getText()+"",
+                        Vereda.getText()+"",Predio.getText()+"",Negros.getText()+"",
+                        Rojos.getText()+"",EstadoCultivo.getText()+"",Observaciones.getText()+"");
+                informe.setValue(modeloForma3007);
                 enviardatos();
             }
         });
@@ -119,8 +149,12 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
         Mes.setText(mes());
         Year.setText(year());
         Dia.setText(dia());
+        baseDatos = FirebaseDatabase.getInstance().getReference();
+        usuarios = baseDatos.child("Usuarios");
+        trampas = baseDatos.child("Inspecciones");
+        informe = baseDatos.child("Formulario");
+        auth = FirebaseAuth.getInstance();
     }
-
 
     public void firmas(){
         FirmaSupervisor.setOnSignedListener(new SignaturePad.OnSignedListener() {
@@ -221,6 +255,7 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
             }
         });
     }
+
     private String dia(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd", Locale.getDefault());
         Date date = new Date();
@@ -229,6 +264,7 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
 
         return  fecha;
     }
+
     private String mes(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM", Locale.getDefault());
         Date date = new Date();
@@ -237,6 +273,7 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
 
         return  fecha;
     }
+
     private String year(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
         Date date = new Date();
@@ -245,6 +282,7 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
 
         return  fecha;
     }
+
     private String fechaactual(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Date date = new Date();
@@ -1560,6 +1598,66 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void verInforme(){
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().getString("id") != null) {
+                final String id = getIntent().getExtras().getString("id");
+                informe.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                       ModeloForma3007 modeloForma3007 = dataSnapshot.getValue(ModeloForma3007.class);
+                        if (modeloForma3007.codifotrampa.equals(id)){
+                            FuncionarioLectura.setText(modeloForma3007.funcionario);
+                            CambioFeromona.setText(modeloForma3007.cambioferomona);
+                            NumeroFeromona.setText(modeloForma3007.leteferomona);
+                            Year.setText(modeloForma3007.year);
+                            Mes.setText(modeloForma3007.mes);
+                            Dia.setText(modeloForma3007.dia);
+                            CodigoTrampa.setText(modeloForma3007.codifotrampa);
+                            Municipio.setText(modeloForma3007.municipio);
+                            Vereda.setText(modeloForma3007.vereda);
+                            Predio.setText(modeloForma3007.predio);
+                            Negros.setText(modeloForma3007.negros);
+                            Rojos.setText(modeloForma3007.rojos);
+                            EstadoCultivo.setText(modeloForma3007.estado);
+                            Observaciones.setText(modeloForma3007.observaciones);
+                            addFormulario.setVisibility(View.INVISIBLE);
+                            GuardarFirmaFuncionario.setVisibility(View.INVISIBLE);
+                            GuardarFirmaSupervisor.setVisibility(View.INVISIBLE);
+                            LimpiarFuncionario.setVisibility(View.INVISIBLE);
+                            LimpiarSupervisor.setVisibility(View.INVISIBLE);
+                            GuardarFormulario.setVisibility(View.INVISIBLE);
+                            ObservacionesGenerales.setVisibility(View.INVISIBLE);
+                            CedulaSupervisor.setVisibility(View.INVISIBLE);
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
         }
     }
 

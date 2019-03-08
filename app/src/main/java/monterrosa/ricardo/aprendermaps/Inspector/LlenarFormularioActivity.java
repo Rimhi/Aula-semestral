@@ -142,6 +142,8 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     Nombre = llegadaMapa.Nombre;
                     Cedula = llegadaMapa.Cedula;
                     correo = llegadaMapa.correo;
+                    responsable.setText(Nombre);
+
                 }
 
             }

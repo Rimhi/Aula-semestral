@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
 import monterrosa.ricardo.aprendermaps.Inspector.LlenarFormularioActivity;
+import monterrosa.ricardo.aprendermaps.Inspector.LlenarFormularioPicudoActivity;
 import monterrosa.ricardo.aprendermaps.R;
 
 /**
@@ -65,6 +66,7 @@ public class FechaInspeccionAdapter extends RecyclerView.Adapter<FechaInspeccion
         holder.id.setText(llegadaMapa.idTrampa);
         holder.correo.setText(llegadaMapa.correo);
         holder.tipo.setText(llegadaMapa.tipo);
+        if (llegadaMapa.tipo.equals("Mosca de la fruta")){
         holder.vermas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +75,16 @@ public class FechaInspeccionAdapter extends RecyclerView.Adapter<FechaInspeccion
                 context.startActivity(intent);
             }
         });
+        }else {
+            holder.vermas.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, LlenarFormularioPicudoActivity.class);
+                    intent.putExtra("id",llegadaMapa.idTrampa+"");
+                    context.startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override
