@@ -39,7 +39,7 @@ public class VerInspectoresFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private RecyclerView listaInspectores;
     private DatabaseReference miBaseDatos;
-    private DatabaseReference Admin;
+    private DatabaseReference Usuario;
     private  DatabaseReference databaseReference;
     private ArrayList<ModeloRegistro> listmodelo = new ArrayList<>();
     private InspectoresAdapter adapter;
@@ -89,13 +89,13 @@ public class VerInspectoresFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         miBaseDatos = databaseReference.child("Usuarios");
-        Admin = databaseReference.child("Admin");
-        miBaseDatos.addChildEventListener(listener);
+        Usuario = databaseReference.child("usuario_final");
         vercorreos();
+        miBaseDatos.addChildEventListener(listener);
         return view;
     }
     private void vercorreos(){
-        Admin.addChildEventListener(new ChildEventListener() {
+        Usuario.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 correosAdmin.add(dataSnapshot.getValue(String.class));
@@ -128,7 +128,8 @@ public class VerInspectoresFragment extends Fragment {
             ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
             if (!mAuth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
                 for (int i = 0;i<correosAdmin.size();i++) {
-                    if (!correosAdmin.get(i).equals(modeloRegistro.correo)) {
+                    if (correosAdmin.get(i).equals(modeloRegistro.correo)) {
+                        Log.e("correos",correosAdmin.get(i));
                         listmodelo.add(modeloRegistro);
                         adapter = new InspectoresAdapter(listmodelo, getContext());
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
