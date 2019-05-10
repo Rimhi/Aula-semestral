@@ -235,42 +235,51 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         addformulario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(),CodigoTrampa.getText().toString(),Nombre,Cedula,correo,auth.getCurrentUser().getUid(),Observaciones.getText()+"","Mosca de la fruta");
-                baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
-                trampas = baseDatos.child("Inspecciones");
-                trampas.child(fechaactual()+" "+CodigoTrampa.getText()).setValue(llegadaMapa);
-                ModeloForma modeloForma = new ModeloForma(CentroAcopio.getText()+"",fechaactual()+"",semana.getText()+"",
-                        Oficina.getText()+"",responsable.getText()+"",nombreColector.getText()+"",registroruta.getText()+"",
-                        Nombredelaruta.getText()+"",codigoruta.getText()+"",CodigoTrampa.getText()+"",Municipio.getText()+"",
-                        Tipo_Atrayente.getText()+"",numeroanas.getText()+"",numeroceratis.getText()+"",numerootros.getText()+"",
-                        fenologia.getText()+"",Estadotrampa.getText()+"",Observaciones.getText()+"");
-                baseDatos.child("Formulario").push().setValue(modeloForma);
-                if (añadir<8) {
-                    if (path==null || path.isEmpty()){
-                        AlertDialog.Builder builder = new AlertDialog.Builder(LlenarFormularioActivity.this);
-                        builder.setCancelable(false);
-                        builder.setMessage("No hay firma, ¿desea continuar?");
-                        builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Enviardatos();
-                            }
-                        });
-                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog = builder.create();
-                        dialog.show();
-                    }else {
-                        Enviardatos();
-                    }
+                if (!CodigoTrampa.getText().toString().isEmpty() && !fechacoleccion.getText().toString().isEmpty() && !nombreColector.getText().toString().isEmpty()
+                        && !Nombredelaruta.getText().toString().isEmpty() && !semana.getText().toString().isEmpty() && !responsable.getText().toString().isEmpty()
+                        && !registroruta.getText().toString().isEmpty() && !codigoruta.getText().toString().isEmpty() && !Municipio.getText().toString().isEmpty()
+                        && !Tipo_Atrayente.getText().toString().isEmpty() && !numeroanas.getText().toString().isEmpty() && !numeroceratis.getText().toString().isEmpty()
+                        && !numerootros.getText().toString().isEmpty() && !fenologia.getText().toString().isEmpty() && !Estadotrampa.getText().toString().isEmpty()
+                        && !Observaciones.getText().toString().isEmpty()) {
+                    LlegadaMapa llegadaMapa = new LlegadaMapa(fechaactual(), CodigoTrampa.getText().toString(), Nombre, Cedula, correo, auth.getCurrentUser().getUid(), Observaciones.getText() + "", "Mosca de la fruta");
+                    baseDatos.child("trampas").child(CodigoTrampa.getText().toString()).child("Inspeccion").child(fechaactual()).setValue(llegadaMapa);
+                    trampas = baseDatos.child("Inspecciones");
+                    trampas.child(fechaactual() + " " + CodigoTrampa.getText()).setValue(llegadaMapa);
+                    ModeloForma modeloForma = new ModeloForma(CentroAcopio.getText() + "", fechaactual() + "", semana.getText() + "",
+                            Oficina.getText() + "", responsable.getText() + "", nombreColector.getText() + "", registroruta.getText() + "",
+                            Nombredelaruta.getText() + "", codigoruta.getText() + "", CodigoTrampa.getText() + "", Municipio.getText() + "",
+                            Tipo_Atrayente.getText() + "", numeroanas.getText() + "", numeroceratis.getText() + "", numerootros.getText() + "",
+                            fenologia.getText() + "", Estadotrampa.getText() + "", Observaciones.getText() + "");
+                    baseDatos.child("Formulario").push().setValue(modeloForma);
+                    if (añadir < 8) {
+                        if (path == null || path.isEmpty()) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(LlenarFormularioActivity.this);
+                            builder.setCancelable(false);
+                            builder.setMessage("No hay firma, ¿desea continuar?");
+                            builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Enviardatos();
+                                }
+                            });
+                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog = builder.create();
+                            dialog.show();
+                        } else {
+                            Enviardatos();
+                        }
 
+                    } else {
+                        Toast.makeText(LlenarFormularioActivity.this, "Máximo 8 trampas", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(LlenarFormularioActivity.this, "Rellena los campos por favor", Toast.LENGTH_SHORT).show();
                 }
-                else
-                    Toast.makeText(LlenarFormularioActivity.this, "Maximo 8 trampas", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -311,9 +320,9 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             out.close();
             Log.i(TAG, "copyFile, success!");
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "copyFile FileNotFoundException " + e.getMessage());
+
         } catch (IOException e) {
-            Log.e(TAG, "copyFile IOException " + e.getMessage());
+
         }
     }
 
@@ -322,7 +331,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), albumName);
         if (!file.mkdirs()) {
-            Log.e("SignaturePad", "Directory not created");
+
         }
         return file;
     }
@@ -382,13 +391,13 @@ public class LlenarFormularioActivity extends AppCompatActivity {
             PdfStamper stamper = new PdfStamper(pdfReader,new FileOutputStream(destino+"/forma.pdf"));
             InputStream ims = getResources().openRawResource(R.raw.forma);
             AcroFields acroFields = stamper.getAcroFields();
-            Log.e("Datos", acroFields.getFields()+"");
 
 
 
-            if (getIntent().getExtras() !=null || getIntent().getExtras().getString("Semana") != null) {
+
+            if (getIntent().getExtras() !=null) {
                 añadir = getIntent().getExtras().getInt("añadir");
-                Log.e("añadir llena", añadir + "");
+
                 acroFields.setField("Centro_de _acopio", getIntent().getExtras().getString("CentroAcopio"));
                 acroFields.setField("Fecha_ddmmaaaa", fechaactual());
                 acroFields.setField("Semana", getIntent().getExtras().getString("semana"));
@@ -431,14 +440,13 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 }
 
                 if (añadir == 2){
-                    Log.e("llenar","entro añadir 2 pdf");
                     acroFields.setField("Semana",semana.getText()+"");
                     acroFields.setField("Oficina", Oficina.getText()+"");
                     acroFields.setField("Responsable", responsable.getText()+"");
                     acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
                     acroFields.setField("Registro_ruta",registroruta.getText()+"");
                     acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
-                    Toast.makeText(this, "recibir añadir 2", Toast.LENGTH_SHORT).show();
+
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
                     acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -451,7 +459,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("CODIGOTRAMPARow2", CodigoTrampa.getText() + "");
                     acroFields.setField("MUNICIPIORow2", Municipio.getText() + "");
                     acroFields.setField("TIPO_ATRAYENTERow2", Tipo_Atrayente.getText()+"");
-                    Log.e("tipo atrayente 2",Tipo_Atrayente.getText()+"");
+
                     acroFields.setField("AnastrephaRow2", numeroanas.getText() + "");
                     acroFields.setField("CeratitisRow2", numeroceratis.getText() + "");
                     acroFields.setField("OtrosRow2", numerootros.getText() + "");
@@ -478,7 +486,13 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     }
 
                 } if (añadir == 3){
-                    Log.e("llenar","entro añadir 3 pdf");
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
                     acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -507,9 +521,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("FENOLOGIARow3", fenologia.getText() + "");
                     acroFields.setField("ESTADOTRAMPARow3", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow3", Observaciones.getText() + "");
-                    Log.e("firma1-final",getIntent().getExtras().getString("firma1"));
-                    Log.e("firma2-final",getIntent().getExtras().getString("firma2"));
-                    Log.e("firma3-final",ruta);
+
                     PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
@@ -529,14 +541,23 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("firma3");
                     ad3.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad3.setProportionalIcon(false);
-                    if (ruta!=null || !ruta.isEmpty()) {
-                        ad3.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("firma3", ad3.getField());
+                    if (ruta!=null){
+                        if(!ruta.isEmpty()) {
+                            ad3.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma3", ad3.getField());
+                        }
                     }
 
 
                 }
                 if (añadir==4){
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
                     acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -575,10 +596,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("FENOLOGIARow4", fenologia.getText() + "");
                     acroFields.setField("ESTADOTRAMPARow4", Estadotrampa.getText() + "");
                     acroFields.setField("OBSERVACIONESRow4", Observaciones.getText() + "");
-                    Log.e("firma1-final",getIntent().getExtras().getString("firma1"));
-                    Log.e("firma2-final",getIntent().getExtras().getString("firma2"));
-                    Log.e("firma3-final",getIntent().getExtras().getString("firma3"));
-                    Log.e("firma4-final",ruta);
+
                     PushbuttonField ad  = acroFields.getNewPushbuttonFromField("firma1");
                     ad.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad.setProportionalIcon(false);
@@ -608,13 +626,22 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     ad4.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad4.setProportionalIcon(false);
                     if (ruta!=null) {
-                        ad4.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("firma4", ad4.getField());
+                        if (!ruta.isEmpty()) {
+                            ad4.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma4", ad4.getField());
+                        }
                     }
 
 
                 }
                 if (añadir == 5){
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
                     acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -634,6 +661,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("ESTADOTRAMPARow2", getIntent().getExtras().getString("estado2"));
                     acroFields.setField("OBSERVACIONESRow2", getIntent().getExtras().getString("observaciones2"));
                     acroFields.setField("FIRMAPROPIETARIORow2", "Aqui");
+
                     acroFields.setField("CODIGOTRAMPARow3", getIntent().getExtras().getString("codigotrampa3"));
                     acroFields.setField("MUNICIPIORow3", getIntent().getExtras().getString("municipio3"));
                     acroFields.setField("TIPO_ATRAYENTERow3", getIntent().getExtras().getString("tipoatrayente3"));
@@ -644,6 +672,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("ESTADOTRAMPARow3", getIntent().getExtras().getString("estado3"));
                     acroFields.setField("OBSERVACIONESRow3", getIntent().getExtras().getString("observaciones3"));
                     acroFields.setField("FIRMAPROPIETARIORow3", "Aqui");
+
                     acroFields.setField("CODIGOTRAMPARow4", getIntent().getExtras().getString("codigotrampa4"));
                     acroFields.setField("MUNICIPIORow4", getIntent().getExtras().getString("municipio4"));
                     acroFields.setField("TIPO_ATRAYENTERow4", getIntent().getExtras().getString("tipoatrayente4"));
@@ -654,6 +683,8 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     acroFields.setField("ESTADOTRAMPARow4", getIntent().getExtras().getString("estado4"));
                     acroFields.setField("OBSERVACIONESRow4", getIntent().getExtras().getString("observaciones4"));
                     acroFields.setField("FIRMAPROPIETARIORow4", "Aqui");
+
+
                     acroFields.setField("CODIGOTRAMPARow5", CodigoTrampa.getText() + "");
                     acroFields.setField("MUNICIPIORow5", Municipio.getText() + "");
                     acroFields.setField("TIPO_ATRAYENTERow5", Tipo_Atrayente.getText().toString());
@@ -679,7 +710,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                         acroFields.replacePushbuttonField("firma2", ad2.getField());
                     }
 
-                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("Firma3");
+                    PushbuttonField ad3  = acroFields.getNewPushbuttonFromField("firma3");
                     ad3.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad3.setProportionalIcon(false);
                     if (getIntent().getExtras().getString("firma3")!=null) {
@@ -695,15 +726,24 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                         acroFields.replacePushbuttonField("firma4", ad4.getField());
                     }
 
-                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("Firma5");
+                    PushbuttonField ad5  = acroFields.getNewPushbuttonFromField("firma5");
                     ad5.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad5.setProportionalIcon(false);
                     if (ruta!=null) {
-                        ad5.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("Firma5", ad5.getField());
+                        if(!ruta.isEmpty()) {
+                            ad5.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma5", ad5.getField());
+                        }
                     }
                 }
                 if (añadir==6){
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
                     acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -804,11 +844,20 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     ad6.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad6.setProportionalIcon(false);
                     if (ruta!=null) {
-                        ad6.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("firma6", ad6.getField());
+                        if(!ruta.isEmpty()) {
+                            ad6.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma6", ad6.getField());
+                        }
                     }
                 }
                 if (añadir==7){
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
                     acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -926,11 +975,20 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     ad7.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad7.setProportionalIcon(false);
                     if (ruta!=null) {
-                        ad7.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("firma7", ad7.getField());
+                        if(!ruta.isEmpty()) {
+                            ad7.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma7", ad7.getField());
+                        }
                     }
                 }
                 if (añadir==8){
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
                     acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -1065,10 +1123,19 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     ad8.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad8.setProportionalIcon(false);
                     if (ruta!=null) {
-                        ad8.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("firma8", ad8.getField());
+                        if(!ruta.isEmpty()) {
+                            ad8.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma8", ad8.getField());
+                        }
                     }
                 }if(añadir==9){
+                    acroFields.setField("Semana",semana.getText()+"");
+                    acroFields.setField("Oficina", Oficina.getText()+"");
+                    acroFields.setField("Responsable", responsable.getText()+"");
+                    acroFields.setField("Nombre del colectorRow1", nombreColector.getText()+"");
+                    acroFields.setField("Registro_ruta",registroruta.getText()+"");
+                    acroFields.setField("Nombrepredioempresa", Nombredelaruta.getText()+"");
+
                     acroFields.setField("CODIGOTRAMPARow1.0", getIntent().getExtras().getString("codigotrampa1"));
                     acroFields.setField("MUNICIPIORow1", getIntent().getExtras().getString("municipio1"));
                     acroFields.setField("TIPO_ATRAYENTERow1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -1219,9 +1286,11 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                     PushbuttonField ad9  = acroFields.getNewPushbuttonFromField("firma9");
                     ad9.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
                     ad9.setProportionalIcon(false);
-                    if (ruta!=null || !ruta.isEmpty()) {
-                        ad9.setImage(Image.getInstance(ruta));
-                        acroFields.replacePushbuttonField("firma9", ad9.getField());
+                    if (ruta!=null){
+                        if(!ruta.isEmpty()) {
+                            ad9.setImage(Image.getInstance(ruta));
+                            acroFields.replacePushbuttonField("firma9", ad9.getField());
+                        }
                     }
                 }
             }
@@ -1229,7 +1298,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
 
             stamper.close();
             pdfReader.close();
-            Log.e("Datos", acroFields.getFields()+"");
+
 
         } catch (DocumentException e) {
             e.printStackTrace();
@@ -1275,7 +1344,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
     }
 
     private void Enviardatos(){
-        Log.e("añadir",añadir+"");
+
         Intent intent = new Intent(LlenarFormularioActivity.this,MapaInspectorActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         intent.putExtra("CentroAcopio",CentroAcopio.getText()+"");
@@ -1288,7 +1357,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         intent.putExtra("codigoruta",codigoruta.getText()+"");
         Toast.makeText(LlenarFormularioActivity.this,"Oficina:" +nombreColector.getText()+"",Toast.LENGTH_SHORT).show();
         if (añadir == 1){
-            Log.e("llenar","entro añadir 1 enviar");
+
             intent.putExtra("codigotrampa1",CodigoTrampa.getText()+"");
             intent.putExtra("municipio1",Municipio.getText()+"");
             intent.putExtra("tipoatrayente1",Tipo_Atrayente.getText()+"");
@@ -1302,7 +1371,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
         }
         if (getIntent().getExtras() != null) {
             if (añadir==2) {
-                Log.e("llenar","entro añadir 2 enviar");
+
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
                 intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -1315,7 +1384,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("firma1", getIntent().getExtras().getString("firma1"));
                 intent.putExtra("codigotrampa2", CodigoTrampa.getText() + "");
                 intent.putExtra("municipio2", Municipio.getText() + "");
-                intent.putExtra("atrayente2", Tipo_Atrayente.getText() + "");
+                intent.putExtra("tipoatrayente2", Tipo_Atrayente.getText() + "");
                 intent.putExtra("anastrepha2", numeroanas.getText() + "");
                 intent.putExtra("ceratis2", numeroceratis.getText() + "");
                 intent.putExtra("otros2", numerootros.getText() + "");
@@ -1323,13 +1392,11 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("estado2", Estadotrampa.getText() + "");
                 intent.putExtra("observaciones2", Observaciones.getText() + "");
                 intent.putExtra("firma2",path);
-                Log.e("formulario-firma2",path);
-                Log.e("formulario-firma1",getIntent().getExtras().getString("firma1"));
-                Log.e("formulario-firma","añadir "+añadir);
+
             }
 
             if (añadir == 3) {
-                Log.e("firma-enviar","entro añadir 3" +añadir);
+
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
                 intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -1341,7 +1408,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
                 intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
                 intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
                 intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
                 intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
                 intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -1350,7 +1417,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
                 intent.putExtra("codigotrampa3", CodigoTrampa.getText() + "");
                 intent.putExtra("municipio3", Municipio.getText() + "");
-                intent.putExtra("atrayente3", Tipo_Atrayente.getText() + "");
+                intent.putExtra("tipoatrayente3", Tipo_Atrayente.getText() + "");
                 intent.putExtra("anastrepha3", numeroanas.getText() + "");
                 intent.putExtra("ceratis3", numeroceratis.getText() + "");
                 intent.putExtra("otros3", numerootros.getText() + "");
@@ -1360,12 +1427,12 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("firma1",getIntent().getExtras().getString("firma1"));
                 intent.putExtra("firma2",getIntent().getExtras().getString("firma2"));
                 intent.putExtra("firma3",path);
-                Log.e("firma1-enviar",getIntent().getExtras().getString("firma1"));
-                Log.e("firma2-enviar",getIntent().getExtras().getString("firma2"));
-                Log.e("firma3-enviar",path);
+
 
             }
             if (añadir == 4) {
+
+
                 intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
                 intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
                 intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -1377,7 +1444,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
                 intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
                 intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
                 intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
                 intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
                 intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -1386,22 +1453,22 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
                 intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
                 intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-                intent.putExtra("atrayente3", getIntent().getExtras().getString("tipoatrayente3"));
+                intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
                 intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
                 intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
                 intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
                 intent.putExtra("fenologia3", getIntent().getExtras().getString("fenologia3"));
                 intent.putExtra("estado3", getIntent().getExtras().getString("estado3"));
                 intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
-                intent.putExtra("codigotrampa3", CodigoTrampa.getText() + "");
-                intent.putExtra("municipio3", Municipio.getText() + "");
-                intent.putExtra("atrayente3", Tipo_Atrayente.getText() + "");
-                intent.putExtra("anastrepha3", numeroanas.getText() + "");
-                intent.putExtra("ceratis3", numeroceratis.getText() + "");
-                intent.putExtra("otros3", numerootros.getText() + "");
-                intent.putExtra("fenologia3", fenologia.getText() + "");
-                intent.putExtra("estado3", Estadotrampa.getText() + "");
-                intent.putExtra("observaciones3", Observaciones.getText() + "");
+                intent.putExtra("codigotrampa4", CodigoTrampa.getText() + "");
+                intent.putExtra("municipio4", Municipio.getText() + "");
+                intent.putExtra("atrayente4", Tipo_Atrayente.getText() + "");
+                intent.putExtra("anastrepha4", numeroanas.getText() + "");
+                intent.putExtra("ceratis4", numeroceratis.getText() + "");
+                intent.putExtra("otros4", numerootros.getText() + "");
+                intent.putExtra("fenologia4", fenologia.getText() + "");
+                intent.putExtra("estado4", Estadotrampa.getText() + "");
+                intent.putExtra("observaciones4", Observaciones.getText() + "");
                 intent.putExtra("firma1",getIntent().getExtras().getString("firma1"));
                 intent.putExtra("firma2",getIntent().getExtras().getString("firma2"));
                 intent.putExtra("firma3",getIntent().getExtras().getString("firma3"));
@@ -1419,7 +1486,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
                 intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
                 intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
                 intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
                 intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
                 intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -1428,7 +1495,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
                 intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
                 intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-                intent.putExtra("atrayente3", getIntent().getExtras().getString("tipoatrayente3"));
+                intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
                 intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
                 intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
                 intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -1437,7 +1504,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
                 intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa3"));
                 intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-                intent.putExtra("atrayente4", getIntent().getExtras().getString("tipoatrayente4"));
+                intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
                 intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
                 intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
                 intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -1446,7 +1513,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
                 intent.putExtra("codigotrampa5", CodigoTrampa.getText() + "");
                 intent.putExtra("municipio5", Municipio.getText() + "");
-                intent.putExtra("atrayente5", Tipo_Atrayente.getText() + "");
+                intent.putExtra("tipoatrayente5", Tipo_Atrayente.getText() + "");
                 intent.putExtra("anastrepha5", numeroanas.getText() + "");
                 intent.putExtra("ceratis5", numeroceratis.getText() + "");
                 intent.putExtra("otros5", numerootros.getText() + "");
@@ -1470,7 +1537,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
                 intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
                 intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
                 intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
                 intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
                 intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -1479,7 +1546,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
                 intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
                 intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-                intent.putExtra("atrayente3", getIntent().getExtras().getString("tipoatrayente3"));
+                intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
                 intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
                 intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
                 intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -1488,7 +1555,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
                 intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa4"));
                 intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-                intent.putExtra("atrayente4", getIntent().getExtras().getString("tipoatrayente4"));
+                intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
                 intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
                 intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
                 intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -1497,7 +1564,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
                 intent.putExtra("codigotrampa5", getIntent().getExtras().getString("codigotrampa5"));
                 intent.putExtra("municipio5", getIntent().getExtras().getString("municipio5"));
-                intent.putExtra("atrayente5", getIntent().getExtras().getString("tipoatrayente5"));
+                intent.putExtra("tipoatrayente5", getIntent().getExtras().getString("tipoatrayente5"));
                 intent.putExtra("anastrepha5", getIntent().getExtras().getString("anastrepha5"));
                 intent.putExtra("ceratis5", getIntent().getExtras().getString("ceratis5"));
                 intent.putExtra("otros5", getIntent().getExtras().getString("otros5"));
@@ -1506,7 +1573,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones5", getIntent().getExtras().getString("observaciones5"));
                 intent.putExtra("codigotrampa6", CodigoTrampa.getText() + "");
                 intent.putExtra("municipio6", Municipio.getText() + "");
-                intent.putExtra("atrayente6", Tipo_Atrayente.getText() + "");
+                intent.putExtra("tipoatrayente6", Tipo_Atrayente.getText() + "");
                 intent.putExtra("anastrepha6", numeroanas.getText() + "");
                 intent.putExtra("ceratis6", numeroceratis.getText() + "");
                 intent.putExtra("otros6", numerootros.getText() + "");
@@ -1532,7 +1599,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
                 intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
                 intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
                 intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
                 intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
                 intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -1541,7 +1608,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
                 intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
                 intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-                intent.putExtra("atrayente3", getIntent().getExtras().getString("tipoatrayente3"));
+                intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
                 intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
                 intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
                 intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -1550,7 +1617,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
                 intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa4"));
                 intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-                intent.putExtra("atrayente4", getIntent().getExtras().getString("tipoatrayente4"));
+                intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
                 intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
                 intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
                 intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -1559,7 +1626,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
                 intent.putExtra("codigotrampa5", getIntent().getExtras().getString("codigotrampa5"));
                 intent.putExtra("municipio5", getIntent().getExtras().getString("municipio5"));
-                intent.putExtra("atrayente5", getIntent().getExtras().getString("tipoatrayente5"));
+                intent.putExtra("tipoatrayente5", getIntent().getExtras().getString("tipoatrayente5"));
                 intent.putExtra("anastrepha5", getIntent().getExtras().getString("anastrepha5"));
                 intent.putExtra("ceratis5", getIntent().getExtras().getString("ceratis5"));
                 intent.putExtra("otros5", getIntent().getExtras().getString("otros5"));
@@ -1568,7 +1635,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones5", getIntent().getExtras().getString("observaciones5"));
                 intent.putExtra("codigotrampa6", getIntent().getExtras().getString("codigotrampa6"));
                 intent.putExtra("municipio6", getIntent().getExtras().getString("municipio6"));
-                intent.putExtra("atrayente6", getIntent().getExtras().getString("tipoatrayente6"));
+                intent.putExtra("tipoatrayente6", getIntent().getExtras().getString("tipoatrayente6"));
                 intent.putExtra("anastrepha6", getIntent().getExtras().getString("anastrepha6"));
                 intent.putExtra("ceratis6", getIntent().getExtras().getString("ceratis6"));
                 intent.putExtra("otros6", getIntent().getExtras().getString("otros6"));
@@ -1577,7 +1644,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones6", getIntent().getExtras().getString("observaciones6"));
                 intent.putExtra("codigotrampa7", CodigoTrampa.getText() + "");
                 intent.putExtra("municipio7", Municipio.getText() + "");
-                intent.putExtra("atrayente7", Tipo_Atrayente.getText() + "");
+                intent.putExtra("tipoatrayente7", Tipo_Atrayente.getText() + "");
                 intent.putExtra("anastrepha7", numeroanas.getText() + "");
                 intent.putExtra("ceratis7", numeroceratis.getText() + "");
                 intent.putExtra("otros7", numerootros.getText() + "");
@@ -1603,7 +1670,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
                 intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
                 intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-                intent.putExtra("atrayente2", getIntent().getExtras().getString("tipoatrayente2"));
+                intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
                 intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
                 intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
                 intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -1612,7 +1679,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
                 intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
                 intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-                intent.putExtra("atrayente3", getIntent().getExtras().getString("tipoatrayente3"));
+                intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
                 intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
                 intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
                 intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -1621,7 +1688,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
                 intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa4"));
                 intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-                intent.putExtra("atrayente4", getIntent().getExtras().getString("tipoatrayente4"));
+                intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
                 intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
                 intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
                 intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -1630,7 +1697,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
                 intent.putExtra("codigotrampa5", getIntent().getExtras().getString("codigotrampa5"));
                 intent.putExtra("municipio5", getIntent().getExtras().getString("municipio5"));
-                intent.putExtra("atrayente5", getIntent().getExtras().getString("tipoatrayente5"));
+                intent.putExtra("tipoatrayente5", getIntent().getExtras().getString("tipoatrayente5"));
                 intent.putExtra("anastrepha5", getIntent().getExtras().getString("anastrepha5"));
                 intent.putExtra("ceratis5", getIntent().getExtras().getString("ceratis5"));
                 intent.putExtra("otros5", getIntent().getExtras().getString("otros5"));
@@ -1639,7 +1706,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones5", getIntent().getExtras().getString("observaciones5"));
                 intent.putExtra("codigotrampa6", getIntent().getExtras().getString("codigotrampa6"));
                 intent.putExtra("municipio6", getIntent().getExtras().getString("municipio6"));
-                intent.putExtra("atrayente6", getIntent().getExtras().getString("tipoatrayente6"));
+                intent.putExtra("tipoatrayente6", getIntent().getExtras().getString("tipoatrayente6"));
                 intent.putExtra("anastrepha6", getIntent().getExtras().getString("anastrepha6"));
                 intent.putExtra("ceratis6", getIntent().getExtras().getString("ceratis6"));
                 intent.putExtra("otros6", getIntent().getExtras().getString("otros6"));
@@ -1649,7 +1716,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("codigotrampa8", CodigoTrampa.getText() + "");
                 intent.putExtra("codigotrampa7", getIntent().getExtras().getString("codigotrampa7"));
                 intent.putExtra("municipio7", getIntent().getExtras().getString("municipio7"));
-                intent.putExtra("atrayente7", getIntent().getExtras().getString("tipoatrayente7"));
+                intent.putExtra("tipoatrayente7", getIntent().getExtras().getString("tipoatrayente7"));
                 intent.putExtra("anastrepha7", getIntent().getExtras().getString("anastrepha7"));
                 intent.putExtra("ceratis7", getIntent().getExtras().getString("ceratis7"));
                 intent.putExtra("otros7", getIntent().getExtras().getString("otros7"));
@@ -1658,7 +1725,7 @@ public class LlenarFormularioActivity extends AppCompatActivity {
                 intent.putExtra("observaciones7", getIntent().getExtras().getString("observaciones7"));
                 intent.putExtra("codigotrampa8", CodigoTrampa.getText() + "");
                 intent.putExtra("municipio8", Municipio.getText() + "");
-                intent.putExtra("atrayente8", Tipo_Atrayente.getText() + "");
+                intent.putExtra("tipoatrayente8", Tipo_Atrayente.getText() + "");
                 intent.putExtra("anastrepha8", numeroanas.getText() + "");
                 intent.putExtra("ceratis8", numeroceratis.getText() + "");
                 intent.putExtra("otros8", numerootros.getText() + "");

@@ -21,8 +21,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import monterrosa.ricardo.aprendermaps.R;
 import monterrosa.ricardo.aprendermaps.adapters.AdapterPermisos;
@@ -42,8 +44,9 @@ public class AjustesAdminFragment extends Fragment {
     private RecyclerView colectoresinhabilitados, colectoreshabilitados;
     private ArrayList<String> inhabilitados = new ArrayList<String>();
     private ArrayList<String> habilitados = new ArrayList<String>();
-    private boolean verdad1 = false;
-    private boolean verdad2 = false;
+    private ArrayList<String> correos = new ArrayList<>();
+    private ArrayList<String> correoshabilitar = new ArrayList<>();
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -101,6 +104,10 @@ public class AjustesAdminFragment extends Fragment {
         colectoreshabilitados = view.findViewById(R.id.Colectoreshabilitados);
         colectoresinhabilitados.setHasFixedSize(true);
         colectoreshabilitados.setHasFixedSize(true);
+        btn_habilitar = view.findViewById(R.id.habilitar);
+        btn_acceso = view.findViewById(R.id.acesso);
+        llenarcorreos();
+        llenarcorreoshabilitar();
         mostrar();
         btn_inhabilitar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,14 +115,14 @@ public class AjustesAdminFragment extends Fragment {
                 inhabilitarcolector();
             }
         });
-        btn_acceso = view.findViewById(R.id.acesso);
+
         btn_acceso.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 permitirAcceso();
             }
         });
-        btn_habilitar = view.findViewById(R.id.habilitar);
+
         btn_habilitar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,24 +132,16 @@ public class AjustesAdminFragment extends Fragment {
 
         return view;
     }
-
-    public void inhabilitarcolector() {
+    private void llenarcorreos(){
+        Log.e("correo","llenar");
         inhabilitar.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.e("entro a inhabilitados", "adentro we");
-                String correo = dataSnapshot.getValue(String.class);
-                if (correo.equals(correocolector.getText() + "")) {
-                    Toast.makeText(getContext(), "El colector ya esta inhabilitado", Toast.LENGTH_SHORT).show();
-                } else {
-                    verdad1 = true;
-                }
-
+                correos.add(dataSnapshot.getValue(String.class));
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
 
             }
 
@@ -161,26 +160,59 @@ public class AjustesAdminFragment extends Fragment {
 
             }
         });
-        if (verdad1) {
+    }
+
+    public void inhabilitarcolector() {
+        boolean var = false;
+        for (int i = 0; i < correos.size(); i++) {
+            if (correos.get(i).equals(correocolector.getText().toString())) {
+                Toast.makeText(getContext(), "El colector ya esta inhabilitado", Toast.LENGTH_SHORT).show();
+                var = false;
+                break;
+            } else {
+                var = true;
+            }
+        }
+        if (var){
             inhabilitar.push().setValue(correocolector.getText() + "");
             Toast.makeText(getContext(), "inhabilitado", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     public void habilitarColector() {
-        inhabilitar.addChildEventListener(new ChildEventListener() {
+
+        for (int i=0; i<correos.size(); i++) {
+            if (correos.get(i).equals(correocolector.getText().toString())) {
+                inhabilitar.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot correo: dataSnapshot.getChildren()) {
+                            if(correocolector.getText().toString().equals(correo.getValue(String.class))) {
+                                correo.getRef().removeValue();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                Toast.makeText(getContext(), "Habilitado", Toast.LENGTH_SHORT).show();
+                break;
+            } else {
+                Toast.makeText(getContext(), "Ya se encuentra habilitado", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private  void llenarcorreoshabilitar(){
+        habilitar.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.e("entro a habilitados", "adentro we");
-                String correo = dataSnapshot.getValue(String.class);
-                if (correo.equals(correocolector.getText() + "")) {
-                    dataSnapshot.getRef().setValue(null);
-                    Toast.makeText(getContext(), "Habilitado", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "Ya se encuentra habilitado", Toast.LENGTH_SHORT).show();
-                }
-
+                correoshabilitar.add(dataSnapshot.getValue(String.class));
             }
 
             @Override
@@ -190,6 +222,7 @@ public class AjustesAdminFragment extends Fragment {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+
             }
 
             @Override
@@ -205,43 +238,24 @@ public class AjustesAdminFragment extends Fragment {
     }
 
     public void permitirAcceso() {
-        habilitar.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String correo = dataSnapshot.getValue(String.class);
-                if (correo.equals(permitiracceso.getText().toString())) {
-                    Toast.makeText(getContext(), "Ya tiene acceso.", Toast.LENGTH_SHORT).show();
-                } else {
-                    verdad2 = true;
-                }
+        boolean var = false;
+        for (int i = 0; i < correoshabilitar.size(); i++) {
+            Log.e("correo",correoshabilitar.get(i));
+            if (correoshabilitar.get(i).equals(permitiracceso.getText().toString())){
+                Toast.makeText(getContext(), "Ya tiene acceso.", Toast.LENGTH_SHORT).show();
+                var = false;
+                break;
+            }else{
+                var = true;
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        if (verdad2) {
+        }
+        if (var){
             habilitar.push().setValue(permitiracceso.getText().toString());
             usuario_final.push().setValue(permitiracceso.getText().toString());
             Toast.makeText(getContext(), "Acceso concedido.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void mostrar(){
         inhabilitar.addChildEventListener(new ChildEventListener() {
             @Override

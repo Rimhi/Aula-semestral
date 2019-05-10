@@ -12,9 +12,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -115,9 +117,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapLongClick(final LatLng latLng) {
                 marcador = mMap.addMarker(new MarkerOptions().anchor(0.0f,1.0f).position(latLng));
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-                builder.setTitle("¿Esta es la posicion de una trampa?")
+                builder.setTitle("¿Esta es la posición de una trampa?")
                         .setCancelable(false)
-                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 LayoutInflater layoutInflater = getLayoutInflater();
@@ -174,6 +176,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
                 dialog = builder.create();
                 dialog.show();
+                /**
+                 * Ver contraseña
+                 */
 
 
 
@@ -194,7 +199,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                              miBaseDatos.child("trampas").child(idtrampa[1]).setValue(null);
                                marker.remove();
                            }
-                       }).setPositiveButton("Informacion", new DialogInterface.OnClickListener() {
+                       }).setPositiveButton("Información", new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialogInterface, int i) {
                        /***
@@ -257,20 +262,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             final Trampa trampa = dataSnapshot.getValue(Trampa.class);
 
             if( mMap != null && trampa != null){
-                if (trampa.Tipo_trampa.equals("Picudo Algodon")){
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .title("Identificacion: " + trampa.id)
-                            .snippet("Fecha: " + trampa.fechaInicio)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail_picudo))
-                            .position(new LatLng(trampa.latitud, trampa.longitud));
-                    mMap.addMarker(markerOptions);
-                }else {
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .title("Identificacion: " + trampa.id)
-                            .snippet("Fecha: " + trampa.fechaInicio)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail))
-                            .position(new LatLng(trampa.latitud, trampa.longitud));
-                    mMap.addMarker(markerOptions);
+                if(trampa.Tipo_trampa!=null) {
+                    if (trampa.Tipo_trampa.equals("Picudo Algodon")) {
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .title("Identificación: " + trampa.id)
+                                .snippet("Fecha: " + trampa.fechaInicio)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail_picudo))
+                                .position(new LatLng(trampa.latitud, trampa.longitud));
+                        mMap.addMarker(markerOptions);
+
+                }
+                    else {
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .title("Identificación: " + trampa.id)
+                                .snippet("Fecha: " + trampa.fechaInicio)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail))
+                                .position(new LatLng(trampa.latitud, trampa.longitud));
+                        mMap.addMarker(markerOptions);
+                }
                 }
             }
         }
@@ -300,11 +309,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final ModeloDarposicion modeloRegistro = dataSnapshot.getValue(ModeloDarposicion.class);
             if (mMap != null && modeloRegistro !=null){
-                marcadorinspectores = mMap.addMarker(new MarkerOptions()
-                        .title("Cedula: "+modeloRegistro.ceduladarposiciontelefonoinspector)
-                        .snippet("Nombre: "+modeloRegistro.nombredarposicioninspector)
-                        .position(new LatLng(modeloRegistro.latitud,modeloRegistro.longitud))
-                        .icon(getBitmapFromVector(MapsActivity.this,R.drawable.ic_person_posicion,getResources().getColor(R.color.Ultimaposicion))));
+                    marcadorinspectores = mMap.addMarker(new MarkerOptions()
+                            .title("Cédula: " + modeloRegistro.ceduladarposiciontelefonoinspector)
+                            .snippet("Nombre: " + modeloRegistro.nombredarposicioninspector)
+                            .position(new LatLng(modeloRegistro.latitud, modeloRegistro.longitud))
+                            .icon(getBitmapFromVector(MapsActivity.this, R.drawable.ic_person_posicion, getResources().getColor(R.color.Ultimaposicion))));
 
             }
         }
@@ -315,7 +324,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             final ModeloDarposicion modeloRegistro = dataSnapshot.getValue(ModeloDarposicion.class);
             if (mMap != null && modeloRegistro !=null){
                 marcadorinspectores = mMap.addMarker(new MarkerOptions()
-                        .title("Cedula: "+modeloRegistro.ceduladarposiciontelefonoinspector)
+                        .title("Cédula: "+modeloRegistro.ceduladarposiciontelefonoinspector)
                         .snippet("Nombre: "+modeloRegistro.nombredarposicioninspector)
                         .position(new LatLng(modeloRegistro.latitud,modeloRegistro.longitud))
                         .icon(getBitmapFromVector(MapsActivity.this,R.drawable.ic_person_posicion,getResources().getColor(R.color.colorPrimaryDark))));

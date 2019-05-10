@@ -31,7 +31,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class RegistroActivity extends AppCompatActivity {
@@ -50,6 +52,8 @@ public class RegistroActivity extends AppCompatActivity {
     private TextView subirimagen;
     private String Imagen;
     private DatabaseReference acceso;
+    private ArrayList<String>correos = new ArrayList<>();
+
 
 
 
@@ -71,81 +75,93 @@ public class RegistroActivity extends AppCompatActivity {
         mStorageRef = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         acceso = databaseReference.child("habilitarCorreos");
+        llenarcorreos();
 
     }
+    private void llenarcorreos(){
+        acceso.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                correos.add(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void irInicio(View view){
         startActivity(new Intent(RegistroActivity.this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
     public void registrar(View view){
+        boolean var = false;
         if (correo.getText().toString().isEmpty() || contraseña.getText().toString().isEmpty() || contraseña2.getText().toString().isEmpty()
                 || nombre.getText().toString().isEmpty() || direccion.getText().toString().isEmpty() || telefono.getText().toString().isEmpty() || file==null || file.toString().isEmpty()) {
-            Toast.makeText(RegistroActivity.this,"Campos Vacios",Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegistroActivity.this,"Campos Vacíos",Toast.LENGTH_SHORT).show();
         }else {
             if (contraseña.getText().toString().equals(contraseña2.getText().toString())) {
-                acceso.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        if (dataSnapshot.getValue(String.class).equals(correo.getText()+"")){
-                            auth.createUserWithEmailAndPassword(correo.getText().toString(),contraseña.getText().toString())
-                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
-                                            progreso.setMessage("Registrando ...");
-                                            progreso.show();
-                                            if (task.isSuccessful()){
-                                                auth.signInWithEmailAndPassword(correo.getText().toString(),contraseña.getText().toString());
-                                                databaseReference = FirebaseDatabase.getInstance().getReference().child("Usuarios");
-                                                miBasedatos = databaseReference.child(auth.getCurrentUser().getUid());
-                                                ModeloRegistro registro = new ModeloRegistro(auth.getCurrentUser().getUid()+"",nombre.getText()+"",
-                                                        cedula.getText()+"", telefono.getText()+"",correo.getText()+"",
-                                                        direccion.getText()+"",Imagen+"",fechaactual()+"");
-                                                miBasedatos.setValue(registro);
-                                                usuario = auth.getCurrentUser();
-                                                usuario.sendEmailVerification()
-                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                if (task.isSuccessful()){
-                                                                    Toast.makeText(RegistroActivity.this, "Por favor Verifica tu correo", Toast.LENGTH_SHORT).show();
-                                                                }
+                for (int i=0; i<correos.size();i++) {
+                    if (correos.get(i).equals(correo.getText().toString())) {
+                        progreso.setMessage("Registrando ...");
+                        progreso.show();
+                        progreso.setCancelable(false);
+                        auth.createUserWithEmailAndPassword(correo.getText().toString(), contraseña.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            auth.signInWithEmailAndPassword(correo.getText().toString(), contraseña.getText().toString());
+                                            databaseReference = FirebaseDatabase.getInstance().getReference().child("Usuarios");
+                                            miBasedatos = databaseReference.child(auth.getCurrentUser().getUid());
+                                            ModeloRegistro registro = new ModeloRegistro(auth.getCurrentUser().getUid() + "", nombre.getText() + "",
+                                                    cedula.getText() + "", telefono.getText() + "", correo.getText() + "",
+                                                    direccion.getText() + "", Imagen + "", fechaactual() + "");
+                                            miBasedatos.setValue(registro);
+                                            usuario = auth.getCurrentUser();
+                                            usuario.sendEmailVerification()
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Toast.makeText(RegistroActivity.this, "Por favor verifica tu correo", Toast.LENGTH_SHORT).show();
                                                             }
-                                                        });
+                                                        }
+                                                    });
 
-                                                progreso.dismiss();
+                                            progreso.dismiss();
 
-                                            }else {
-                                                Toast.makeText(RegistroActivity.this,"Error al Registrar Usuario",Toast.LENGTH_SHORT).show();
-                                                progreso.dismiss();
-                                            }
+                                        } else {
+                                            Toast.makeText(RegistroActivity.this, "Error al registrar usuario", Toast.LENGTH_SHORT).show();
+                                            progreso.dismiss();
                                         }
-                                    });
-                        }else {
-                            Toast.makeText(RegistroActivity.this, "Acceso restringido, consulta con tu administrador", Toast.LENGTH_SHORT).show();
-                        }
+                                    }
+                                });
+                            var = false;
+                            break;
+                    } else {
+                        var = true;
                     }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-
+                }
+                if (var){
+                    Toast.makeText(RegistroActivity.this, "Acceso restringido, consulta con tu administrador", Toast.LENGTH_SHORT).show();
+                }
             }else {
                 Toast.makeText(RegistroActivity.this,"Contraseñas Distintas",Toast.LENGTH_SHORT).show();
             }
@@ -169,12 +185,12 @@ public class RegistroActivity extends AppCompatActivity {
         subirimagen.setVisibility(View.VISIBLE);
     }
     public void SubirArchivosAStorage(View view){
-        acceso.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getValue(String.class).equals(correo.getText()+"")){
+        boolean var = false;
+            for (int i = 0; i < correos.size();i++){
+                if (correos.get(i).equals(correo.getText().toString())){
                     progreso.setMessage("Subiendo ...");
                     progreso.show();
+                    progreso.setCancelable(false);
                     if (!cedula.getText().toString().isEmpty() && file!=null) {
                         StorageReference riversRef = mStorageRef.child(cedula.getText().toString()).child(file.getLastPathSegment());
 
@@ -203,35 +219,18 @@ public class RegistroActivity extends AppCompatActivity {
 
                                     }
                                 });
+                        var = false;
+                        break;
                     }else {
                         Toast.makeText(RegistroActivity.this, "Ha ocurrido un error, Carga  una imagen o ingresa tu cedula", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(RegistroActivity.this, "No tienes permiso de Subir imagenes, Consuta con tu administrador", Toast.LENGTH_SHORT).show();
+                    var = true;
                 }
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+            if (var){
+                Toast.makeText(RegistroActivity.this, "No tienes permiso de Subir imagenes, Consuta con tu administrador", Toast.LENGTH_SHORT).show();
             }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
     }
 
     public String fechaactual(){
@@ -242,6 +241,5 @@ public class RegistroActivity extends AppCompatActivity {
 
         return  fecha;
     }
-
 
 }

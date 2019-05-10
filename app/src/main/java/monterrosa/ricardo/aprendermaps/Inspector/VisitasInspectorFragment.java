@@ -7,8 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -18,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import monterrosa.ricardo.aprendermaps.R;
 import monterrosa.ricardo.aprendermaps.adapters.FechaInspeccionAdapter;
@@ -91,6 +96,7 @@ public class VisitasInspectorFragment extends Fragment {
         trampas = databaseReference.child("Inspecciones");
         auth = FirebaseAuth.getInstance();
         trampas.addChildEventListener(listener);
+        setHasOptionsMenu(true);
 
         return view;
     }
@@ -169,5 +175,39 @@ public class VisitasInspectorFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search,menu);
+        MenuItem item = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView)item.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                final List<LlegadaMapa> search = items(list,newText);
+                adapter.setFilter(search);
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    private List<LlegadaMapa>items(List<LlegadaMapa>item,String query){
+        query.toLowerCase();
+        final List<LlegadaMapa> filter = new ArrayList<>();
+
+        for (LlegadaMapa model : item){
+            final String text = model.Fecha;
+
+            if (text.startsWith(query)){
+                filter.add(model);
+            }
+        }
+        return filter;
     }
 }

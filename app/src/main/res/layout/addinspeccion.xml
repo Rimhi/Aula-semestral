@@ -7,7 +7,8 @@
     android:background="@color/colorAccent">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="10dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -15,7 +16,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Codigo Trampa: "
+                android:text="Código Trampa: "
                 android:layout_marginTop="10dp"
                 android:textColor="@color/btn"/>
             <EditText
@@ -35,7 +36,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Monteria"
+                android:text="Montería"
                 android:layout_marginTop="10dp"
                 android:id="@+id/FormularioMunicipio"
                 android:background="@drawable/redondo"
@@ -62,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/btn"
-                android:text="Numero de Especimenes Capturados:"/>
+                android:text="Número de Especimenes Capturados:"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +87,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Otros Generos"
+                android:hint="Otros Géneros"
                 android:id="@+id/numeroOtros"
                 android:layout_marginTop="10dp"
                 android:inputType="number"
@@ -96,7 +97,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Fenologia: "
+                android:text="Fenología: "
                 android:textColor="@color/btn"
                 android:layout_marginTop="10dp"/>
             <EditText

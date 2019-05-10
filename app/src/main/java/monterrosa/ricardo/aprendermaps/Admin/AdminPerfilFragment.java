@@ -218,7 +218,7 @@ public class AdminPerfilFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
-                                Toast.makeText(getContext(),"Contraseña Cambiada Con exito",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(),"Contraseña Cambiada Con éxito",Toast.LENGTH_SHORT).show();
                                 Log.e(TAG,"Contraseña Cambiada");
                                 startActivity(new Intent(getContext(),AdminActivity.class));
                             }else {

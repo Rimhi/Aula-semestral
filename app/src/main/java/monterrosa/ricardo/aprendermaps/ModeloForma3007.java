@@ -24,4 +24,7 @@ public class ModeloForma3007 {
         this.observaciones = observaciones;
 
     }
+
+    public ModeloForma3007() {
+    }
 }

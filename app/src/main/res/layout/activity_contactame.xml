@@ -12,7 +12,7 @@
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
      android:layout_gravity="center"
-     android:text="Informacion basica de contacto"
+     android:text="Información basica de contacto"
      android:textSize="25dp"
      android:background="@drawable/redondo"
      android:padding="10dp"
@@ -20,7 +20,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Telefono: 3108265084"
+        android:text="Teléfono: 3108265084"
         android:layout_margin="10dp"
         android:padding="10dp"
         android:background="@drawable/redondo"

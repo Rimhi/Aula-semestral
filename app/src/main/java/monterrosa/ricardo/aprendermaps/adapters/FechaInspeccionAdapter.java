@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
@@ -53,6 +54,12 @@ public class FechaInspeccionAdapter extends RecyclerView.Adapter<FechaInspeccion
         view.setVisibility(View.VISIBLE);
         animator.start();
 
+
+    }
+    public void setFilter(List<LlegadaMapa> item){
+        lista = new ArrayList<>();
+        lista.addAll(item);
+        notifyDataSetChanged();
 
     }
 

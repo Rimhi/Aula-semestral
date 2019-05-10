@@ -9,10 +9,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import monterrosa.ricardo.aprendermaps.Inspector.LlegadaMapa;
@@ -87,6 +92,7 @@ public class AdminVisitasFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -107,28 +113,73 @@ public class AdminVisitasFragment extends Fragment {
         decidirquemostrar.setAdapter(adaptadorspinner);
         progressDialog = new ProgressDialog(getContext());
         mostrardatos();
+        //mostrartodoslosdatos();
+
 
         return view;
+    }
+    public void mostrartodoslosdatos(){
+        list.clear();
+        inspecciones.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                final LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
+
+                    Log.e("hoy","entro a si hay inspecciones");
+                    list.add(llegadaMapa);
+                    adapter = new FechaInspeccionAdapter(list,getContext());
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                    listavisitasinspectores.setLayoutManager(linearLayoutManager);
+                    listavisitasinspectores.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    progressDialog.dismiss();
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
     public void mostrardatos(){
         decidirquemostrar.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                progressDialog.setMessage("Cargando ...");
-                progressDialog.show();
                 switch (i){
                     case 1:
                         list.clear();
                         inspecciones.addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
+                                progressDialog.setMessage("Cargando ...");
+                                progressDialog.show();
                                 final LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
+                                List<LlegadaMapa>lista = new ArrayList<>();
                                 if (!llegadaMapa.Fecha.equals(fechaactual())) {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(getContext(), "Hoy no hubo inspecciones", Toast.LENGTH_SHORT).show();
+                                    lista.add(llegadaMapa);
+                                    if (lista.size()<=0) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getContext(), "Hoy no hubo inspecciones", Toast.LENGTH_SHORT).show();
+                                    }
                                 }else {
-                                    Log.e("hoy","entro a si hay inspecciones");
                                     list.add(llegadaMapa);
                                     adapter = new FechaInspeccionAdapter(list,getContext());
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -166,7 +217,8 @@ public class AdminVisitasFragment extends Fragment {
                         inspecciones.addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                Log.e("siempre","entro a si hay inspecciones");
+                                progressDialog.setMessage("Cargando ...");
+                                progressDialog.show();
                                 final LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
                                     listtodos.add(llegadaMapa);
                                     adapter = new FechaInspeccionAdapter(listtodos,getContext());
@@ -176,6 +228,9 @@ public class AdminVisitasFragment extends Fragment {
                                     listavisitasinspectores.setAdapter(adapter);
                                     adapter.notifyDataSetChanged();
                                     progressDialog.dismiss();
+                                    if (listtodos.size() == 0){
+                                        Toast.makeText( getContext(),"No hay disponibles, intentalo mas tarde!", Toast.LENGTH_SHORT).show();
+                                    }
 
                             }
 
@@ -211,6 +266,45 @@ public class AdminVisitasFragment extends Fragment {
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search,menu);
+        MenuItem item = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView)item.getActionView();
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mostrartodoslosdatos();
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                final List<LlegadaMapa>search = items(list,newText);
+                adapter.setFilter(search);
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    private List<LlegadaMapa>items(List<LlegadaMapa>item,String query){
+        query.toLowerCase();
+        final List<LlegadaMapa> filter = new ArrayList<>();
+
+        for (LlegadaMapa model : item){
+            final String text = model.Fecha;
+
+            if (text.startsWith(query)){
+                filter.add(model);
+            }
+        }
+        return filter;
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -251,7 +345,7 @@ public class AdminVisitasFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
     public String fechaactual(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Date date = new Date();
 
         String fecha = dateFormat.format(date);

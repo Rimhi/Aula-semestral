@@ -51,7 +51,7 @@
                 android:padding="10dp"
                 android:enabled="false"
                 android:layout_margin="5dp"
-                android:hint="  Cedula"
+                android:hint="  Cédula"
                 android:id="@+id/editarcedulainspector"
                 android:inputType="number"
                 android:drawableLeft="@drawable/ic_chat"/>
@@ -68,7 +68,7 @@
             <EditText
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:hint="  Direccion de residencia"
+                android:hint="  Dirección de residencia"
                 android:id="@+id/editardireccioninspector"
                 android:background="@drawable/redondo"
                 android:padding="10dp"
@@ -87,7 +87,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Informacion de ingreso"
+                android:text="Información de ingreso"
                 android:textColor="@color/btn"
                 android:textSize="20dp"
                 android:gravity="center"
@@ -96,7 +96,7 @@
             <EditText
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:hint="  Correo Electronico"
+                android:hint="  Correo Electrónico"
                 android:background="@drawable/redondo"
                 android:padding="10dp"
                 android:enabled="false"

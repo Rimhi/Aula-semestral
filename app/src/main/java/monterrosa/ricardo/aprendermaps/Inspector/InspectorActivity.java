@@ -95,8 +95,8 @@ public class InspectorActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (!user.isEmailVerified()){
                     final AlertDialog.Builder builder = new AlertDialog.Builder(InspectorActivity.this);
-                    builder.setTitle("Verificacion de email")
-                            .setMessage("Por favor verifica tu correo electronico para continuar")
+                    builder.setTitle("Verificación de email")
+                            .setMessage("Por favor verifica tu correo electrónico para continuar")
                             .setCancelable(false)
                             .setIcon(R.drawable.ic_email)
                             .setNegativeButton("Cerrar sesion", new DialogInterface.OnClickListener() {
@@ -106,12 +106,14 @@ public class InspectorActivity extends AppCompatActivity
                                     startActivity(new Intent(InspectorActivity.this,MainActivity.class));
                                 }
                             });
-                    dialog = builder.create();
-                    dialog.show();
+                    if (!InspectorActivity.super.isDestroyed()) {
+                        dialog = builder.create();
+                        dialog.show();
+                    }
                 }if (user.isEmailVerified()){
                     final AlertDialog.Builder builder = new AlertDialog.Builder(InspectorActivity.this);
-                    builder.setTitle("Verificacion de email")
-                            .setMessage("Por favor verifica tu correo electronico para continuar")
+                    builder.setTitle("Verificación de email")
+                            .setMessage("Por favor verifica tu correo electrónico para continuar")
                             .setCancelable(false)
                             .setIcon(R.drawable.ic_email)
                             .setNegativeButton("Inciar sesion", new DialogInterface.OnClickListener() {

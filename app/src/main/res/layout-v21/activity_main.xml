@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/colorAccent"
+    android:layout_height="match_parent"
+    tools:context="monterrosa.ricardo.aprendermaps.MainActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30dp"
+        android:layout_marginTop="5dp"
+        android:text="Bienvenid@"
+        android:gravity="center"
+        android:textColor="@color/colorPrimary"
+        android:layout_margin="5dp"
+        android:padding="10dp"/>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="300dp"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/correoInspector"
+            android:hint="  Correo Electrónico"
+            android:textColor="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary"
+            android:background="@color/colorAccent"
+            android:inputType="textEmailAddress"
+            android:drawableLeft="@drawable/ic_persona" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:passwordToggleTint="@color/colorPrimary"
+        app:passwordToggleEnabled="true"
+        android:textColorHint="@color/colorPrimary">
+        <EditText
+            android:layout_width="300dp"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:background="@color/colorAccent"
+            android:layout_height="wrap_content"
+            android:id="@+id/contraseñaInspector"
+            android:hint="  Contraseña"
+            android:textColorHint="@color/colorPrimary"
+            android:textColor="@color/colorPrimary"
+            android:inputType="textPassword"
+            android:drawableStart="@drawable/ic_key"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Iniciar Sesion"
+        android:textColor="@color/colorPrimary"
+        android:onClick="irMapInspector"
+        android:shadowColor="@color/colorPrimary"
+        android:drawableTop="@drawable/ic_lock_open"
+        android:background="@color/colorAccent"/>
+    <TextView
+        android:layout_width="300dp"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:text="OLVIDÉ MI CONTRASEÑA"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:onClick="recuperarcontraseña"
+        android:drawableTop="@drawable/ic_key"
+        android:background="@color/colorAccent"
+        android:textColor="@color/colorPrimary"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:padding="10dp"
+        android:textColor="@color/colorPrimary"
+        android:text="¿Aún no tienes tu cuenta?  Registrate pulsando aqui ..."
+        android:id="@+id/irRegistro"
+        android:background="@color/colorAccent"
+        android:onClick="onclick"
+        android:gravity="center"
+        android:drawableBottom="@drawable/ic_person_add"
+        android:textSize="17dp"/>
+
+
+</LinearLayout>

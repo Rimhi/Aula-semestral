@@ -73,14 +73,14 @@ public class ServiceNotificacion extends Service {
     }
     public void vernotificacion(){
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        mibasedatos = databaseReference.child("Inspecciones");
+        mibasedatos =  databaseReference.child("Inspecciones");
         mibasedatos.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 LlegadaMapa llegadaMapa = dataSnapshot.getValue(LlegadaMapa.class);
                if (llegadaMapa.Fecha.equals(fechaactual())) {
                    Log.e("entra",llegadaMapa.NombreColector);
-                   createNotification(llegadaMapa.NombreColector,"El colector ha hecho una visita",AdminActivity.class);
+                   createNotification(llegadaMapa.NombreColector,"El colector "+llegadaMapa.NombreColector+" ha hecho una visita",AdminActivity.class);
                }
             }
 

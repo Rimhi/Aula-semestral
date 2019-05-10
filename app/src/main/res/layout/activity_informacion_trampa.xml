@@ -22,13 +22,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Fecha de colocacion de la trampa :"
+                android:text="Fecha de colocación de la trampa :"
                 android:layout_marginTop="20dp"
                 android:textColor="@color/btn"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Pulsa aqui Para la fecha"
+                android:hint="Pulsa aquí Para la fecha"
                 android:background="@drawable/redondo"
                 android:padding="10dp"
                 android:inputType="date"
@@ -38,7 +38,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Identificacion de la trampa :"
+                android:text="Identificación de la trampa :"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/btn"/>
             <EditText
@@ -85,7 +85,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fechas de Inspeccion: "
+                android:text="Fechas de Inspección: "
                 android:textColor="@color/btn"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"

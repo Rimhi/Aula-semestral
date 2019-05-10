@@ -79,7 +79,7 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
                         CodigoTrampa.getText()+"",Municipio.getText()+"",
                         Vereda.getText()+"",Predio.getText()+"",Negros.getText()+"",
                         Rojos.getText()+"",EstadoCultivo.getText()+"",Observaciones.getText()+"");
-                informe.setValue(modeloForma3007);
+                informe.push().setValue(modeloForma3007);
                 llenarpdf(new File(Environment.getExternalStorageDirectory().toString(),"Reportes")+"",path,path2);
                 Copiarpdf();
                 Context context = LlenarFormularioPicudoActivity.this;
@@ -106,8 +106,13 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
                         CodigoTrampa.getText()+"",Municipio.getText()+"",
                         Vereda.getText()+"",Predio.getText()+"",Negros.getText()+"",
                         Rojos.getText()+"",EstadoCultivo.getText()+"",Observaciones.getText()+"");
-                informe.setValue(modeloForma3007);
-                enviardatos();
+                informe.push().setValue(modeloForma3007);
+                if (añadir<10){
+                    enviardatos();
+                }else{
+                   Toast.makeText(getApplicationContext(),"Maximo 10 Registros, por favor en via este y crea otro",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -1041,530 +1046,531 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
                 acroFields.setField("ObservacionesRow2", Observaciones.getText() + "");
             }
             if (añadir==3){
-                acroFields.setField("DiaRow1",getIntent().getExtras().getString("DiaRow1"));
-                acroFields.setField("CodigoTrampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
+                acroFields.setField("DíaRow1",getIntent().getExtras().getString("DiaRow1"));
+                acroFields.setField("Código de trampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
                 acroFields.setField("MunicipioRow1",getIntent().getExtras().getString("MunicipioRow1"));
                 acroFields.setField("VeredaRow1",getIntent().getExtras().getString("VeredaRow1"));
                 acroFields.setField("PredioRow1",getIntent().getExtras().getString("PredioRow1"));
                 acroFields.setField("NegrosRow1",getIntent().getExtras().getString("NegrosRow1"));
                 acroFields.setField("RojosRow1",getIntent().getExtras().getString("RojosRow1"));
-                acroFields.setField("Estado CultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
+                acroFields.setField("Estado cultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
                 acroFields.setField("ObservacionesRow1",getIntent().getExtras().getString("ObservacionesRow1"));
 
-                acroFields.setField("DiaRow2",getIntent().getExtras().getString("DiaRow2"));
-                acroFields.setField("CodigoTrampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
+                acroFields.setField("DíaRow2",getIntent().getExtras().getString("DiaRow2"));
+                acroFields.setField("Código de trampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
                 acroFields.setField("MunicipioRow2",getIntent().getExtras().getString("MunicipioRow2"));
                 acroFields.setField("VeredaRow2",getIntent().getExtras().getString("VeredaRow2"));
                 acroFields.setField("PredioRow2",getIntent().getExtras().getString("PredioRow2"));
                 acroFields.setField("NegrosRow2",getIntent().getExtras().getString("NegrosRow2"));
                 acroFields.setField("RojosRow2",getIntent().getExtras().getString("RojosRow2"));
-                acroFields.setField("Estado CultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
+                acroFields.setField("Estado cultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
                 acroFields.setField("ObservacionesRow2",getIntent().getExtras().getString("ObservacionesRow2"));
 
-                acroFields.setField("DiaRow3", Dia.getText() + "");
-                acroFields.setField("CodigoTrampaRow3", CodigoTrampa.getText() + "");
+                acroFields.setField("DíaRow3", Dia.getText() + "");
+                acroFields.setField("Código de trampaRow3", CodigoTrampa.getText() + "");
                 acroFields.setField("MunicipioRow3", Municipio.getText() + "");
                 acroFields.setField("VeredaRow3", Vereda.getText() + "");
                 acroFields.setField("PredioRow3", Predio.getText() + "");
                 acroFields.setField("NegrosRow3", Negros.getText() + "");
                 acroFields.setField("RojosRow3", Rojos.getText() + "");
-                acroFields.setField("Estado CultivoRow3", EstadoCultivo.getText() + "");
+                acroFields.setField("Estado cultivoRow3", EstadoCultivo.getText() + "");
+                acroFields.setField("ObservacionesRow3", Observaciones.getText() + "");
             }
             if (añadir ==4){
-                acroFields.setField("DiaRow1",getIntent().getExtras().getString("DiaRow1"));
-                acroFields.setField("CodigoTrampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
+                acroFields.setField("DíaRow1",getIntent().getExtras().getString("DiaRow1"));
+                acroFields.setField("Código de trampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
                 acroFields.setField("MunicipioRow1",getIntent().getExtras().getString("MunicipioRow1"));
                 acroFields.setField("VeredaRow1",getIntent().getExtras().getString("VeredaRow1"));
                 acroFields.setField("PredioRow1",getIntent().getExtras().getString("PredioRow1"));
                 acroFields.setField("NegrosRow1",getIntent().getExtras().getString("NegrosRow1"));
                 acroFields.setField("RojosRow1",getIntent().getExtras().getString("RojosRow1"));
-                acroFields.setField("Estado CultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
+                acroFields.setField("Estado cultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
                 acroFields.setField("ObservacionesRow1",getIntent().getExtras().getString("ObservacionesRow1"));
 
-                acroFields.setField("DiaRow2",getIntent().getExtras().getString("DiaRow2"));
-                acroFields.setField("CodigoTrampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
+                acroFields.setField("DíaRow2",getIntent().getExtras().getString("DiaRow2"));
+                acroFields.setField("Código de trampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
                 acroFields.setField("MunicipioRow2",getIntent().getExtras().getString("MunicipioRow2"));
                 acroFields.setField("VeredaRow2",getIntent().getExtras().getString("VeredaRow2"));
                 acroFields.setField("PredioRow2",getIntent().getExtras().getString("PredioRow2"));
                 acroFields.setField("NegrosRow2",getIntent().getExtras().getString("NegrosRow2"));
                 acroFields.setField("RojosRow2",getIntent().getExtras().getString("RojosRow2"));
-                acroFields.setField("Estado CultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
+                acroFields.setField("Estado cultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
                 acroFields.setField("ObservacionesRow2",getIntent().getExtras().getString("ObservacionesRow2"));
 
-                acroFields.setField("DiaRow3",getIntent().getExtras().getString("DiaRow3"));
-                acroFields.setField("CodigoTrampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
+                acroFields.setField("DíaRow3",getIntent().getExtras().getString("DiaRow3"));
+                acroFields.setField("Código de trampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
                 acroFields.setField("MunicipioRow3",getIntent().getExtras().getString("MunicipioRow3"));
                 acroFields.setField("VeredaRow3",getIntent().getExtras().getString("VeredaRow3"));
                 acroFields.setField("PredioRow3",getIntent().getExtras().getString("PredioRow3"));
                 acroFields.setField("NegrosRow3",getIntent().getExtras().getString("NegrosRow3"));
                 acroFields.setField("RojosRow3",getIntent().getExtras().getString("RojosRow3"));
-                acroFields.setField("Estado CultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
+                acroFields.setField("Estado cultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
                 acroFields.setField("ObservacionesRow3",getIntent().getExtras().getString("ObservacionesRow3"));
 
-                acroFields.setField("DiaRow4", Dia.getText() + "");
-                acroFields.setField("CodigoTrampaRow4", CodigoTrampa.getText() + "");
+                acroFields.setField("DíaRow4", Dia.getText() + "");
+                acroFields.setField("Código de trampaRow4", CodigoTrampa.getText() + "");
                 acroFields.setField("MunicipioRow4", Municipio.getText() + "");
                 acroFields.setField("VeredaRow4", Vereda.getText() + "");
                 acroFields.setField("PredioRow4", Predio.getText() + "");
                 acroFields.setField("NegrosRow4", Negros.getText() + "");
                 acroFields.setField("RojosRow4", Rojos.getText() + "");
-                acroFields.setField("Estado CultivoRow4", EstadoCultivo.getText() + "");
+                acroFields.setField("Estado cultivoRow4", EstadoCultivo.getText() + "");
                 acroFields.setField("ObservacionesRow4", Observaciones.getText() + "");
             }
             if (añadir==5){
-                acroFields.setField("DiaRow1",getIntent().getExtras().getString("DiaRow1"));
-                acroFields.setField("CodigoTrampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
+                acroFields.setField("DíaRow1",getIntent().getExtras().getString("DiaRow1"));
+                acroFields.setField("Código de trampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
                 acroFields.setField("MunicipioRow1",getIntent().getExtras().getString("MunicipioRow1"));
                 acroFields.setField("VeredaRow1",getIntent().getExtras().getString("VeredaRow1"));
                 acroFields.setField("PredioRow1",getIntent().getExtras().getString("PredioRow1"));
                 acroFields.setField("NegrosRow1",getIntent().getExtras().getString("NegrosRow1"));
                 acroFields.setField("RojosRow1",getIntent().getExtras().getString("RojosRow1"));
-                acroFields.setField("Estado CultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
+                acroFields.setField("Estado cultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
                 acroFields.setField("ObservacionesRow1",getIntent().getExtras().getString("ObservacionesRow1"));
 
-                acroFields.setField("DiaRow2",getIntent().getExtras().getString("DiaRow2"));
-                acroFields.setField("CodigoTrampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
+                acroFields.setField("DíaRow2",getIntent().getExtras().getString("DiaRow2"));
+                acroFields.setField("Código de trampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
                 acroFields.setField("MunicipioRow2",getIntent().getExtras().getString("MunicipioRow2"));
                 acroFields.setField("VeredaRow2",getIntent().getExtras().getString("VeredaRow2"));
                 acroFields.setField("PredioRow2",getIntent().getExtras().getString("PredioRow2"));
                 acroFields.setField("NegrosRow2",getIntent().getExtras().getString("NegrosRow2"));
                 acroFields.setField("RojosRow2",getIntent().getExtras().getString("RojosRow2"));
-                acroFields.setField("Estado CultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
+                acroFields.setField("Estado cultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
                 acroFields.setField("ObservacionesRow2",getIntent().getExtras().getString("ObservacionesRow2"));
 
-                acroFields.setField("DiaRow3",getIntent().getExtras().getString("DiaRow3"));
-                acroFields.setField("CodigoTrampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
+                acroFields.setField("DíaRow3",getIntent().getExtras().getString("DiaRow3"));
+                acroFields.setField("Código de trampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
                 acroFields.setField("MunicipioRow3",getIntent().getExtras().getString("MunicipioRow3"));
                 acroFields.setField("VeredaRow3",getIntent().getExtras().getString("VeredaRow3"));
                 acroFields.setField("PredioRow3",getIntent().getExtras().getString("PredioRow3"));
                 acroFields.setField("NegrosRow3",getIntent().getExtras().getString("NegrosRow3"));
                 acroFields.setField("RojosRow3",getIntent().getExtras().getString("RojosRow3"));
-                acroFields.setField("Estado CultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
+                acroFields.setField("Estado cultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
                 acroFields.setField("ObservacionesRow3",getIntent().getExtras().getString("ObservacionesRow3"));
 
-                acroFields.setField("DiaRow4",getIntent().getExtras().getString("DiaRow4"));
-                acroFields.setField("CodigoTrampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
+                acroFields.setField("DíaRow4",getIntent().getExtras().getString("DiaRow4"));
+                acroFields.setField("Código de trampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
                 acroFields.setField("MunicipioRow4",getIntent().getExtras().getString("MunicipioRow4"));
                 acroFields.setField("VeredaRow4",getIntent().getExtras().getString("VeredaRow4"));
                 acroFields.setField("PredioRow4",getIntent().getExtras().getString("PredioRow4"));
                 acroFields.setField("NegrosRow4",getIntent().getExtras().getString("NegrosRow4"));
                 acroFields.setField("RojosRow4",getIntent().getExtras().getString("RojosRow4"));
-                acroFields.setField("Estado CultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
+                acroFields.setField("Estado cultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
                 acroFields.setField("ObservacionesRow4",getIntent().getExtras().getString("ObservacionesRow4"));
 
-                acroFields.setField("DiaRow5", Dia.getText() + "");
-                acroFields.setField("CodigoTrampaRow5", CodigoTrampa.getText() + "");
+                acroFields.setField("DíaRow5", Dia.getText() + "");
+                acroFields.setField("Código de trampaRow5", CodigoTrampa.getText() + "");
                 acroFields.setField("MunicipioRow5", Municipio.getText() + "");
                 acroFields.setField("VeredaRow5", Vereda.getText() + "");
                 acroFields.setField("PredioRow5", Predio.getText() + "");
                 acroFields.setField("NegrosRow5", Negros.getText() + "");
                 acroFields.setField("RojosRow5", Rojos.getText() + "");
-                acroFields.setField("Estado CultivoRow5", EstadoCultivo.getText() + "");
+                acroFields.setField("Estado cultivoRow5", EstadoCultivo.getText() + "");
                 acroFields.setField("ObservacionesRow5", Observaciones.getText() + "");
             }
             if (añadir==6){
-                acroFields.setField("DiaRow1",getIntent().getExtras().getString("DiaRow1"));
-                acroFields.setField("CodigoTrampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
+                acroFields.setField("DíaRow1",getIntent().getExtras().getString("DiaRow1"));
+                acroFields.setField("Código de trampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
                 acroFields.setField("MunicipioRow1",getIntent().getExtras().getString("MunicipioRow1"));
                 acroFields.setField("VeredaRow1",getIntent().getExtras().getString("VeredaRow1"));
                 acroFields.setField("PredioRow1",getIntent().getExtras().getString("PredioRow1"));
                 acroFields.setField("NegrosRow1",getIntent().getExtras().getString("NegrosRow1"));
                 acroFields.setField("RojosRow1",getIntent().getExtras().getString("RojosRow1"));
-                acroFields.setField("Estado CultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
+                acroFields.setField("Estado cultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
                 acroFields.setField("ObservacionesRow1",getIntent().getExtras().getString("ObservacionesRow1"));
 
-                acroFields.setField("DiaRow2",getIntent().getExtras().getString("DiaRow2"));
-                acroFields.setField("CodigoTrampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
+                acroFields.setField("DíaRow2",getIntent().getExtras().getString("DiaRow2"));
+                acroFields.setField("Código de trampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
                 acroFields.setField("MunicipioRow2",getIntent().getExtras().getString("MunicipioRow2"));
                 acroFields.setField("VeredaRow2",getIntent().getExtras().getString("VeredaRow2"));
                 acroFields.setField("PredioRow2",getIntent().getExtras().getString("PredioRow2"));
                 acroFields.setField("NegrosRow2",getIntent().getExtras().getString("NegrosRow2"));
                 acroFields.setField("RojosRow2",getIntent().getExtras().getString("RojosRow2"));
-                acroFields.setField("Estado CultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
+                acroFields.setField("Estado cultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
                 acroFields.setField("ObservacionesRow2",getIntent().getExtras().getString("ObservacionesRow2"));
 
-                acroFields.setField("DiaRow3",getIntent().getExtras().getString("DiaRow3"));
-                acroFields.setField("CodigoTrampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
+                acroFields.setField("DíaRow3",getIntent().getExtras().getString("DiaRow3"));
+                acroFields.setField("Código de trampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
                 acroFields.setField("MunicipioRow3",getIntent().getExtras().getString("MunicipioRow3"));
                 acroFields.setField("VeredaRow3",getIntent().getExtras().getString("VeredaRow3"));
                 acroFields.setField("PredioRow3",getIntent().getExtras().getString("PredioRow3"));
                 acroFields.setField("NegrosRow3",getIntent().getExtras().getString("NegrosRow3"));
                 acroFields.setField("RojosRow3",getIntent().getExtras().getString("RojosRow3"));
-                acroFields.setField("Estado CultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
+                acroFields.setField("Estado cultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
                 acroFields.setField("ObservacionesRow3",getIntent().getExtras().getString("ObservacionesRow3"));
 
-                acroFields.setField("DiaRow4",getIntent().getExtras().getString("DiaRow4"));
-                acroFields.setField("CodigoTrampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
+                acroFields.setField("DíaRow4",getIntent().getExtras().getString("DiaRow4"));
+                acroFields.setField("Código de trampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
                 acroFields.setField("MunicipioRow4",getIntent().getExtras().getString("MunicipioRow4"));
                 acroFields.setField("VeredaRow4",getIntent().getExtras().getString("VeredaRow4"));
                 acroFields.setField("PredioRow4",getIntent().getExtras().getString("PredioRow4"));
                 acroFields.setField("NegrosRow4",getIntent().getExtras().getString("NegrosRow4"));
                 acroFields.setField("RojosRow4",getIntent().getExtras().getString("RojosRow4"));
-                acroFields.setField("Estado CultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
+                acroFields.setField("Estado cultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
                 acroFields.setField("ObservacionesRow4",getIntent().getExtras().getString("ObservacionesRow4"));
 
-                acroFields.setField("DiaRow5",getIntent().getExtras().getString("DiaRow5"));
-                acroFields.setField("CodigoTrampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
+                acroFields.setField("DíaRow5",getIntent().getExtras().getString("DiaRow5"));
+                acroFields.setField("Código de trampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
                 acroFields.setField("MunicipioRow5",getIntent().getExtras().getString("MunicipioRow5"));
                 acroFields.setField("VeredaRow5",getIntent().getExtras().getString("VeredaRow5"));
                 acroFields.setField("PredioRow5",getIntent().getExtras().getString("PredioRow5"));
                 acroFields.setField("NegrosRow5",getIntent().getExtras().getString("NegrosRow5"));
                 acroFields.setField("RojosRow5",getIntent().getExtras().getString("RojosRow5"));
-                acroFields.setField("Estado CultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
+                acroFields.setField("Estado cultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
                 acroFields.setField("ObservacionesRow5",getIntent().getExtras().getString("ObservacionesRow5"));
 
-                acroFields.setField("DiaRow6", Dia.getText() + "");
-                acroFields.setField("CodigoTrampaRow6", CodigoTrampa.getText() + "");
+                acroFields.setField("DíaRow6", Dia.getText() + "");
+                acroFields.setField("Código de trampaRow6", CodigoTrampa.getText() + "");
                 acroFields.setField("MunicipioRow6", Municipio.getText() + "");
                 acroFields.setField("VeredaRow6", Vereda.getText() + "");
                 acroFields.setField("PredioRow6", Predio.getText() + "");
                 acroFields.setField("NegrosRow6", Negros.getText() + "");
                 acroFields.setField("RojosRow6", Rojos.getText() + "");
-                acroFields.setField("Estado CultivoRow6", EstadoCultivo.getText() + "");
+                acroFields.setField("Estado cultivoRow6", EstadoCultivo.getText() + "");
                 acroFields.setField("ObservacionesRow6", Observaciones.getText() + "");
             }
             if (añadir==7){
-                acroFields.setField("DiaRow1",getIntent().getExtras().getString("DiaRow1"));
-                acroFields.setField("CodigoTrampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
+                acroFields.setField("DíaRow1",getIntent().getExtras().getString("DiaRow1"));
+                acroFields.setField("Código de trampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
                 acroFields.setField("MunicipioRow1",getIntent().getExtras().getString("MunicipioRow1"));
                 acroFields.setField("VeredaRow1",getIntent().getExtras().getString("VeredaRow1"));
                 acroFields.setField("PredioRow1",getIntent().getExtras().getString("PredioRow1"));
                 acroFields.setField("NegrosRow1",getIntent().getExtras().getString("NegrosRow1"));
                 acroFields.setField("RojosRow1",getIntent().getExtras().getString("RojosRow1"));
-                acroFields.setField("Estado CultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
+                acroFields.setField("Estado cultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
                 acroFields.setField("ObservacionesRow1",getIntent().getExtras().getString("ObservacionesRow1"));
 
-                acroFields.setField("DiaRow2",getIntent().getExtras().getString("DiaRow2"));
-                acroFields.setField("CodigoTrampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
+                acroFields.setField("DíaRow2",getIntent().getExtras().getString("DiaRow2"));
+                acroFields.setField("Código de trampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
                 acroFields.setField("MunicipioRow2",getIntent().getExtras().getString("MunicipioRow2"));
                 acroFields.setField("VeredaRow2",getIntent().getExtras().getString("VeredaRow2"));
                 acroFields.setField("PredioRow2",getIntent().getExtras().getString("PredioRow2"));
                 acroFields.setField("NegrosRow2",getIntent().getExtras().getString("NegrosRow2"));
                 acroFields.setField("RojosRow2",getIntent().getExtras().getString("RojosRow2"));
-                acroFields.setField("Estado CultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
+                acroFields.setField("Estado cultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
                 acroFields.setField("ObservacionesRow2",getIntent().getExtras().getString("ObservacionesRow2"));
 
-                acroFields.setField("DiaRow3",getIntent().getExtras().getString("DiaRow3"));
-                acroFields.setField("CodigoTrampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
+                acroFields.setField("DíaRow3",getIntent().getExtras().getString("DiaRow3"));
+                acroFields.setField("Código de trampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
                 acroFields.setField("MunicipioRow3",getIntent().getExtras().getString("MunicipioRow3"));
                 acroFields.setField("VeredaRow3",getIntent().getExtras().getString("VeredaRow3"));
                 acroFields.setField("PredioRow3",getIntent().getExtras().getString("PredioRow3"));
                 acroFields.setField("NegrosRow3",getIntent().getExtras().getString("NegrosRow3"));
                 acroFields.setField("RojosRow3",getIntent().getExtras().getString("RojosRow3"));
-                acroFields.setField("Estado CultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
+                acroFields.setField("Estado cultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
                 acroFields.setField("ObservacionesRow3",getIntent().getExtras().getString("ObservacionesRow3"));
 
-                acroFields.setField("DiaRow4",getIntent().getExtras().getString("DiaRow4"));
-                acroFields.setField("CodigoTrampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
+                acroFields.setField("DíaRow4",getIntent().getExtras().getString("DiaRow4"));
+                acroFields.setField("Código de trampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
                 acroFields.setField("MunicipioRow4",getIntent().getExtras().getString("MunicipioRow4"));
                 acroFields.setField("VeredaRow4",getIntent().getExtras().getString("VeredaRow4"));
                 acroFields.setField("PredioRow4",getIntent().getExtras().getString("PredioRow4"));
                 acroFields.setField("NegrosRow4",getIntent().getExtras().getString("NegrosRow4"));
                 acroFields.setField("RojosRow4",getIntent().getExtras().getString("RojosRow4"));
-                acroFields.setField("Estado CultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
+                acroFields.setField("Estado cultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
                 acroFields.setField("ObservacionesRow4",getIntent().getExtras().getString("ObservacionesRow4"));
 
-                acroFields.setField("DiaRow5",getIntent().getExtras().getString("DiaRow5"));
-                acroFields.setField("CodigoTrampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
+                acroFields.setField("DíaRow5",getIntent().getExtras().getString("DiaRow5"));
+                acroFields.setField("Código de trampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
                 acroFields.setField("MunicipioRow5",getIntent().getExtras().getString("MunicipioRow5"));
                 acroFields.setField("VeredaRow5",getIntent().getExtras().getString("VeredaRow5"));
                 acroFields.setField("PredioRow5",getIntent().getExtras().getString("PredioRow5"));
                 acroFields.setField("NegrosRow5",getIntent().getExtras().getString("NegrosRow5"));
                 acroFields.setField("RojosRow5",getIntent().getExtras().getString("RojosRow5"));
-                acroFields.setField("Estado CultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
+                acroFields.setField("Estado cultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
                 acroFields.setField("ObservacionesRow5",getIntent().getExtras().getString("ObservacionesRow5"));
 
-                acroFields.setField("DiaRow6",getIntent().getExtras().getString("DiaRow6"));
-                acroFields.setField("CodigoTrampaRow6",getIntent().getExtras().getString("CodigoTrampaRow6"));
+                acroFields.setField("DíaRow6",getIntent().getExtras().getString("DiaRow6"));
+                acroFields.setField("Código de trampaRow6",getIntent().getExtras().getString("CodigoTrampaRow6"));
                 acroFields.setField("MunicipioRow6",getIntent().getExtras().getString("MunicipioRow6"));
                 acroFields.setField("VeredaRow6",getIntent().getExtras().getString("VeredaRow6"));
                 acroFields.setField("PredioRow6",getIntent().getExtras().getString("PredioRow6"));
                 acroFields.setField("NegrosRow6",getIntent().getExtras().getString("NegrosRow6"));
                 acroFields.setField("RojosRow6",getIntent().getExtras().getString("RojosRow6"));
-                acroFields.setField("Estado CultivoRow6",getIntent().getExtras().getString("EstadoCultivoRow6"));
+                acroFields.setField("Estado cultivoRow6",getIntent().getExtras().getString("EstadoCultivoRow6"));
                 acroFields.setField("ObservacionesRow6",getIntent().getExtras().getString("ObservacionesRow6"));
 
 
-                acroFields.setField("DiaRow7", Dia.getText() + "");
-                acroFields.setField("CodigoTrampaRow7", CodigoTrampa.getText() + "");
+                acroFields.setField("DíaRow7", Dia.getText() + "");
+                acroFields.setField("Código de trampaRow7", CodigoTrampa.getText() + "");
                 acroFields.setField("MunicipioRow7", Municipio.getText() + "");
                 acroFields.setField("VeredaRow7", Vereda.getText() + "");
                 acroFields.setField("PredioRow7", Predio.getText() + "");
                 acroFields.setField("NegrosRow7", Negros.getText() + "");
                 acroFields.setField("RojosRow7", Rojos.getText() + "");
-                acroFields.setField("EstadoCultivoRow7", EstadoCultivo.getText() + "");
+                acroFields.setField("Estado cultivoRow7", EstadoCultivo.getText() + "");
                 acroFields.setField("ObservacionesRow7", Observaciones.getText() + "");
             }if (añadir==8){
-                acroFields.setField("DiaRow1",getIntent().getExtras().getString("DiaRow1"));
-                acroFields.setField("CodigoTrampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
+                acroFields.setField("DíaRow1",getIntent().getExtras().getString("DiaRow1"));
+                acroFields.setField("Código de trampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
                 acroFields.setField("MunicipioRow1",getIntent().getExtras().getString("MunicipioRow1"));
                 acroFields.setField("VeredaRow1",getIntent().getExtras().getString("VeredaRow1"));
                 acroFields.setField("PredioRow1",getIntent().getExtras().getString("PredioRow1"));
                 acroFields.setField("NegrosRow1",getIntent().getExtras().getString("NegrosRow1"));
                 acroFields.setField("RojosRow1",getIntent().getExtras().getString("RojosRow1"));
-                acroFields.setField("Estado CultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
+                acroFields.setField("Estado cultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
                 acroFields.setField("ObservacionesRow1",getIntent().getExtras().getString("ObservacionesRow1"));
 
-                acroFields.setField("DiaRow2",getIntent().getExtras().getString("DiaRow2"));
-                acroFields.setField("CodigoTrampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
+                acroFields.setField("DíaRow2",getIntent().getExtras().getString("DiaRow2"));
+                acroFields.setField("Código de trampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
                 acroFields.setField("MunicipioRow2",getIntent().getExtras().getString("MunicipioRow2"));
                 acroFields.setField("VeredaRow2",getIntent().getExtras().getString("VeredaRow2"));
                 acroFields.setField("PredioRow2",getIntent().getExtras().getString("PredioRow2"));
                 acroFields.setField("NegrosRow2",getIntent().getExtras().getString("NegrosRow2"));
                 acroFields.setField("RojosRow2",getIntent().getExtras().getString("RojosRow2"));
-                acroFields.setField("Estado CultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
+                acroFields.setField("Estado cultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
                 acroFields.setField("ObservacionesRow2",getIntent().getExtras().getString("ObservacionesRow2"));
 
-                acroFields.setField("DiaRow3",getIntent().getExtras().getString("DiaRow3"));
-                acroFields.setField("CodigoTrampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
+                acroFields.setField("DíaRow3",getIntent().getExtras().getString("DiaRow3"));
+                acroFields.setField("Código de trampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
                 acroFields.setField("MunicipioRow3",getIntent().getExtras().getString("MunicipioRow3"));
                 acroFields.setField("VeredaRow3",getIntent().getExtras().getString("VeredaRow3"));
                 acroFields.setField("PredioRow3",getIntent().getExtras().getString("PredioRow3"));
                 acroFields.setField("NegrosRow3",getIntent().getExtras().getString("NegrosRow3"));
                 acroFields.setField("RojosRow3",getIntent().getExtras().getString("RojosRow3"));
-                acroFields.setField("Estado CultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
+                acroFields.setField("Estado cultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
                 acroFields.setField("ObservacionesRow3",getIntent().getExtras().getString("ObservacionesRow3"));
 
-                acroFields.setField("DiaRow4",getIntent().getExtras().getString("DiaRow4"));
-                acroFields.setField("CodigoTrampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
+                acroFields.setField("DíaRow4",getIntent().getExtras().getString("DiaRow4"));
+                acroFields.setField("Código de trampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
                 acroFields.setField("MunicipioRow4",getIntent().getExtras().getString("MunicipioRow4"));
                 acroFields.setField("VeredaRow4",getIntent().getExtras().getString("VeredaRow4"));
                 acroFields.setField("PredioRow4",getIntent().getExtras().getString("PredioRow4"));
                 acroFields.setField("NegrosRow4",getIntent().getExtras().getString("NegrosRow4"));
                 acroFields.setField("RojosRow4",getIntent().getExtras().getString("RojosRow4"));
-                acroFields.setField("Estado CultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
+                acroFields.setField("Estado cultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
                 acroFields.setField("ObservacionesRow4",getIntent().getExtras().getString("ObservacionesRow4"));
 
-                acroFields.setField("DiaRow5",getIntent().getExtras().getString("DiaRow5"));
-                acroFields.setField("CodigoTrampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
+                acroFields.setField("DíaRow5",getIntent().getExtras().getString("DiaRow5"));
+                acroFields.setField("Código de trampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
                 acroFields.setField("MunicipioRow5",getIntent().getExtras().getString("MunicipioRow5"));
                 acroFields.setField("VeredaRow5",getIntent().getExtras().getString("VeredaRow5"));
                 acroFields.setField("PredioRow5",getIntent().getExtras().getString("PredioRow5"));
                 acroFields.setField("NegrosRow5",getIntent().getExtras().getString("NegrosRow5"));
                 acroFields.setField("RojosRow5",getIntent().getExtras().getString("RojosRow5"));
-                acroFields.setField("Estado CultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
+                acroFields.setField("Estado cultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
                 acroFields.setField("ObservacionesRow5",getIntent().getExtras().getString("ObservacionesRow5"));
 
-                acroFields.setField("DiaRow6",getIntent().getExtras().getString("DiaRow6"));
-                acroFields.setField("CodigoTrampaRow6",getIntent().getExtras().getString("CodigoTrampaRow6"));
+                acroFields.setField("DíaRow6",getIntent().getExtras().getString("DiaRow6"));
+                acroFields.setField("Código de trampaRow6",getIntent().getExtras().getString("CodigoTrampaRow6"));
                 acroFields.setField("MunicipioRow6",getIntent().getExtras().getString("MunicipioRow6"));
                 acroFields.setField("VeredaRow6",getIntent().getExtras().getString("VeredaRow6"));
                 acroFields.setField("PredioRow6",getIntent().getExtras().getString("PredioRow6"));
                 acroFields.setField("NegrosRow6",getIntent().getExtras().getString("NegrosRow6"));
                 acroFields.setField("RojosRow6",getIntent().getExtras().getString("RojosRow6"));
-                acroFields.setField("Estado CultivoRow6",getIntent().getExtras().getString("EstadoCultivoRow6"));
+                acroFields.setField("Estado cultivoRow6",getIntent().getExtras().getString("EstadoCultivoRow6"));
                 acroFields.setField("ObservacionesRow6",getIntent().getExtras().getString("ObservacionesRow6"));
 
-                acroFields.setField("DiaRow7",getIntent().getExtras().getString("DiaRow7"));
-                acroFields.setField("CodigoTrampaRow7",getIntent().getExtras().getString("CodigoTrampaRow7"));
+                acroFields.setField("DíaRow7",getIntent().getExtras().getString("DiaRow7"));
+                acroFields.setField("Código de trampaRow7",getIntent().getExtras().getString("CodigoTrampaRow7"));
                 acroFields.setField("MunicipioRow7",getIntent().getExtras().getString("MunicipioRow7"));
                 acroFields.setField("VeredaRow7",getIntent().getExtras().getString("VeredaRow7"));
                 acroFields.setField("PredioRow7",getIntent().getExtras().getString("PredioRow7"));
                 acroFields.setField("NegrosRow7",getIntent().getExtras().getString("NegrosRow7"));
                 acroFields.setField("RojosRow7",getIntent().getExtras().getString("RojosRow7"));
-                acroFields.setField("Estado CultivoRow7",getIntent().getExtras().getString("EstadoCultivoRow7"));
+                acroFields.setField("Estado cultivoRow7",getIntent().getExtras().getString("EstadoCultivoRow7"));
                 acroFields.setField("ObservacionesRow7",getIntent().getExtras().getString("ObservacionesRow7"));
 
-                acroFields.setField("DiaRow8", Dia.getText() + "");
-                acroFields.setField("CodigoTrampaRow8", CodigoTrampa.getText() + "");
+                acroFields.setField("DíaRow8", Dia.getText() + "");
+                acroFields.setField("Código de trampaRow8", CodigoTrampa.getText() + "");
                 acroFields.setField("MunicipioRow8", Municipio.getText() + "");
                 acroFields.setField("VeredaRow8", Vereda.getText() + "");
                 acroFields.setField("PredioRow8", Predio.getText() + "");
                 acroFields.setField("NegrosRow8", Negros.getText() + "");
                 acroFields.setField("RojosRow8", Rojos.getText() + "");
-                acroFields.setField("Estado CultivoRow8", EstadoCultivo.getText() + "");
+                acroFields.setField("Estado cultivoRow8", EstadoCultivo.getText() + "");
                 acroFields.setField("ObservacionesRow8", Observaciones.getText() + "");
             }
             if (añadir==9){
-                acroFields.setField("DiaRow1",getIntent().getExtras().getString("DiaRow1"));
-                acroFields.setField("CodigoTrampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
+                acroFields.setField("DíaRow1",getIntent().getExtras().getString("DiaRow1"));
+                acroFields.setField("Código de trampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
                 acroFields.setField("MunicipioRow1",getIntent().getExtras().getString("MunicipioRow1"));
                 acroFields.setField("VeredaRow1",getIntent().getExtras().getString("VeredaRow1"));
                 acroFields.setField("PredioRow1",getIntent().getExtras().getString("PredioRow1"));
                 acroFields.setField("NegrosRow1",getIntent().getExtras().getString("NegrosRow1"));
                 acroFields.setField("RojosRow1",getIntent().getExtras().getString("RojosRow1"));
-                acroFields.setField("Estado CultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
+                acroFields.setField("Estado cultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
                 acroFields.setField("ObservacionesRow1",getIntent().getExtras().getString("ObservacionesRow1"));
 
-                acroFields.setField("DiaRow2",getIntent().getExtras().getString("DiaRow2"));
-                acroFields.setField("CodigoTrampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
+                acroFields.setField("DíaRow2",getIntent().getExtras().getString("DiaRow2"));
+                acroFields.setField("Código de trampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
                 acroFields.setField("MunicipioRow2",getIntent().getExtras().getString("MunicipioRow2"));
                 acroFields.setField("VeredaRow2",getIntent().getExtras().getString("VeredaRow2"));
                 acroFields.setField("PredioRow2",getIntent().getExtras().getString("PredioRow2"));
                 acroFields.setField("NegrosRow2",getIntent().getExtras().getString("NegrosRow2"));
                 acroFields.setField("RojosRow2",getIntent().getExtras().getString("RojosRow2"));
-                acroFields.setField("Estado CultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
+                acroFields.setField("Estado cultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
                 acroFields.setField("ObservacionesRow2",getIntent().getExtras().getString("ObservacionesRow2"));
 
-                acroFields.setField("DiaRow3",getIntent().getExtras().getString("DiaRow3"));
-                acroFields.setField("CodigoTrampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
+                acroFields.setField("DíaRow3",getIntent().getExtras().getString("DiaRow3"));
+                acroFields.setField("Código de trampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
                 acroFields.setField("MunicipioRow3",getIntent().getExtras().getString("MunicipioRow3"));
                 acroFields.setField("VeredaRow3",getIntent().getExtras().getString("VeredaRow3"));
                 acroFields.setField("PredioRow3",getIntent().getExtras().getString("PredioRow3"));
                 acroFields.setField("NegrosRow3",getIntent().getExtras().getString("NegrosRow3"));
                 acroFields.setField("RojosRow3",getIntent().getExtras().getString("RojosRow3"));
-                acroFields.setField("Estado CultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
+                acroFields.setField("Estado cultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
                 acroFields.setField("ObservacionesRow3",getIntent().getExtras().getString("ObservacionesRow3"));
 
-                acroFields.setField("DiaRow4",getIntent().getExtras().getString("DiaRow4"));
-                acroFields.setField("CodigoTrampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
+                acroFields.setField("DíaRow4",getIntent().getExtras().getString("DiaRow4"));
+                acroFields.setField("Código de trampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
                 acroFields.setField("MunicipioRow4",getIntent().getExtras().getString("MunicipioRow4"));
                 acroFields.setField("VeredaRow4",getIntent().getExtras().getString("VeredaRow4"));
                 acroFields.setField("PredioRow4",getIntent().getExtras().getString("PredioRow4"));
                 acroFields.setField("NegrosRow4",getIntent().getExtras().getString("NegrosRow4"));
                 acroFields.setField("RojosRow4",getIntent().getExtras().getString("RojosRow4"));
-                acroFields.setField("Estado CultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
+                acroFields.setField("Estado cultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
                 acroFields.setField("ObservacionesRow4",getIntent().getExtras().getString("ObservacionesRow4"));
 
-                acroFields.setField("DiaRow5",getIntent().getExtras().getString("DiaRow5"));
-                acroFields.setField("CodigoTrampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
+                acroFields.setField("DíaRow5",getIntent().getExtras().getString("DiaRow5"));
+                acroFields.setField("Código de trampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
                 acroFields.setField("MunicipioRow5",getIntent().getExtras().getString("MunicipioRow5"));
                 acroFields.setField("VeredaRow5",getIntent().getExtras().getString("VeredaRow5"));
                 acroFields.setField("PredioRow5",getIntent().getExtras().getString("PredioRow5"));
                 acroFields.setField("NegrosRow5",getIntent().getExtras().getString("NegrosRow5"));
                 acroFields.setField("RojosRow5",getIntent().getExtras().getString("RojosRow5"));
-                acroFields.setField("Estado CultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
+                acroFields.setField("Estado cultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
                 acroFields.setField("ObservacionesRow5",getIntent().getExtras().getString("ObservacionesRow5"));
 
-                acroFields.setField("DiaRow6",getIntent().getExtras().getString("DiaRow6"));
-                acroFields.setField("CodigoTrampaRow6",getIntent().getExtras().getString("CodigoTrampaRow6"));
+                acroFields.setField("DíaRow6",getIntent().getExtras().getString("DiaRow6"));
+                acroFields.setField("Código de trampaRow6",getIntent().getExtras().getString("CodigoTrampaRow6"));
                 acroFields.setField("MunicipioRow6",getIntent().getExtras().getString("MunicipioRow6"));
                 acroFields.setField("VeredaRow6",getIntent().getExtras().getString("VeredaRow6"));
                 acroFields.setField("PredioRow6",getIntent().getExtras().getString("PredioRow6"));
                 acroFields.setField("NegrosRow6",getIntent().getExtras().getString("NegrosRow6"));
                 acroFields.setField("RojosRow6",getIntent().getExtras().getString("RojosRow6"));
-                acroFields.setField("Estado CultivoRow6",getIntent().getExtras().getString("EstadoCultivoRow6"));
+                acroFields.setField("Estado cultivoRow6",getIntent().getExtras().getString("EstadoCultivoRow6"));
                 acroFields.setField("ObservacionesRow6",getIntent().getExtras().getString("ObservacionesRow6"));
 
-                acroFields.setField("DiaRow7",getIntent().getExtras().getString("DiaRow7"));
-                acroFields.setField("CodigoTrampaRow7",getIntent().getExtras().getString("CodigoTrampaRow7"));
+                acroFields.setField("DíaRow7",getIntent().getExtras().getString("DiaRow7"));
+                acroFields.setField("Código de trampaRow7",getIntent().getExtras().getString("CodigoTrampaRow7"));
                 acroFields.setField("MunicipioRow7",getIntent().getExtras().getString("MunicipioRow7"));
                 acroFields.setField("VeredaRow7",getIntent().getExtras().getString("VeredaRow7"));
                 acroFields.setField("PredioRow7",getIntent().getExtras().getString("PredioRow7"));
                 acroFields.setField("NegrosRow7",getIntent().getExtras().getString("NegrosRow7"));
                 acroFields.setField("RojosRow7",getIntent().getExtras().getString("RojosRow7"));
-                acroFields.setField("Estado CultivoRow7",getIntent().getExtras().getString("EstadoCultivoRow7"));
+                acroFields.setField("Estado cultivoRow7",getIntent().getExtras().getString("EstadoCultivoRow7"));
                 acroFields.setField("ObservacionesRow7",getIntent().getExtras().getString("ObservacionesRow7"));
 
-                acroFields.setField("DiaRow8",getIntent().getExtras().getString("DiaRow8"));
-                acroFields.setField("CodigoTrampaRow8",getIntent().getExtras().getString("CodigoTrampaRow8"));
+                acroFields.setField("DíaRow8",getIntent().getExtras().getString("DiaRow8"));
+                acroFields.setField("Código de trampaRow8",getIntent().getExtras().getString("CodigoTrampaRow8"));
                 acroFields.setField("MunicipioRow8",getIntent().getExtras().getString("MunicipioRow8"));
                 acroFields.setField("VeredaRow8",getIntent().getExtras().getString("VeredaRow8"));
                 acroFields.setField("PredioRow8",getIntent().getExtras().getString("PredioRow8"));
                 acroFields.setField("NegrosRow8",getIntent().getExtras().getString("NegrosRow8"));
                 acroFields.setField("RojosRow8",getIntent().getExtras().getString("RojosRow8"));
-                acroFields.setField("Estado CultivoRow8",getIntent().getExtras().getString("EstadoCultivoRow8"));
+                acroFields.setField("Estado cultivoRow8",getIntent().getExtras().getString("EstadoCultivoRow8"));
                 acroFields.setField("ObservacionesRow8",getIntent().getExtras().getString("ObservacionesRow8"));
 
-                acroFields.setField("DiaRow9", Dia.getText() + "");
-                acroFields.setField("CodigoTrampaRow9", CodigoTrampa.getText() + "");
+                acroFields.setField("DíaRow9", Dia.getText() + "");
+                acroFields.setField("Código de trampaRow9", CodigoTrampa.getText() + "");
                 acroFields.setField("MunicipioRow9", Municipio.getText() + "");
                 acroFields.setField("VeredaRow9", Vereda.getText() + "");
                 acroFields.setField("PredioRow9", Predio.getText() + "");
                 acroFields.setField("NegrosRow9", Negros.getText() + "");
                 acroFields.setField("RojosRow9", Rojos.getText() + "");
-                acroFields.setField("Estado CultivoRow9", EstadoCultivo.getText() + "");
+                acroFields.setField("Estado cultivoRow9", EstadoCultivo.getText() + "");
                 acroFields.setField("ObservacionesRow9", Observaciones.getText() + "");
             }
             if (añadir==10){
-                acroFields.setField("DiaRow1",getIntent().getExtras().getString("DiaRow1"));
-                acroFields.setField("CodigoTrampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
+                acroFields.setField("DíaRow1",getIntent().getExtras().getString("DiaRow1"));
+                acroFields.setField("Código de trampaRow1",getIntent().getExtras().getString("CodigoTrampaRow1"));
                 acroFields.setField("MunicipioRow1",getIntent().getExtras().getString("MunicipioRow1"));
                 acroFields.setField("VeredaRow1",getIntent().getExtras().getString("VeredaRow1"));
                 acroFields.setField("PredioRow1",getIntent().getExtras().getString("PredioRow1"));
                 acroFields.setField("NegrosRow1",getIntent().getExtras().getString("NegrosRow1"));
                 acroFields.setField("RojosRow1",getIntent().getExtras().getString("RojosRow1"));
-                acroFields.setField("Estado CultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
+                acroFields.setField("Estado cultivoRow1",getIntent().getExtras().getString("EstadoCultivoRow1"));
                 acroFields.setField("ObservacionesRow1",getIntent().getExtras().getString("ObservacionesRow1"));
 
-                acroFields.setField("DiaRow2",getIntent().getExtras().getString("DiaRow2"));
-                acroFields.setField("CodigoTrampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
+                acroFields.setField("DíaRow2",getIntent().getExtras().getString("DiaRow2"));
+                acroFields.setField("Código de trampaRow2",getIntent().getExtras().getString("CodigoTrampaRow2"));
                 acroFields.setField("MunicipioRow2",getIntent().getExtras().getString("MunicipioRow2"));
                 acroFields.setField("VeredaRow2",getIntent().getExtras().getString("VeredaRow2"));
                 acroFields.setField("PredioRow2",getIntent().getExtras().getString("PredioRow2"));
                 acroFields.setField("NegrosRow2",getIntent().getExtras().getString("NegrosRow2"));
                 acroFields.setField("RojosRow2",getIntent().getExtras().getString("RojosRow2"));
-                acroFields.setField("Estado CultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
+                acroFields.setField("Estado cultivoRow2",getIntent().getExtras().getString("EstadoCultivoRow2"));
                 acroFields.setField("ObservacionesRow2",getIntent().getExtras().getString("ObservacionesRow2"));
 
-                acroFields.setField("DiaRow3",getIntent().getExtras().getString("DiaRow3"));
-                acroFields.setField("CodigoTrampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
+                acroFields.setField("DíaRow3",getIntent().getExtras().getString("DiaRow3"));
+                acroFields.setField("Código de trampaRow3",getIntent().getExtras().getString("CodigoTrampaRow3"));
                 acroFields.setField("MunicipioRow3",getIntent().getExtras().getString("MunicipioRow3"));
                 acroFields.setField("VeredaRow3",getIntent().getExtras().getString("VeredaRow3"));
                 acroFields.setField("PredioRow3",getIntent().getExtras().getString("PredioRow3"));
                 acroFields.setField("NegrosRow3",getIntent().getExtras().getString("NegrosRow3"));
                 acroFields.setField("RojosRow3",getIntent().getExtras().getString("RojosRow3"));
-                acroFields.setField("Estado CultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
+                acroFields.setField("Estado cultivoRow3",getIntent().getExtras().getString("EstadoCultivoRow3"));
                 acroFields.setField("ObservacionesRow3",getIntent().getExtras().getString("ObservacionesRow3"));
 
-                acroFields.setField("DiaRow4",getIntent().getExtras().getString("DiaRow4"));
-                acroFields.setField("CodigoTrampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
+                acroFields.setField("DíaRow4",getIntent().getExtras().getString("DiaRow4"));
+                acroFields.setField("Código de trampaRow4",getIntent().getExtras().getString("CodigoTrampaRow4"));
                 acroFields.setField("MunicipioRow4",getIntent().getExtras().getString("MunicipioRow4"));
                 acroFields.setField("VeredaRow4",getIntent().getExtras().getString("VeredaRow4"));
                 acroFields.setField("PredioRow4",getIntent().getExtras().getString("PredioRow4"));
                 acroFields.setField("NegrosRow4",getIntent().getExtras().getString("NegrosRow4"));
                 acroFields.setField("RojosRow4",getIntent().getExtras().getString("RojosRow4"));
-                acroFields.setField("Estado CultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
+                acroFields.setField("Estado cultivoRow4",getIntent().getExtras().getString("EstadoCultivoRow4"));
                 acroFields.setField("ObservacionesRow4",getIntent().getExtras().getString("ObservacionesRow4"));
 
-                acroFields.setField("DiaRow5",getIntent().getExtras().getString("DiaRow5"));
-                acroFields.setField("CodigoTrampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
+                acroFields.setField("DíaRow5",getIntent().getExtras().getString("DiaRow5"));
+                acroFields.setField("Código de trampaRow5",getIntent().getExtras().getString("CodigoTrampaRow5"));
                 acroFields.setField("MunicipioRow5",getIntent().getExtras().getString("MunicipioRow5"));
                 acroFields.setField("VeredaRow5",getIntent().getExtras().getString("VeredaRow5"));
                 acroFields.setField("PredioRow5",getIntent().getExtras().getString("PredioRow5"));
                 acroFields.setField("NegrosRow5",getIntent().getExtras().getString("NegrosRow5"));
                 acroFields.setField("RojosRow5",getIntent().getExtras().getString("RojosRow5"));
-                acroFields.setField("Estado CultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
+                acroFields.setField("Estado cultivoRow5",getIntent().getExtras().getString("EstadoCultivoRow5"));
                 acroFields.setField("ObservacionesRow5",getIntent().getExtras().getString("ObservacionesRow5"));
 
-                acroFields.setField("DiaRow6",getIntent().getExtras().getString("DiaRow6"));
-                acroFields.setField("CodigoTrampaRow6",getIntent().getExtras().getString("CodigoTrampaRow6"));
+                acroFields.setField("DíaRow6",getIntent().getExtras().getString("DiaRow6"));
+                acroFields.setField("Código de trampaRow6",getIntent().getExtras().getString("CodigoTrampaRow6"));
                 acroFields.setField("MunicipioRow6",getIntent().getExtras().getString("MunicipioRow6"));
                 acroFields.setField("VeredaRow6",getIntent().getExtras().getString("VeredaRow6"));
                 acroFields.setField("PredioRow6",getIntent().getExtras().getString("PredioRow6"));
                 acroFields.setField("NegrosRow6",getIntent().getExtras().getString("NegrosRow6"));
                 acroFields.setField("RojosRow6",getIntent().getExtras().getString("RojosRow6"));
-                acroFields.setField("Estado CultivoRow6",getIntent().getExtras().getString("EstadoCultivoRow6"));
+                acroFields.setField("Estado cultivoRow6",getIntent().getExtras().getString("EstadoCultivoRow6"));
                 acroFields.setField("ObservacionesRow6",getIntent().getExtras().getString("ObservacionesRow6"));
 
-                acroFields.setField("DiaRow7",getIntent().getExtras().getString("DiaRow7"));
-                acroFields.setField("CodigoTrampaRow7",getIntent().getExtras().getString("CodigoTrampaRow7"));
+                acroFields.setField("DíaRow7",getIntent().getExtras().getString("DiaRow7"));
+                acroFields.setField("Código de trampaRow7",getIntent().getExtras().getString("CodigoTrampaRow7"));
                 acroFields.setField("MunicipioRow7",getIntent().getExtras().getString("MunicipioRow7"));
                 acroFields.setField("VeredaRow7",getIntent().getExtras().getString("VeredaRow7"));
                 acroFields.setField("PredioRow7",getIntent().getExtras().getString("PredioRow7"));
                 acroFields.setField("NegrosRow7",getIntent().getExtras().getString("NegrosRow7"));
                 acroFields.setField("RojosRow7",getIntent().getExtras().getString("RojosRow7"));
-                acroFields.setField("Estado CultivoRow7",getIntent().getExtras().getString("EstadoCultivoRow7"));
+                acroFields.setField("Estado cultivoRow7",getIntent().getExtras().getString("EstadoCultivoRow7"));
                 acroFields.setField("ObservacionesRow7",getIntent().getExtras().getString("ObservacionesRow7"));
 
-                acroFields.setField("DiaRow8",getIntent().getExtras().getString("DiaRow8"));
-                acroFields.setField("CodigoTrampaRow8",getIntent().getExtras().getString("CodigoTrampaRow8"));
+                acroFields.setField("DíaRow8",getIntent().getExtras().getString("DiaRow8"));
+                acroFields.setField("Código de trampaRow8",getIntent().getExtras().getString("CodigoTrampaRow8"));
                 acroFields.setField("MunicipioRow8",getIntent().getExtras().getString("MunicipioRow8"));
                 acroFields.setField("VeredaRow8",getIntent().getExtras().getString("VeredaRow8"));
                 acroFields.setField("PredioRow8",getIntent().getExtras().getString("PredioRow8"));
                 acroFields.setField("NegrosRow8",getIntent().getExtras().getString("NegrosRow8"));
                 acroFields.setField("RojosRow8",getIntent().getExtras().getString("RojosRow8"));
-                acroFields.setField("Estado CultivoRow8",getIntent().getExtras().getString("EstadoCultivoRow8"));
+                acroFields.setField("Estado cultivoRow8",getIntent().getExtras().getString("EstadoCultivoRow8"));
                 acroFields.setField("ObservacionesRow8",getIntent().getExtras().getString("ObservacionesRow8"));
 
-                acroFields.setField("DiaRow9",getIntent().getExtras().getString("DiaRow9"));
-                acroFields.setField("CodigoTrampaRow9",getIntent().getExtras().getString("CodigoTrampaRow9"));
+                acroFields.setField("DíaRow9",getIntent().getExtras().getString("DiaRow9"));
+                acroFields.setField("Código de trampaRow9",getIntent().getExtras().getString("CodigoTrampaRow9"));
                 acroFields.setField("MunicipioRow9",getIntent().getExtras().getString("MunicipioRow9"));
                 acroFields.setField("VeredaRow9",getIntent().getExtras().getString("VeredaRow9"));
                 acroFields.setField("PredioRow9",getIntent().getExtras().getString("PredioRow9"));
                 acroFields.setField("NegrosRow9",getIntent().getExtras().getString("NegrosRow9"));
                 acroFields.setField("RojosRow9",getIntent().getExtras().getString("RojosRow9"));
-                acroFields.setField("Estado CultivoRow9",getIntent().getExtras().getString("EstadoCultivoRow9"));
+                acroFields.setField("Estado cultivoRow9",getIntent().getExtras().getString("EstadoCultivoRow9"));
                 acroFields.setField("ObservacionesRow9",getIntent().getExtras().getString("ObservacionesRow9"));
 
-                acroFields.setField("DiaRow10", Dia.getText() + "");
-                acroFields.setField("CodigoTrampaRow10", CodigoTrampa.getText() + "");
+                acroFields.setField("DíaRow10", Dia.getText() + "");
+                acroFields.setField("Código de trampaRow10", CodigoTrampa.getText() + "");
                 acroFields.setField("MunicipioRow10", Municipio.getText() + "");
                 acroFields.setField("VeredaRow10", Vereda.getText() + "");
                 acroFields.setField("PredioRow10", Predio.getText() + "");
                 acroFields.setField("NegrosRow10", Negros.getText() + "");
                 acroFields.setField("RojosRow10", Rojos.getText() + "");
-                acroFields.setField("Estado CultivoRow10", EstadoCultivo.getText() + "");
+                acroFields.setField("Estado cultivoRow10", EstadoCultivo.getText() + "");
                 acroFields.setField("ObservacionesRow10",Observaciones.getText()+"");
                 acroFields.setField("ObservacionesRow10", Observaciones.getText() + "");
             }
@@ -1605,6 +1611,7 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().getString("id") != null) {
                 final String id = getIntent().getExtras().getString("id");
+                informe = baseDatos.child("Formulario");
                 informe.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -1632,6 +1639,8 @@ public class LlenarFormularioPicudoActivity extends AppCompatActivity {
                             GuardarFormulario.setVisibility(View.INVISIBLE);
                             ObservacionesGenerales.setVisibility(View.INVISIBLE);
                             CedulaSupervisor.setVisibility(View.INVISIBLE);
+                            FirmaFuncionario.setVisibility(View.INVISIBLE);
+                            FirmaSupervisor.setVisibility(View.INVISIBLE);
 
 
                         }

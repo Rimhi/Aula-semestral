@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -38,10 +39,12 @@ public class VerInspectoresFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private RecyclerView listaInspectores;
     private DatabaseReference miBaseDatos;
+    private DatabaseReference Admin;
     private  DatabaseReference databaseReference;
     private ArrayList<ModeloRegistro> listmodelo = new ArrayList<>();
     private InspectoresAdapter adapter;
     private FirebaseAuth mAuth;
+    private ArrayList<String>correosAdmin = new ArrayList<>();
 
     public VerInspectoresFragment() {
         // Required empty public constructor
@@ -81,27 +84,60 @@ public class VerInspectoresFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ver_inspectores, container, false);
 
-        Log.w("Mirar", "onCreateView de Inspectores");
 
         listaInspectores = view.findViewById(R.id.listainspectores);
         mAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         miBaseDatos = databaseReference.child("Usuarios");
+        Admin = databaseReference.child("Admin");
         miBaseDatos.addChildEventListener(listener);
+        vercorreos();
         return view;
+    }
+    private void vercorreos(){
+        Admin.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                correosAdmin.add(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
     ChildEventListener listener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
             if (!mAuth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
-                listmodelo.add(modeloRegistro);
-                adapter = new InspectoresAdapter(listmodelo, getContext());
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                listaInspectores.setLayoutManager(linearLayoutManager);
-                listaInspectores.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                for (int i = 0;i<correosAdmin.size();i++) {
+                    if (!correosAdmin.get(i).equals(modeloRegistro.correo)) {
+                        listmodelo.add(modeloRegistro);
+                        adapter = new InspectoresAdapter(listmodelo, getContext());
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                        listaInspectores.setLayoutManager(linearLayoutManager);
+                        listaInspectores.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
             }
 
 

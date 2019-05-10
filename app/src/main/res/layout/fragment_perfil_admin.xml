@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Presiona aqui si la foto no ha cargado"
+                android:text="Presiona aquí si la foto no ha cargado"
                 android:gravity="center"
                 android:padding="10dp"
                 android:visibility="invisible"
@@ -50,7 +50,7 @@
                 android:padding="10dp"
                 android:layout_margin="5dp"
                 android:layout_height="wrap_content"
-                android:hint="  Cedula"
+                android:hint="  Cédula"
                 android:id="@+id/editarcedulaadmin"
                 android:inputType="number"
                 android:drawableLeft="@drawable/ic_chat"/>
@@ -72,7 +72,7 @@
                 android:padding="10dp"
                 android:layout_margin="5dp"
                 android:layout_height="wrap_content"
-                android:hint="  Direccion de residencia"
+                android:hint="  Dirección de residencia"
                 android:id="@+id/editardireccionadmin"
                 android:drawableLeft="@drawable/ic_direccion"/>
             <Button
@@ -88,7 +88,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Informacion de ingreso"
+                android:text="Información de ingreso"
                 android:textSize="20dp"
                 android:textColor="@color/btn"
                 android:gravity="center"
@@ -100,7 +100,7 @@
                 android:padding="10dp"
                 android:layout_margin="5dp"
                 android:layout_height="wrap_content"
-                android:hint="  Correo Electronico"
+                android:hint="  Correo Electrónico"
                 android:id="@+id/editarcorreoelectronicoadmin"
                 android:focusable="false"
                 android:drawableLeft="@drawable/ic_email_registro"/>

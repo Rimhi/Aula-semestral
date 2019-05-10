@@ -6,17 +6,22 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -63,14 +68,13 @@ public class MainActivity extends AppCompatActivity{
     private DatabaseReference acceso;
     private DatabaseReference inhabilitado;
     private DatabaseReference admin, usuario_final;
-    private String[] correosadmin = {};
-    private int posicion = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MultiDex.install(this);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         pedirPermisosFaltantes();
         mAuth = FirebaseAuth.getInstance();
         contraseña = findViewById(R.id.contraseñaInspector);
@@ -80,13 +84,13 @@ public class MainActivity extends AppCompatActivity{
         inhabilitado = reference.child("inhabilitarCorreos");
         acceso = reference.child("habilitarCorreos");
 
-
+        progreso.setMessage("Iniciando...");
+        progreso.setCancelable(false);
+        progreso.show();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
-               /* progreso.setMessage("Iniciando...");
-                progreso.setCancelable(false);
-                progreso.show();*/
+
                 final ChildEventListener listener = acceso.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity{
                                         if (firebaseAuth.getCurrentUser() != null)
                                             if (dataSnapshot.getValue().equals(firebaseAuth.getCurrentUser().getEmail() + "")) {
                                                 mAuth.signOut();
-                                                //progreso.dismiss();
+                                                progreso.dismiss();
                                                 Toast.makeText(MainActivity.this, "has sido INHABILITADO, consulta con tu administrador", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 if (firebaseAuth.getCurrentUser() != null) {
@@ -113,7 +117,7 @@ public class MainActivity extends AppCompatActivity{
                                                                 Intent intent = new Intent(MainActivity.this, AdminActivity.class).addFlags(
                                                                         Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                                 Toast.makeText(MainActivity.this, dataSnapshot.getValue() + " Correo admin", Toast.LENGTH_LONG).show();
-                                                                // progreso.dismiss();
+                                                                progreso.dismiss();
                                                                 startActivity(intent);
 
                                                             }else{
@@ -125,7 +129,7 @@ public class MainActivity extends AppCompatActivity{
                                                                             Intent intent = new Intent(MainActivity.this, InspectorActivity.class).addFlags(
                                                                                     Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                                             Toast.makeText(MainActivity.this, dataSnapshot.getValue() + " Correo user", Toast.LENGTH_LONG).show();
-                                                                            // progreso.dismiss();
+                                                                            progreso.dismiss();
                                                                             startActivity(intent);
                                                                         }
                                                                         }
@@ -151,9 +155,6 @@ public class MainActivity extends AppCompatActivity{
                                                                     }
                                                                 });
                                                             }
-
-
-
                                                         }
 
                                                         @Override
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity{
 
 
                                                 } else {
-                                                    // progreso.dismiss();
+                                                     progreso.dismiss();
                                                     //Toast.makeText(MainActivity.this, "Datos Incorrectos", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -230,18 +231,14 @@ public class MainActivity extends AppCompatActivity{
 
                     }
                 });
-
-
+                if (mAuth.getCurrentUser() == null && progreso.isShowing()){
+                    progreso.dismiss();
+                }
             }
         };
 
-
-
-
     }
-
-
-
+    
     public void recuperarcontraseña(View view){
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (correo.getText().toString().isEmpty()){
@@ -257,7 +254,7 @@ public class MainActivity extends AppCompatActivity{
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
                                 progreso.dismiss();
-                                Toast.makeText(MainActivity.this, "Correo electronico enviado", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Correo electrónico enviado", Toast.LENGTH_SHORT).show();
                             }else {
                                 Toast.makeText(MainActivity.this, "ha ocurrido un error, intenta de nuevo o verifica tu email", Toast.LENGTH_SHORT).show();
                             }
@@ -461,6 +458,14 @@ public class MainActivity extends AppCompatActivity{
         }
 
         return todosConsedidos;
+    }
+    public Drawable getDrawable(Resources res, int id){
+        Drawable img = null;
+        final int version = Build.VERSION.SDK_INT;
+        if (version < 21) {
+            img = res.getDrawable(id);
+        }
+        return img;
     }
 
 }

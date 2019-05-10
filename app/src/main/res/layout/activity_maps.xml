@@ -26,14 +26,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/jail_picudo"
-        android:text="Picudo Algodon"
+        android:text="  Picudo de algodón"
         android:layout_margin="5dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/jail"
-        android:text="Mosca de la fruta"
+        android:text="  Mosca de la fruta"
         android:layout_margin="5dp"/>
 
 </LinearLayout>

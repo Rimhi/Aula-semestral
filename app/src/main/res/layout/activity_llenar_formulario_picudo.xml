@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:textColor="@color/btn"
-                android:text="Se realizo cambio de feromona: "/>
+                android:text="Se realizó cambio de feromona: "/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:textColor="@color/btn"
-                android:text="Numero de lote nueva feromona" />
+                android:text="Número de lote nueva feromona" />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:textColor="@color/btn"
-                android:text="Dia: " />
+                android:text="Día: " />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Codigo Trampa: "
+                android:text="Código Trampa: "
                 android:layout_marginTop="12dp"
                 android:textColor="@color/btn"
                 />
@@ -132,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/MunicipioPicudo"
-                android:text="Monteria"
+                android:text="Montería"
                 android:inputType="text"
                 android:layout_marginTop="10dp"
                 android:padding="10dp"
@@ -254,7 +254,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cedula Supervisor: "
+                android:text="Cédula Supervisor: "
                 android:layout_marginTop="12dp"
                 android:textColor="@color/btn"/>
             <EditText

@@ -1,5 +1,6 @@
 package monterrosa.ricardo.aprendermaps.Admin;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -91,11 +92,11 @@ public class AdminActivity extends AppCompatActivity
 
         if (!user.isEmailVerified()) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
-            builder.setTitle("Verificacion de email")
+            builder.setTitle("Verificación de email")
                     .setMessage("Por favor verifica tu correo electronico para continuar")
                     .setCancelable(false)
                     .setIcon(R.drawable.ic_email)
-                    .setNegativeButton("Cerrar sesion", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Cerrar sesión", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             auth.signOut();
@@ -110,8 +111,8 @@ public class AdminActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (!user.isEmailVerified()){
                     final AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
-                    builder.setTitle("Verificacion de email")
-                            .setMessage("Por favor verifica tu correo electronico para continuar")
+                    builder.setTitle("Verificación de email")
+                            .setMessage("Por favor verifica tu correo electrónico para continuar")
                             .setCancelable(false)
                             .setIcon(R.drawable.ic_email)
                             .setNegativeButton("Cerrar sesion", new DialogInterface.OnClickListener() {
@@ -125,8 +126,8 @@ public class AdminActivity extends AppCompatActivity
                     dialog.show();
                 }if (user.isEmailVerified()){
                     final AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
-                    builder.setTitle("Verificacion de email")
-                            .setMessage("Por favor verifica tu correo electronico para continuar")
+                    builder.setTitle("Verificación de email")
+                            .setMessage("Por favor verifica tu correo electrónico para continuar")
                             .setCancelable(false)
                             .setIcon(R.drawable.ic_email)
                             .setNegativeButton("Inciar sesion", new DialogInterface.OnClickListener() {
@@ -138,8 +139,9 @@ public class AdminActivity extends AppCompatActivity
                             });
                     dialog = builder.create();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        if (dialog!=null || !AdminActivity.super.isDestroyed() || AdminActivity.super.isActivityTransitionRunning())
-                        dialog.show();
+                        if (!((Activity)AdminActivity.this).isFinishing()) {
+                            dialog.show();
+                        }
                     }
                     if (dialog.isShowing()) {
                         dialog.dismiss();
@@ -160,7 +162,7 @@ public class AdminActivity extends AppCompatActivity
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final ModeloRegistro modeloRegistro = dataSnapshot.getValue(ModeloRegistro.class);
             if (auth.getCurrentUser().getUid().equals(modeloRegistro.IDguidDatabase)) {
-                bienvenido.setText("Bienvenido sr(a) "+modeloRegistro.Nombre);
+                bienvenido.setText("Bienvenid@ sr(a) "+modeloRegistro.Nombre);
                 nombre.setText(modeloRegistro.Nombre);
                 correo.setText(modeloRegistro.correo);
                 String imagen = modeloRegistro.imagen;

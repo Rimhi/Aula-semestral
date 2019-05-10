@@ -171,11 +171,13 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         public void onLocationChanged(Location location) {
             userlocation = new LatLng(location.getLatitude(), location.getLongitude());
            if (userlocation != null) {
-               ModeloDarposicion modeloDarposicion = new ModeloDarposicion(userlocation.latitude, userlocation.longitude, auth.getCurrentUser().getUid(),
-                       NombreInspector, TelefonoInspector, CedulaInspector);
-               if (modeloDarposicion != null){
+               if (auth.getCurrentUser().getUid() != null) {
+                   ModeloDarposicion modeloDarposicion = new ModeloDarposicion(userlocation.latitude, userlocation.longitude, auth.getCurrentUser().getUid(),
+                           NombreInspector, TelefonoInspector, CedulaInspector);
+               if (auth.getCurrentUser().getUid() != null) {
                    posicionesinspector.child(auth.getCurrentUser().getUid()).setValue(modeloDarposicion);
-                }
+               }
+           }
                progressDialog.dismiss();
            }
         }
@@ -230,7 +232,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             @Override
             public void onInfoWindowClick(final Marker marker) {
             if (userlocation!=null) {
-                if (calcularDistancia(userlocation, marker.getPosition()) <= 100000) {
+                if (calcularDistancia(userlocation, marker.getPosition()) <= 5) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MapaInspectorActivity.this);
                     builder.setTitle("¿Desea llenar formulario?")
                             .setNegativeButton("no", new DialogInterface.OnClickListener() {
@@ -242,9 +244,6 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             final String[] tipo = marker.getSnippet().split(":");
-                            Log.e("completo",marker.getSnippet()+"");
-                            Log.e("trampa",tipo[0]);
-                            Log.e("trampa",tipo[1]);
                             if (tipo[1].equals(" Picudo Algodon")){
                                 picudoAlgodon(marker);
                             } else {
@@ -304,20 +303,22 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             final Trampa trampa = dataSnapshot.getValue(Trampa.class);
 
             if (mMap != null && trampa != null) {
-                if (trampa.Tipo_trampa.equals("Picudo Algodon")){
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .title("Identificacion: " + trampa.id)
-                            .snippet("Tipo: "+trampa.Tipo_trampa)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail_picudo))
-                            .position(new LatLng(trampa.latitud, trampa.longitud));
-                    mMap.addMarker(markerOptions);
-                }else {
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .title("Identificacion: " + trampa.id)
-                            .snippet("Tipo: "+trampa.Tipo_trampa)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail))
-                            .position(new LatLng(trampa.latitud, trampa.longitud));
-                    mMap.addMarker(markerOptions);
+                if (trampa.Tipo_trampa !=null) {
+                    if (trampa.Tipo_trampa.equals("Picudo Algodon")) {
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .title("Identificacion: " + trampa.id)
+                                .snippet("Tipo: " + trampa.Tipo_trampa)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail_picudo))
+                                .position(new LatLng(trampa.latitud, trampa.longitud));
+                        mMap.addMarker(markerOptions);
+                    } else {
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .title("Identificacion: " + trampa.id)
+                                .snippet("Tipo: " + trampa.Tipo_trampa)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.jail))
+                                .position(new LatLng(trampa.latitud, trampa.longitud));
+                        mMap.addMarker(markerOptions);
+                    }
                 }
 
             }
@@ -571,7 +572,6 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         intent.putExtra("codigoruta", getIntent().getExtras().getString("codigoruta"));
         intent.putExtra("nombreruta1", getIntent().getExtras().getString("nombreruta"));
         if (getIntent().getExtras().getInt("añadir") == 1) {
-            Log.e("map", "entro añadir 1 " + getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
             intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -582,10 +582,8 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("estado1", getIntent().getExtras().getString("estado1"));
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("firma1", getIntent().getExtras().getString("firma1"));
-            Log.e("firma1",getIntent().getExtras().getString("firma1"));
         }
         if (getIntent().getExtras().getInt("añadir")== 2) {
-            Log.e("map", "entro añadir 2 " + getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
             intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -597,7 +595,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
             intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-            intent.putExtra("atrayente2", getIntent().getExtras().getString("atrayente2"));
+            intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
             intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
             intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
             intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -606,11 +604,10 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
             intent.putExtra("firma1", getIntent().getExtras().getString("firma1"));
             intent.putExtra("firma2", getIntent().getExtras().getString("firma2"));
-            Log.e("firma1",getIntent().getExtras().getString("firma1"));
-            Log.e("firma2",getIntent().getExtras().getString("firma2"));
+
         }
         if (getIntent().getExtras().getInt("añadir") == 3) {
-            Log.e("map", "entro añadir 3 " + getIntent().getExtras().getString("codigotrampa1"));
+
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
             intent.putExtra("municipio1", getIntent().getExtras().getString("municipio1"));
             intent.putExtra("tipoatrayente1", getIntent().getExtras().getString("tipoatrayente1"));
@@ -622,7 +619,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
             intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-            intent.putExtra("atrayente2", getIntent().getExtras().getString("atrayente2"));
+            intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
             intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
             intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
             intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -631,7 +628,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
             intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
             intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-            intent.putExtra("atrayente3", getIntent().getExtras().getString("atrayente3"));
+            intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
             intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
             intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
             intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -641,9 +638,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("firma1", getIntent().getExtras().getString("firma1"));
             intent.putExtra("firma2", getIntent().getExtras().getString("firma2"));
             intent.putExtra("firma3", getIntent().getExtras().getString("firma3"));
-            Log.e("firma1",getIntent().getExtras().getString("firma1"));
-            Log.e("firma2",getIntent().getExtras().getString("firma2"));
-            Log.e("firma3",getIntent().getExtras().getString("firma3"));
+
         }
         if (getIntent().getExtras().getInt("añadir") == 4) {
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
@@ -657,7 +652,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
             intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-            intent.putExtra("atrayente2", getIntent().getExtras().getString("atrayente2"));
+            intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
             intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
             intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
             intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -666,7 +661,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
             intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
             intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-            intent.putExtra("atrayente3", getIntent().getExtras().getString("atrayente3"));
+            intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
             intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
             intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
             intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -675,7 +670,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
             intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa4"));
             intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-            intent.putExtra("atrayente4", getIntent().getExtras().getString("atrayente4"));
+            intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
             intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
             intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
             intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -686,10 +681,6 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("firma2", getIntent().getExtras().getString("firma2"));
             intent.putExtra("firma3", getIntent().getExtras().getString("firma3"));
             intent.putExtra("firma4", getIntent().getExtras().getString("firma4"));
-            Log.e("firma1",getIntent().getExtras().getString("firma1"));
-            Log.e("firma2",getIntent().getExtras().getString("firma2"));
-            Log.e("firma3",getIntent().getExtras().getString("firma3"));
-            Log.e("firma4",getIntent().getExtras().getString("firma4"));
         }
         if (getIntent().getExtras().getInt("añadir") == 5) {
             intent.putExtra("codigotrampa1", getIntent().getExtras().getString("codigotrampa1"));
@@ -703,7 +694,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
             intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-            intent.putExtra("atrayente2", getIntent().getExtras().getString("atrayente2"));
+            intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
             intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
             intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
             intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -712,7 +703,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
             intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
             intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-            intent.putExtra("atrayente3", getIntent().getExtras().getString("atrayente3"));
+            intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
             intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
             intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
             intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -721,7 +712,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
             intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa4"));
             intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-            intent.putExtra("atrayente4", getIntent().getExtras().getString("atrayente4"));
+            intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
             intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
             intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
             intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -755,7 +746,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
             intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-            intent.putExtra("atrayente2", getIntent().getExtras().getString("atrayente2"));
+            intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
             intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
             intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
             intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -764,7 +755,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
             intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
             intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-            intent.putExtra("atrayente3", getIntent().getExtras().getString("atrayente3"));
+            intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
             intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
             intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
             intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -773,7 +764,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
             intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa4"));
             intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-            intent.putExtra("atrayente4", getIntent().getExtras().getString("atrayente4"));
+            intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
             intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
             intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
             intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -782,7 +773,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
             intent.putExtra("codigotrampa5", getIntent().getExtras().getString("codigotrampa5"));
             intent.putExtra("municipio5", getIntent().getExtras().getString("municipio5"));
-            intent.putExtra("atrayente5", getIntent().getExtras().getString("atrayente5"));
+            intent.putExtra("tipoatrayente5", getIntent().getExtras().getString("tipoatrayente5"));
             intent.putExtra("anastrepha5", getIntent().getExtras().getString("anastrepha5"));
             intent.putExtra("ceratis5", getIntent().getExtras().getString("ceratis5"));
             intent.putExtra("otros5", getIntent().getExtras().getString("otros5"));
@@ -791,7 +782,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones5", getIntent().getExtras().getString("observaciones5"));
             intent.putExtra("codigotrampa6", getIntent().getExtras().getString("codigotrampa6"));
             intent.putExtra("municipio6", getIntent().getExtras().getString("municipio6"));
-            intent.putExtra("atrayente6", getIntent().getExtras().getString("atrayente6"));
+            intent.putExtra("tipoatrayente6", getIntent().getExtras().getString("tipoatrayente6"));
             intent.putExtra("anastrepha6", getIntent().getExtras().getString("anastrepha6"));
             intent.putExtra("ceratis6", getIntent().getExtras().getString("ceratis6"));
             intent.putExtra("otros6", getIntent().getExtras().getString("otros6"));
@@ -817,7 +808,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
             intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-            intent.putExtra("atrayente2", getIntent().getExtras().getString("atrayente2"));
+            intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
             intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
             intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
             intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -826,7 +817,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
             intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
             intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-            intent.putExtra("atrayente3", getIntent().getExtras().getString("atrayente3"));
+            intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
             intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
             intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
             intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -835,7 +826,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
             intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa4"));
             intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-            intent.putExtra("atrayente4", getIntent().getExtras().getString("atrayente4"));
+            intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
             intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
             intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
             intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -844,7 +835,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
             intent.putExtra("codigotrampa5", getIntent().getExtras().getString("codigotrampa5"));
             intent.putExtra("municipio5", getIntent().getExtras().getString("municipio5"));
-            intent.putExtra("atrayente5", getIntent().getExtras().getString("atrayente5"));
+            intent.putExtra("tipoatrayente5", getIntent().getExtras().getString("tipoatrayente5"));
             intent.putExtra("anastrepha5", getIntent().getExtras().getString("anastrepha5"));
             intent.putExtra("ceratis5", getIntent().getExtras().getString("ceratis5"));
             intent.putExtra("otros5", getIntent().getExtras().getString("otros5"));
@@ -853,7 +844,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones5", getIntent().getExtras().getString("observaciones5"));
             intent.putExtra("codigotrampa6", getIntent().getExtras().getString("codigotrampa6"));
             intent.putExtra("municipio6", getIntent().getExtras().getString("municipio6"));
-            intent.putExtra("atrayente6", getIntent().getExtras().getString("atrayente6"));
+            intent.putExtra("tipoatrayente6", getIntent().getExtras().getString("tipoatrayente6"));
             intent.putExtra("anastrepha6", getIntent().getExtras().getString("anastrepha6"));
             intent.putExtra("ceratis6", getIntent().getExtras().getString("ceratis6"));
             intent.putExtra("otros6", getIntent().getExtras().getString("otros6"));
@@ -862,7 +853,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones6", getIntent().getExtras().getString("observaciones6"));
             intent.putExtra("codigotrampa7", getIntent().getExtras().getString("codigotrampa7"));
             intent.putExtra("municipio7", getIntent().getExtras().getString("municipio7"));
-            intent.putExtra("atrayente7", getIntent().getExtras().getString("atrayente7"));
+            intent.putExtra("tipoatrayente7", getIntent().getExtras().getString("tipoatrayente7"));
             intent.putExtra("anastrepha7", getIntent().getExtras().getString("anastrepha7"));
             intent.putExtra("ceratis7", getIntent().getExtras().getString("ceratis7"));
             intent.putExtra("otros7", getIntent().getExtras().getString("otros7"));
@@ -889,7 +880,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones1", getIntent().getExtras().getString("observaciones1"));
             intent.putExtra("codigotrampa2", getIntent().getExtras().getString("codigotrampa2"));
             intent.putExtra("municipio2", getIntent().getExtras().getString("municipio2"));
-            intent.putExtra("atrayente2", getIntent().getExtras().getString("atrayente2"));
+            intent.putExtra("tipoatrayente2", getIntent().getExtras().getString("tipoatrayente2"));
             intent.putExtra("anastrepha2", getIntent().getExtras().getString("anastrepha2"));
             intent.putExtra("ceratis2", getIntent().getExtras().getString("ceratis2"));
             intent.putExtra("otros2", getIntent().getExtras().getString("otros2"));
@@ -898,7 +889,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones2", getIntent().getExtras().getString("observaciones2"));
             intent.putExtra("codigotrampa3", getIntent().getExtras().getString("codigotrampa3"));
             intent.putExtra("municipio3", getIntent().getExtras().getString("municipio3"));
-            intent.putExtra("atrayente3", getIntent().getExtras().getString("atrayente3"));
+            intent.putExtra("tipoatrayente3", getIntent().getExtras().getString("tipoatrayente3"));
             intent.putExtra("anastrepha3", getIntent().getExtras().getString("anastrepha3"));
             intent.putExtra("ceratis3", getIntent().getExtras().getString("ceratis3"));
             intent.putExtra("otros3", getIntent().getExtras().getString("otros3"));
@@ -907,7 +898,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones3", getIntent().getExtras().getString("observaciones3"));
             intent.putExtra("codigotrampa4", getIntent().getExtras().getString("codigotrampa4"));
             intent.putExtra("municipio4", getIntent().getExtras().getString("municipio4"));
-            intent.putExtra("atrayente4", getIntent().getExtras().getString("atrayente4"));
+            intent.putExtra("tipoatrayente4", getIntent().getExtras().getString("tipoatrayente4"));
             intent.putExtra("anastrepha4", getIntent().getExtras().getString("anastrepha4"));
             intent.putExtra("ceratis4", getIntent().getExtras().getString("ceratis4"));
             intent.putExtra("otros4", getIntent().getExtras().getString("otros4"));
@@ -916,7 +907,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones4", getIntent().getExtras().getString("observaciones4"));
             intent.putExtra("codigotrampa5", getIntent().getExtras().getString("codigotrampa5"));
             intent.putExtra("municipio5", getIntent().getExtras().getString("municipio5"));
-            intent.putExtra("atrayente5", getIntent().getExtras().getString("atrayente5"));
+            intent.putExtra("tipoatrayente5", getIntent().getExtras().getString("tipoatrayente5"));
             intent.putExtra("anastrepha5", getIntent().getExtras().getString("anastrepha5"));
             intent.putExtra("ceratis5", getIntent().getExtras().getString("ceratis5"));
             intent.putExtra("otros5", getIntent().getExtras().getString("otros5"));
@@ -925,7 +916,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones5", getIntent().getExtras().getString("observaciones5"));
             intent.putExtra("codigotrampa6", getIntent().getExtras().getString("codigotrampa6"));
             intent.putExtra("municipio6", getIntent().getExtras().getString("municipio6"));
-            intent.putExtra("atrayente6", getIntent().getExtras().getString("atrayente6"));
+            intent.putExtra("tipoatrayente6", getIntent().getExtras().getString("tipoatrayente6"));
             intent.putExtra("anastrepha6", getIntent().getExtras().getString("anastrepha6"));
             intent.putExtra("ceratis6", getIntent().getExtras().getString("ceratis6"));
             intent.putExtra("otros6", getIntent().getExtras().getString("otros6"));
@@ -934,7 +925,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones6", getIntent().getExtras().getString("observaciones6"));
             intent.putExtra("codigotrampa7", getIntent().getExtras().getString("codigotrampa7"));
             intent.putExtra("municipio7", getIntent().getExtras().getString("municipio7"));
-            intent.putExtra("atrayente7", getIntent().getExtras().getString("atrayente7"));
+            intent.putExtra("tipoatrayente7", getIntent().getExtras().getString("tipoatrayente7"));
             intent.putExtra("anastrepha7", getIntent().getExtras().getString("anastrepha7"));
             intent.putExtra("ceratis7", getIntent().getExtras().getString("ceratis7"));
             intent.putExtra("otros7", getIntent().getExtras().getString("otros7"));
@@ -943,7 +934,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("observaciones7", getIntent().getExtras().getString("observaciones7"));
             intent.putExtra("codigotrampa8", getIntent().getExtras().getString("codigotrampa8"));
             intent.putExtra("municipio8", getIntent().getExtras().getString("municipio8"));
-            intent.putExtra("atrayente8", getIntent().getExtras().getString("atrayente8"));
+            intent.putExtra("tipoatrayente8", getIntent().getExtras().getString("tipoatrayente8"));
             intent.putExtra("anastrepha8", getIntent().getExtras().getString("anastrepha8"));
             intent.putExtra("ceratis8", getIntent().getExtras().getString("ceratis8"));
             intent.putExtra("otros8", getIntent().getExtras().getString("otros8"));
@@ -970,7 +961,7 @@ public class MapaInspectorActivity extends AppCompatActivity implements OnMapRea
         intent.putExtra("codigotrampa", idtrampa[1]);
         intent.putExtra("añadir",getIntent().getExtras().getInt("page")+1);
         if(getIntent().getExtras().getString("llave") !=null) {
-            Log.e("añadir mapa", getIntent().getExtras().getInt("page") + "");
+
             intent.putExtra("Funcionario", getIntent().getExtras().getString("Funcionario"));
             intent.putExtra("Year", getIntent().getExtras().getString("Year"));
             intent.putExtra("CambioFeromona", getIntent().getExtras().getString("CambioFeromona"));
